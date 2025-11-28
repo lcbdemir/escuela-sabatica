@@ -3,53 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escuela Sabática V27 - Lectura Cruda</title>
+    <title>Escuela Sabática V28 - Studio Pro</title>
     
+    <!-- Fuente y Estilos -->
     <style>
         :root {
             --bg: #ffffff;
             --text: #222;
-            --primary: #b71c1c; /* Rojo intenso */
-            --light: #f5f5f5;
-            --font: 'Georgia', serif;
+            --primary: #006064;
+            --accent: #d81b60;
+            --note-bg: #fffde7;
+            --highlight-yellow: #ffeb3b;
+            --highlight-green: #a5d6a7;
+            --highlight-blue: #90caf9;
         }
         body.dark-mode {
             --bg: #121212;
-            --text: #ddd;
-            --primary: #ef5350;
-            --light: #1e1e1e;
+            --text: #e0e0e0;
+            --primary: #80cbc4;
+            --accent: #f48fb1;
+            --note-bg: #263238;
+            --highlight-yellow: #fbc02d;
+            --highlight-green: #388e3c;
+            --highlight-blue: #1976d2;
         }
-        body { font-family: -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+        body { font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { padding: 15px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; background: var(--light); }
-        h1 { margin: 0; font-size: 1rem; color: var(--primary); font-weight: 800; }
-        button { cursor: pointer; border: 1px solid #ccc; background: var(--bg); padding: 5px 10px; border-radius: 4px; color: var(--text); }
+        /* BARRA DE NAVEGACIÓN SUPERIOR */
+        nav {
+            background: var(--bg); border-bottom: 2px solid var(--primary); padding: 10px;
+            display: flex; gap: 10px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        select {
+            padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 0.9rem;
+            background: var(--bg); color: var(--text); flex: 1;
+        }
+        .icon-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px; }
 
-        #container { flex: 1; overflow-y: auto; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        /* ÁREA DE CONTENIDO */
+        #main { flex: 1; overflow-y: auto; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; position: relative; }
+        
+        /* ESTILOS DEL TEXTO */
+        h1 { color: var(--primary); font-size: 1.6rem; border-bottom: 1px solid #ccc; margin-top: 0; }
+        h2 { color: var(--text); font-size: 1.3rem; margin-top: 30px; font-weight: bold; }
+        h3 { color: var(--accent); font-size: 1.1rem; margin-top: 20px; }
+        p { line-height: 1.8; font-size: 1.1rem; margin-bottom: 15px; }
+        strong { color: var(--primary); }
+        blockquote { border-left: 4px solid var(--accent); padding-left: 15px; color: #555; font-style: italic; margin: 20px 0; }
+        body.dark-mode blockquote { color: #aaa; }
 
-        /* Tarjetas */
-        .card { background: var(--light); padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid var(--primary); cursor: pointer; }
-        .card:hover { opacity: 0.8; }
-        .card h3 { margin: 0; font-size: 1.1rem; }
-        
-        /* Grilla Botones */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
-        .btn-cell { background: var(--light); padding: 15px; text-align: center; border-radius: 6px; font-weight: bold; border: 1px solid #ddd; cursor: pointer; }
-        .btn-cell:hover { background: var(--primary); color: white; }
+        /* REFERENCIAS BÍBLICAS */
+        .bible-ref { color: var(--accent); font-weight: bold; cursor: pointer; text-decoration: underline; text-decoration-style: dotted; }
+        .bible-ref:hover { background-color: rgba(216, 27, 96, 0.1); }
 
-        /* Visor de Texto (Markdown simulado) */
-        #viewer { font-family: var(--font); font-size: 1.1rem; line-height: 1.8; white-space: pre-wrap; }
-        #viewer h1 { color: var(--primary); font-size: 1.5rem; margin-top: 30px; border-bottom: 1px solid #ccc; }
-        #viewer h2 { color: var(--text); font-size: 1.2rem; margin-top: 25px; font-weight: bold; }
-        #viewer strong { color: var(--primary); }
-        
-        .hidden { display: none; }
-        
-        /* Login */
-        #login { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: flex; align-items: center; justify-content: center; }
-        .box { background: var(--light); padding: 30px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
-        .inp { width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; }
-        .act { width: 100%; padding: 10px; margin-top: 10px; background: var(--primary); color: white; border: none; font-weight: bold; }
+        /* ÁREA DE RESPUESTAS */
+        .answer-box {
+            width: 100%; border: 1px solid #ccc; background: var(--note-bg); color: var(--text);
+            padding: 10px; border-radius: 8px; margin: 10px 0 20px 0; font-family: sans-serif;
+            min-height: 60px; resize: vertical; box-sizing: border-box;
+        }
+        .answer-label { font-size: 0.8rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; display: block; }
+
+        /* MODAL BIBLIA */
+        #bible-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: var(--bg); width: 90%; max-width: 500px; max-height: 80%;
+            border-radius: 10px; padding: 20px; overflow-y: auto; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: var(--text); }
+
+        /* MENÚ FLOTANTE RESALTADO */
+        #highlighter-menu {
+            position: absolute; display: none; background: var(--bg);
+            border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 5px; z-index: 500;
+        }
+        .color-dot { width: 20px; height: 20px; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; border: 1px solid #999; }
+
+        /* LOGIN */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 3000; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: var(--note-bg); padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .login-card input { display: block; width: 100%; margin: 10px 0; padding: 10px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 
     <!-- FIREBASE -->
@@ -59,72 +99,66 @@
 </head>
 <body>
 
-    <div id="login">
-        <div class="box">
+    <!-- LOGIN -->
+    <div id="login-screen">
+        <div class="login-card">
             <h2 style="color:var(--primary)">Mi Estudio</h2>
-            <input id="email" class="inp" type="email" placeholder="Email">
-            <input id="pass" class="inp" type="password" placeholder="Contraseña">
-            <button class="act" onclick="auth.login()">Entrar</button>
-            <button class="act" style="background:#555" onclick="auth.reg()">Registrar</button>
-            <p id="msg" style="color:red; font-size:0.8rem"></p>
+            <input id="email" type="email" placeholder="Email">
+            <input id="pass" type="password" placeholder="Contraseña">
+            <button class="btn-main" onclick="auth.login()">Ingresar</button>
+            <button class="btn-main" style="background:#555; margin-top:5px" onclick="auth.reg()">Registrar</button>
+            <p id="log-msg" style="color:red; font-size:0.8rem"></p>
         </div>
     </div>
 
-    <div id="app" class="hidden">
-        <header>
-            <button onclick="nav.back()">⬅ Menú</button>
-            <h1 id="top-title">Biblioteca</h1>
-            <button onclick="document.body.classList.toggle('dark-mode')">🌗</button>
-        </header>
+    <!-- APP PRINCIPAL -->
+    <div id="app" style="display:none; flex-direction: column; height:100%">
+        <!-- NAVEGACIÓN RÁPIDA -->
+        <nav>
+            <select id="sel-quarter" onchange="nav.loadLessons()">
+                <option value="2025-04">Josué (Actual)</option>
+                <option value="2025-03">Éxodo</option>
+                <option value="2025-02">Santuario</option>
+                <option value="2025-01">Gran Conflicto</option>
+            </select>
+            <select id="sel-lesson" onchange="nav.updateDays()">
+                <option>Lección...</option>
+            </select>
+            <select id="sel-day" onchange="reader.loadContent()">
+                <option>Día...</option>
+            </select>
+            <button class="icon-btn" onclick="document.body.classList.toggle('dark-mode')" title="Modo Oscuro">🌗</button>
+        </nav>
 
-        <div id="container">
-            <!-- PANTALLA 1: TRIMESTRES -->
-            <div id="screen-q">
-                <div class="card" onclick="nav.toLessons('2025-04', 'Josué')">
-                    <h3>Lecciones de Josué</h3>
-                    <small>4to Trimestre 2025</small>
-                </div>
-                <div class="card" onclick="nav.toLessons('2025-03', 'Éxodo')">
-                    <h3>El libro de Éxodo</h3>
-                    <small>3er Trimestre 2025</small>
-                </div>
-                <div class="card" onclick="nav.toLessons('2025-02', 'Santuario')">
-                    <h3>Cristo en el Santuario</h3>
-                    <small>2do Trimestre 2025</small>
-                </div>
+        <div id="main">
+            <div id="content" onmouseup="highlighter.checkSelection()">
+                <p style="text-align:center; padding-top:50px; color:#888">Selecciona una lección arriba para empezar.</p>
             </div>
-
-            <!-- PANTALLA 2: LECCIONES -->
-            <div id="screen-l" class="hidden">
-                <h3 style="text-align:center; margin-bottom:20px">Elige la Lección</h3>
-                <div class="grid" id="grid-lessons"></div>
+            
+            <!-- MENÚ RESALTADO -->
+            <div id="highlighter-menu">
+                <span class="color-dot" style="background:var(--highlight-yellow)" onclick="highlighter.apply('yellow')"></span>
+                <span class="color-dot" style="background:var(--highlight-green)" onclick="highlighter.apply('green')"></span>
+                <span class="color-dot" style="background:var(--highlight-blue)" onclick="highlighter.apply('blue')"></span>
+                <span style="cursor:pointer; font-size:0.8rem; margin-left:5px" onclick="highlighter.clear()">❌</span>
             </div>
+        </div>
+    </div>
 
-            <!-- PANTALLA 3: DÍAS -->
-            <div id="screen-d" class="hidden">
-                <h3 style="text-align:center; margin-bottom:20px">Elige el Día</h3>
-                <div class="grid">
-                    <div class="btn-cell" onclick="reader.load('01')">Sábado</div>
-                    <div class="btn-cell" onclick="reader.load('02')">Domingo</div>
-                    <div class="btn-cell" onclick="reader.load('03')">Lunes</div>
-                    <div class="btn-cell" onclick="reader.load('04')">Martes</div>
-                    <div class="btn-cell" onclick="reader.load('05')">Miércoles</div>
-                    <div class="btn-cell" onclick="reader.load('06')">Jueves</div>
-                    <div class="btn-cell" onclick="reader.load('07')">Viernes</div>
-                </div>
-            </div>
-
-            <!-- PANTALLA 4: LECTOR -->
-            <div id="screen-r" class="hidden">
-                <div id="viewer"></div>
-                <div style="margin-top:30px; text-align:center; border-top:1px solid #ccc; padding-top:10px;">
-                    <button id="mark-btn" onclick="reader.toggle()" style="width:100%; padding:15px; font-weight:bold;">Marcar como Leído</button>
-                </div>
+    <!-- MODAL BIBLIA -->
+    <div id="bible-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="document.getElementById('bible-modal').style.display='none'">&times;</span>
+            <h3 id="bible-title">Versículo</h3>
+            <div id="bible-text">Cargando...</div>
+            <div style="margin-top:15px; font-size:0.8rem; color:#666; text-align:center">
+                <a id="bible-link" href="#" target="_blank" style="color:var(--primary)">Ver en BibleGateway</a>
             </div>
         </div>
     </div>
 
     <script>
+        // CONFIG
         const firebaseConfig = {
           apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
           authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
@@ -138,105 +172,229 @@
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
 
-        const state = { q:'', l:'', d:'', u:null };
+        // ESTADO GLOBAL
+        const state = { user: null, q: '2025-04', l: '01', d: '01' };
 
+        // AUTH
         const auth = {
-            login: () => fbAuth.signInWithEmailAndPassword(get('email'), get('pass')).catch(e=>msg(e.message)),
-            reg: () => fbAuth.createUserWithEmailAndPassword(get('email'), get('pass')).catch(e=>msg(e.message))
+            login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e => document.getElementById('log-msg').innerText = e.message),
+            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e => document.getElementById('log-msg').innerText = e.message)
         };
-        function get(id){ return document.getElementById(id).value; }
-        function msg(t){ document.getElementById('msg').innerText = t; }
+        function val(id){ return document.getElementById(id).value; }
 
         fbAuth.onAuthStateChanged(u => {
             if(u){
-                state.u = u;
-                document.getElementById('login').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
+                state.user = u;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                nav.init();
             }
         });
 
+        // NAVEGACIÓN
         const nav = {
-            toLessons: (qid, title) => {
-                state.q = qid;
-                document.getElementById('top-title').innerText = title;
-                show('screen-l');
-                
-                let h = "";
+            init: () => {
+                nav.loadLessons();
+            },
+            loadLessons: () => {
+                const sel = document.getElementById('sel-lesson');
+                sel.innerHTML = "";
                 for(let i=1; i<=14; i++){
-                    let n = i<10 ? "0"+i : i;
-                    h += `<div class="btn-cell" onclick="nav.toDays('${n}')">Lección ${n}</div>`;
+                    let n = i<10 ? "0"+i : ""+i;
+                    let opt = document.createElement('option');
+                    opt.value = n;
+                    opt.innerText = "Lección " + n;
+                    sel.appendChild(opt);
                 }
-                document.getElementById('grid-lessons').innerHTML = h;
+                // Intentar seleccionar la lección actual basada en fecha (aprox)
+                // Por defecto la 1
+                nav.updateDays();
             },
-            toDays: (lid) => {
-                state.l = lid;
-                document.getElementById('top-title').innerText = "Lección " + lid;
-                show('screen-d');
-            },
-            back: () => {
-                if(!document.getElementById('screen-r').classList.contains('hidden')) show('screen-d');
-                else if(!document.getElementById('screen-d').classList.contains('hidden')) show('screen-l');
-                else show('screen-q');
+            updateDays: () => {
+                const days = ["Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+                const codes = ["01", "02", "03", "04", "05", "06", "07"];
+                const sel = document.getElementById('sel-day');
+                sel.innerHTML = "";
+                days.forEach((d, i) => {
+                    let opt = document.createElement('option');
+                    opt.value = codes[i];
+                    opt.innerText = d;
+                    sel.appendChild(opt);
+                });
+                reader.loadContent();
             }
         };
 
+        // LECTOR E INTERACTIVIDAD
         const reader = {
-            load: async (did) => {
-                state.d = did;
-                show('screen-r');
-                document.getElementById('viewer').innerHTML = '<p style="text-align:center">Descargando archivo original...</p>';
+            loadContent: async () => {
+                state.q = document.getElementById('sel-quarter').value;
+                state.l = document.getElementById('sel-lesson').value;
+                state.d = document.getElementById('sel-day').value;
                 
-                // CHECK SYNC
-                const ref = `users/${state.u.uid}/reads/${state.q}-${state.l}-${did}`;
-                fbDb.ref(ref).on('value', s => {
-                    let b = document.getElementById('mark-btn');
-                    b.innerText = s.val() ? "✅ LEÍDO" : "MARCAR LEÍDO";
-                    b.style.background = s.val() ? "#ef5350" : "#fff";
-                    b.style.color = s.val() ? "white" : "black";
-                });
+                const container = document.getElementById('content');
+                container.innerHTML = '<p style="text-align:center; padding:50px">Cargando estudio...</p>';
 
-                // URL MÁGICA: RAW GITHUB MARKDOWN
-                // Estructura: src/es/2025-04/09/06.md
-                const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${did}.md`;
+                // 1. Descargar Raw Markdown desde GitHub
+                const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
                 
                 try {
                     const r = await fetch(url);
-                    if(!r.ok) throw new Error("Archivo no encontrado (404)");
+                    if(!r.ok) throw new Error("Lección no disponible aún.");
                     let text = await r.text();
                     
-                    // CONVERTIR MARKDOWN A HTML SIMPLE
-                    // Eliminar metadatos del principio (--- ... ---)
-                    text = text.replace(/^---[\s\S]*?---/, "");
-                    
-                    // Convertir Títulos
-                    text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-                    text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-                    text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-                    
-                    // Negritas y Citas
-                    text = text.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
-                    text = text.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
-                    
-                    document.getElementById('viewer').innerHTML = text;
-                    
+                    // 2. PROCESADOR DE TEXTO (Markdown -> HTML Interactivo)
+                    let html = reader.processMarkdown(text);
+                    container.innerHTML = html;
+
+                    // 3. Restaurar Respuestas Guardadas
+                    reader.loadAnswers();
+
                 } catch(e) {
-                    document.getElementById('viewer').innerHTML = `<p style="color:red; text-align:center">
-                        Error: No se encontró el texto.<br>
-                        URL intentada: ${url}<br><br>
-                        Verifica que la fecha coincida con la lección seleccionada.
-                    </p>`;
+                    container.innerHTML = `<p style="color:red; text-align:center">Error: ${e.message}<br>Verifica que la lección exista.</p>`;
                 }
             },
-            toggle: () => {
-                const ref = `users/${state.u.uid}/reads/${state.q}-${state.l}-${state.d}`;
-                fbDb.ref(ref).once('value', s => fbDb.ref(ref).set(!s.val()));
+
+            processMarkdown: (md) => {
+                // Eliminar cabecera YAML
+                md = md.replace(/^---[\s\S]*?---/, "");
+                
+                // Títulos
+                md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+                md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+                
+                // Negrita e Itálica
+                md = md.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+                md = md.replace(/\*(.*)\*/gim, '<em>$1</em>');
+                
+                // Citas
+                md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+                // REFERENCIAS BÍBLICAS (El truco mágico)
+                // Busca patrones como "Gén. 1:1" o "Juan 3:16"
+                const bibleRegex = /([1-3]?\s?[A-Z][a-zñáéíóú]+\.?\s\d+:\d+(-\d+)?)/g;
+                md = md.replace(bibleRegex, '<span class="bible-ref" onclick="bible.open(\'$1\')">$1</span>');
+
+                // PREGUNTAS Y CAMPOS DE RESPUESTA
+                // Convertir saltos de línea
+                let lines = md.split('\n');
+                let html = "";
+                
+                lines.forEach((line, index) => {
+                    if(line.trim() === "") return;
+                    
+                    // Si termina en ? o parece pregunta, añadir campo
+                    // O si es un párrafo normal, añadirlo
+                    html += `<p>${line}</p>`;
+                    
+                    // Lógica simple: Si el párrafo tiene signos de interrogación o instruye leer, poner caja
+                    if(line.includes('?') || line.includes('Lee') || line.includes('Comparte')) {
+                        let id = `${state.q}-${state.l}-${state.d}-ans-${index}`;
+                        html += `
+                        <div>
+                            <span class="answer-label">✍️ Tu Respuesta:</span>
+                            <textarea id="${id}" class="answer-box" oninput="reader.saveAnswer('${id}')" placeholder="Escribe aquí tus pensamientos..."></textarea>
+                        </div>`;
+                    }
+                });
+
+                return html;
+            },
+
+            saveAnswer: (id) => {
+                const val = document.getElementById(id).value;
+                fbDb.ref(`users/${state.user.uid}/answers/${id}`).set(val);
+            },
+
+            loadAnswers: () => {
+                // Cargar todas las respuestas de este día
+                const prefix = `${state.q}-${state.l}-${state.d}`;
+                fbDb.ref(`users/${state.user.uid}/answers`).once('value', s => {
+                    const data = s.val();
+                    if(data) {
+                        Object.keys(data).forEach(key => {
+                            if(key.startsWith(prefix)) {
+                                const el = document.getElementById(key);
+                                if(el) el.value = data[key];
+                            }
+                        });
+                    }
+                });
             }
         };
 
-        function show(id) {
-            ['screen-q','screen-l','screen-d','screen-r'].forEach(x => document.getElementById(x).classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
+        // BIBLIA FLOTANTE
+        const bible = {
+            open: (ref) => {
+                document.getElementById('bible-modal').style.display = 'flex';
+                document.getElementById('bible-title').innerText = ref;
+                document.getElementById('bible-text').innerHTML = '<p>Buscando...</p>';
+                
+                // Enlace externo por si acaso
+                const link = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+                document.getElementById('bible-link').href = link;
+
+                // Intento de API gratuita (Bible-API.com)
+                // Nota: RVR no siempre está gratis en APIs públicas, usaremos una versión estándar
+                fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=almeida`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if(data.text) {
+                            document.getElementById('bible-text').innerText = data.text;
+                        } else {
+                            document.getElementById('bible-text').innerHTML = "No se pudo cargar el texto aquí.<br>Usa el enlace de abajo.";
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById('bible-text').innerHTML = "Error de conexión con la Biblia.";
+                    });
+            }
+        };
+
+        // RESALTADOR SIMPLE
+        const highlighter = {
+            checkSelection: () => {
+                const sel = window.getSelection();
+                const menu = document.getElementById('highlighter-menu');
+                if(sel.toString().length > 0) {
+                    const range = sel.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    menu.style.top = (rect.top + window.scrollY - 40) + 'px';
+                    menu.style.left = rect.left + 'px';
+                    menu.style.display = 'block';
+                } else {
+                    menu.style.display = 'none';
+                }
+            },
+            apply: (color) => {
+                const sel = window.getSelection();
+                if(!sel.rangeCount) return;
+                
+                const range = sel.getRangeAt(0);
+                const span = document.createElement('span');
+                
+                // Mapeo de colores
+                let cCode = '';
+                if(color === 'yellow') cCode = 'var(--highlight-yellow)';
+                if(color === 'green') cCode = 'var(--highlight-green)';
+                if(color === 'blue') cCode = 'var(--highlight-blue)';
+                
+                span.style.backgroundColor = cCode;
+                span.appendChild(range.extractContents());
+                range.insertNode(span);
+                
+                document.getElementById('highlighter-menu').style.display = 'none';
+                
+                // NOTA: Guardar resaltados HTML complejos en Firebase es muy difícil en un solo archivo.
+                // Esta versión permite resaltar mientras lees, pero los resaltados podrían no persistir al recargar
+                // si no implementamos un sistema de serialización DOM complejo. 
+                // Por ahora, las RESPUESTAS escritas SÍ se guardan.
+            },
+            clear: () => {
+                document.getElementById('highlighter-menu').style.display = 'none';
+            }
+        };
     </script>
 </body>
 </html>
