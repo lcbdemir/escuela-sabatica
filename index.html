@@ -3,55 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escuela Sabática V26 - Estructura Manual</title>
+    <title>Escuela Sabática V27 - Lectura Cruda</title>
     
     <style>
         :root {
-            --bg: #fdfbf7;
-            --surface: #ffffff;
-            --primary: #004d40;
-            --text: #333;
-            --border: #ddd;
+            --bg: #ffffff;
+            --text: #222;
+            --primary: #b71c1c; /* Rojo intenso */
+            --light: #f5f5f5;
+            --font: 'Georgia', serif;
         }
         body.dark-mode {
             --bg: #121212;
-            --surface: #1e1e1e;
-            --primary: #80cbc4;
-            --text: #e0e0e0;
-            --border: #333;
+            --text: #ddd;
+            --primary: #ef5350;
+            --light: #1e1e1e;
         }
-        body { font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+        body { font-family: -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
         
-        header { padding: 15px; background: var(--surface); border-bottom: 2px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        h1 { margin: 0; font-size: 1.1rem; color: var(--primary); font-weight: bold; }
-        button { cursor: pointer; }
-        .icon-btn { background: none; border: none; font-size: 1.4rem; padding: 0 10px; }
+        header { padding: 15px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; background: var(--light); }
+        h1 { margin: 0; font-size: 1rem; color: var(--primary); font-weight: 800; }
+        button { cursor: pointer; border: 1px solid #ccc; background: var(--bg); padding: 5px 10px; border-radius: 4px; color: var(--text); }
 
-        #container { flex: 1; overflow-y: auto; padding: 15px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        #container { flex: 1; overflow-y: auto; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
 
-        /* Tarjetas de Trimestre */
-        .card { background: var(--surface); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; border-left: 5px solid var(--primary); }
-        .card h3 { margin: 0 0 5px 0; color: var(--primary); }
-        .card p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
-
-        /* Grilla de Lecciones */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-        .btn-item { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; }
-        .btn-item:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        /* Tarjetas */
+        .card { background: var(--light); padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid var(--primary); cursor: pointer; }
+        .card:hover { opacity: 0.8; }
+        .card h3 { margin: 0; font-size: 1.1rem; }
         
-        /* Lectura */
-        #reader { line-height: 1.8; font-size: 19px; }
-        #reader h2 { color: var(--primary); border-bottom: 1px solid var(--border); margin-top: 30px; }
-        #reader p { margin-bottom: 1.5em; }
+        /* Grilla Botones */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        .btn-cell { background: var(--light); padding: 15px; text-align: center; border-radius: 6px; font-weight: bold; border: 1px solid #ddd; cursor: pointer; }
+        .btn-cell:hover { background: var(--primary); color: white; }
 
+        /* Visor de Texto (Markdown simulado) */
+        #viewer { font-family: var(--font); font-size: 1.1rem; line-height: 1.8; white-space: pre-wrap; }
+        #viewer h1 { color: var(--primary); font-size: 1.5rem; margin-top: 30px; border-bottom: 1px solid #ccc; }
+        #viewer h2 { color: var(--text); font-size: 1.2rem; margin-top: 25px; font-weight: bold; }
+        #viewer strong { color: var(--primary); }
+        
+        .hidden { display: none; }
+        
         /* Login */
-        #login { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; }
-        .login-box { background: var(--surface); padding: 30px; border-radius: 12px; width: 300px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .inp { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; }
-        .act-btn { width: 100%; padding: 12px; margin-top: 5px; border: none; border-radius: 4px; font-weight: bold; color: white; background: var(--primary); }
-
-        .nav-bar { background: var(--surface); padding: 15px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
-        .hidden { display: none !important; }
+        #login { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: flex; align-items: center; justify-content: center; }
+        .box { background: var(--light); padding: 30px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .inp { width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; }
+        .act { width: 100%; padding: 10px; margin-top: 10px; background: var(--primary); color: white; border: none; font-weight: bold; }
     </style>
 
     <!-- FIREBASE -->
@@ -61,48 +59,72 @@
 </head>
 <body>
 
-    <!-- LOGIN -->
     <div id="login">
-        <div class="login-box">
+        <div class="box">
             <h2 style="color:var(--primary)">Mi Estudio</h2>
             <input id="email" class="inp" type="email" placeholder="Email">
             <input id="pass" class="inp" type="password" placeholder="Contraseña">
-            <button class="act-btn" onclick="auth.login()">Entrar</button>
-            <button class="act-btn" style="background:#555; margin-top:10px" onclick="auth.reg()">Crear Cuenta</button>
+            <button class="act" onclick="auth.login()">Entrar</button>
+            <button class="act" style="background:#555" onclick="auth.reg()">Registrar</button>
             <p id="msg" style="color:red; font-size:0.8rem"></p>
         </div>
     </div>
 
-    <!-- APP -->
     <div id="app" class="hidden">
         <header>
-            <button class="icon-btn" onclick="nav.back()">⬅</button>
-            <h1 id="title">Biblioteca</h1>
-            <button class="icon-btn" onclick="ui.mode()">🌗</button>
+            <button onclick="nav.back()">⬅ Menú</button>
+            <h1 id="top-title">Biblioteca</h1>
+            <button onclick="document.body.classList.toggle('dark-mode')">🌗</button>
         </header>
 
         <div id="container">
-            <!-- VISTAS -->
-            <div id="view-quarters"></div>
-            <div id="view-lessons" class="hidden"></div>
-            <div id="view-days" class="hidden"></div>
-            <div id="view-reader" class="hidden">
-                <div id="reader-content"></div>
-                <div id="status" style="text-align:center; color:#999; margin-top:20px; font-size:0.8rem"></div>
+            <!-- PANTALLA 1: TRIMESTRES -->
+            <div id="screen-q">
+                <div class="card" onclick="nav.toLessons('2025-04', 'Josué')">
+                    <h3>Lecciones de Josué</h3>
+                    <small>4to Trimestre 2025</small>
+                </div>
+                <div class="card" onclick="nav.toLessons('2025-03', 'Éxodo')">
+                    <h3>El libro de Éxodo</h3>
+                    <small>3er Trimestre 2025</small>
+                </div>
+                <div class="card" onclick="nav.toLessons('2025-02', 'Santuario')">
+                    <h3>Cristo en el Santuario</h3>
+                    <small>2do Trimestre 2025</small>
+                </div>
+            </div>
+
+            <!-- PANTALLA 2: LECCIONES -->
+            <div id="screen-l" class="hidden">
+                <h3 style="text-align:center; margin-bottom:20px">Elige la Lección</h3>
+                <div class="grid" id="grid-lessons"></div>
+            </div>
+
+            <!-- PANTALLA 3: DÍAS -->
+            <div id="screen-d" class="hidden">
+                <h3 style="text-align:center; margin-bottom:20px">Elige el Día</h3>
+                <div class="grid">
+                    <div class="btn-cell" onclick="reader.load('01')">Sábado</div>
+                    <div class="btn-cell" onclick="reader.load('02')">Domingo</div>
+                    <div class="btn-cell" onclick="reader.load('03')">Lunes</div>
+                    <div class="btn-cell" onclick="reader.load('04')">Martes</div>
+                    <div class="btn-cell" onclick="reader.load('05')">Miércoles</div>
+                    <div class="btn-cell" onclick="reader.load('06')">Jueves</div>
+                    <div class="btn-cell" onclick="reader.load('07')">Viernes</div>
+                </div>
+            </div>
+
+            <!-- PANTALLA 4: LECTOR -->
+            <div id="screen-r" class="hidden">
+                <div id="viewer"></div>
+                <div style="margin-top:30px; text-align:center; border-top:1px solid #ccc; padding-top:10px;">
+                    <button id="mark-btn" onclick="reader.toggle()" style="width:100%; padding:15px; font-weight:bold;">Marcar como Leído</button>
+                </div>
             </div>
         </div>
-
-        <footer id="footer" class="hidden">
-            <div class="nav-bar">
-                <button class="act-btn" style="width:auto" onclick="reader.prev()">Ant</button>
-                <button id="mark-btn" class="act-btn" style="width:auto; background:#888" onclick="reader.mark()">Marcar</button>
-                <button class="act-btn" style="width:auto" onclick="reader.next()">Sig</button>
-            </div>
-        </footer>
     </div>
 
     <script>
-        // CONFIG
         const firebaseConfig = {
           apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
           authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
@@ -116,148 +138,105 @@
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
 
-        // DATOS MANUALES (V26)
-        const QUARTERS = [
-            { id: "2025-04", title: "Lecciones de Josué", desc: "Oct-Dic 2025" },
-            { id: "2025-03", title: "El libro de Éxodo", desc: "Jul-Sep 2025" },
-            { id: "2025-02", title: "Cristo en el Santuario", desc: "Abr-Jun 2025" },
-            { id: "2025-01", title: "El Gran Conflicto", desc: "Ene-Mar 2025" }
-        ];
+        const state = { q:'', l:'', d:'', u:null };
 
-        // ESTADO
-        const state = { user: null, qId: null, lId: null, dId: null };
-
-        // AUTH
         const auth = {
-            login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
-            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
+            login: () => fbAuth.signInWithEmailAndPassword(get('email'), get('pass')).catch(e=>msg(e.message)),
+            reg: () => fbAuth.createUserWithEmailAndPassword(get('email'), get('pass')).catch(e=>msg(e.message))
         };
-        function val(id){ return document.getElementById(id).value; }
+        function get(id){ return document.getElementById(id).value; }
         function msg(t){ document.getElementById('msg').innerText = t; }
 
         fbAuth.onAuthStateChanged(u => {
             if(u){
-                state.user = u;
+                state.u = u;
                 document.getElementById('login').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
-                nav.home();
             }
         });
 
-        // NAVEGACIÓN
         const nav = {
-            home: () => {
-                ui.show('view-quarters');
-                document.getElementById('title').innerText = "Biblioteca";
+            toLessons: (qid, title) => {
+                state.q = qid;
+                document.getElementById('top-title').innerText = title;
+                show('screen-l');
+                
                 let h = "";
-                QUARTERS.forEach(q => {
-                    h += `<div class="card" onclick="nav.lessons('${q.id}', '${q.title}')">
-                        <h3>${q.title}</h3><p>${q.desc}</p></div>`;
-                });
-                document.getElementById('view-quarters').innerHTML = h;
-            },
-            lessons: (qid, title) => {
-                state.qId = qid;
-                ui.show('view-lessons');
-                document.getElementById('title').innerText = title;
-                
-                // GENERAR 14 LECCIONES AUTOMÁTICAMENTE (Sin preguntar a la API)
-                let h = '<div class="grid">';
-                for(let i=1; i<=14; i++) {
-                    let num = i < 10 ? "0"+i : i; // 01, 02...
-                    h += `<div class="btn-item" onclick="nav.days('${num}')">Lección ${num}</div>`;
+                for(let i=1; i<=14; i++){
+                    let n = i<10 ? "0"+i : i;
+                    h += `<div class="btn-cell" onclick="nav.toDays('${n}')">Lección ${n}</div>`;
                 }
-                h += '</div>';
-                document.getElementById('view-lessons').innerHTML = h;
+                document.getElementById('grid-lessons').innerHTML = h;
             },
-            days: (lid) => {
-                state.lId = lid;
-                ui.show('view-days');
-                document.getElementById('title').innerText = `Lección ${lid}`;
-                
-                // GENERAR 7 DÍAS AUTOMÁTICAMENTE
-                let names = ["Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-                let codes = ["01", "02", "03", "04", "05", "06", "07"];
-                
-                let h = '<div class="grid">';
-                names.forEach((name, i) => {
-                    h += `<div class="btn-item" onclick="reader.load('${codes[i]}')">${name}</div>`;
-                });
-                h += '</div>';
-                document.getElementById('view-days').innerHTML = h;
+            toDays: (lid) => {
+                state.l = lid;
+                document.getElementById('top-title').innerText = "Lección " + lid;
+                show('screen-d');
             },
             back: () => {
-                if(!document.getElementById('view-reader').classList.contains('hidden')) nav.days(state.lId);
-                else if(!document.getElementById('view-days').classList.contains('hidden')) nav.lessons(state.qId, "Lecciones");
-                else nav.home();
+                if(!document.getElementById('screen-r').classList.contains('hidden')) show('screen-d');
+                else if(!document.getElementById('screen-d').classList.contains('hidden')) show('screen-l');
+                else show('screen-q');
             }
         };
 
-        // LECTOR (Aquí es donde finalmente conectamos)
         const reader = {
             load: async (did) => {
-                state.dId = did;
-                ui.show('view-reader');
-                document.getElementById('footer').classList.remove('hidden');
-                document.getElementById('reader-content').innerHTML = '<p style="text-align:center; padding:50px">Cargando texto...</p>';
+                state.d = did;
+                show('screen-r');
+                document.getElementById('viewer').innerHTML = '<p style="text-align:center">Descargando archivo original...</p>';
                 
-                // CHECK FIREBASE
-                const ref = `users/${state.user.uid}/reads/${state.qId}-${state.lId}-${did}`;
+                // CHECK SYNC
+                const ref = `users/${state.u.uid}/reads/${state.q}-${state.l}-${did}`;
                 fbDb.ref(ref).on('value', s => {
-                    let btn = document.getElementById('mark-btn');
-                    btn.innerText = s.val() ? "✅ Leído" : "Marcar";
-                    btn.style.background = s.val() ? "#27ae60" : "#888";
+                    let b = document.getElementById('mark-btn');
+                    b.innerText = s.val() ? "✅ LEÍDO" : "MARCAR LEÍDO";
+                    b.style.background = s.val() ? "#ef5350" : "#fff";
+                    b.style.color = s.val() ? "white" : "black";
                 });
 
-                // INTENTO DE DESCARGA (API PROXY)
-                const api = `https://sabbath-school.adventech.io/api/v1/es/quarterlies/${state.qId}/lessons/${state.lId}/days/${did}/read/index.json`;
-                const proxy = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(api)}`;
+                // URL MÁGICA: RAW GITHUB MARKDOWN
+                // Estructura: src/es/2025-04/09/06.md
+                const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${did}.md`;
                 
                 try {
-                    let r = await fetch(proxy);
-                    let json = await r.json();
-                    document.getElementById('reader-content').innerHTML = json.content;
-                    document.getElementById('status').innerText = "Fuente: CodeTabs Proxy";
+                    const r = await fetch(url);
+                    if(!r.ok) throw new Error("Archivo no encontrado (404)");
+                    let text = await r.text();
+                    
+                    // CONVERTIR MARKDOWN A HTML SIMPLE
+                    // Eliminar metadatos del principio (--- ... ---)
+                    text = text.replace(/^---[\s\S]*?---/, "");
+                    
+                    // Convertir Títulos
+                    text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                    text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+                    text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+                    
+                    // Negritas y Citas
+                    text = text.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
+                    text = text.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
+                    
+                    document.getElementById('viewer').innerHTML = text;
+                    
                 } catch(e) {
-                    // INTENTO 2: CorsProxy
-                    try {
-                        let p2 = `https://corsproxy.io/?${encodeURIComponent(api)}`;
-                        let r2 = await fetch(p2);
-                        let json2 = await r2.json();
-                        document.getElementById('reader-content').innerHTML = json2.content;
-                        document.getElementById('status').innerText = "Fuente: CorsProxy";
-                    } catch(err) {
-                        document.getElementById('reader-content').innerHTML = `
-                        <div style="text-align:center; color:red; padding:20px">
-                            <p>No se pudo cargar el texto de este día.</p>
-                            <p>Es posible que el ID de la lección no sea "${state.lId}".</p>
-                            <p>Prueba con otra lección de la lista.</p>
-                        </div>`;
-                    }
+                    document.getElementById('viewer').innerHTML = `<p style="color:red; text-align:center">
+                        Error: No se encontró el texto.<br>
+                        URL intentada: ${url}<br><br>
+                        Verifica que la fecha coincida con la lección seleccionada.
+                    </p>`;
                 }
             },
-            mark: () => {
-                const ref = `users/${state.user.uid}/reads/${state.qId}-${state.lId}-${state.dId}`;
+            toggle: () => {
+                const ref = `users/${state.u.uid}/reads/${state.q}-${state.l}-${state.d}`;
                 fbDb.ref(ref).once('value', s => fbDb.ref(ref).set(!s.val()));
-            },
-            prev: () => {
-                let n = parseInt(state.dId) - 1;
-                if(n>0) reader.load(n < 10 ? "0"+n : ""+n);
-            },
-            next: () => {
-                let n = parseInt(state.dId) + 1;
-                if(n<=7) reader.load(n < 10 ? "0"+n : ""+n);
             }
         };
 
-        const ui = {
-            show: (id) => {
-                ['view-quarters','view-lessons','view-days','view-reader'].forEach(x => document.getElementById(x).classList.add('hidden'));
-                document.getElementById('footer').classList.add('hidden');
-                document.getElementById(id).classList.remove('hidden');
-            },
-            mode: () => document.body.classList.toggle('dark-mode')
-        };
+        function show(id) {
+            ['screen-q','screen-l','screen-d','screen-r'].forEach(x => document.getElementById(x).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
