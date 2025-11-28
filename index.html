@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escuela Sabática V22 - Sistema Completo</title>
+    
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --accent-color: #00796b; /* Verde Teal */
+            --font-main: 'Georgia', serif;
+        }
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #80cbc4;
+        }
+        body {
+            font-family: -apple-system, sans-serif;
+            margin: 0; background-color: var(--bg-color);
+            color: var(--text-color); display: flex; flex-direction: column; height: 100vh;
+        }
+        
+        /* HEADER */
+        header {
+            background-color: var(--card-bg); padding: 15px; display: flex;
+            justify-content: space-between; align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); z-index: 10;
+        }
+        h1 { margin: 0; font-size: 1.1rem; color: var(--accent-color); font-weight: bold; }
+        .controls button {
+            background: none; border: 1px solid #ccc; padding: 5px 10px;
+            cursor: pointer; border-radius: 4px; color: var(--text-color);
+        }
+
+        /* BODY */
+        #main-container { flex: 1; overflow-y: auto; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        
+        /* MENU CARDS */
+        .quarter-card {
+            background: var(--card-bg); padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 15px;
+            cursor: pointer; border-left: 5px solid var(--accent-color);
+            transition: transform 0.2s;
+        }
+        .quarter-card:active { transform: scale(0.98); }
+        .quarter-card h3 { margin: 0; font-size: 1.1rem; color: var(--accent-color); }
+        .quarter-card p { margin: 5px 0 0; color: #666; font-size: 0.9rem; }
+        .badge { background: #e0f2f1; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; color: #004d40; display: inline-block; margin-bottom: 5px; font-weight: bold;}
+
+        /* LECTURA */
+        #content-area { line-height: 1.9; text-align: left; font-family: var(--font-main); font-size: 19px; display: none;}
+        #content-area h2 { color: var(--accent-color); border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 30px; }
+        #content-area h3 { margin-top: 25px; color: #444; font-weight: 800; }
+        .dark-mode #content-area h3 { color: #ccc; }
+        #content-area p { margin-bottom: 1.5em; }
+        #content-area a { pointer-events: none; text-decoration: none; color: inherit; font-weight: bold; border-bottom: 1px dotted #999; }
+
+        /* FOOTER */
+        footer { background-color: var(--card-bg); padding: 15px; display: flex; justify-content: space-between; border-top: 1px solid #ddd; display: none; }
+        .nav-btn {
+            background-color: var(--accent-color); color: white; border: none;
+            padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+
+        /* LOGIN */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: var(--card-bg); padding: 30px; border-radius: 10px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .login-box input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-log { width: 100%; padding: 12px; margin-top: 10px; border:none; border-radius:4px; font-weight:bold; color:white; cursor:pointer;}
+        
+        #full-library { display: none; margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px; }
+        .debug { font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 20px; font-family: monospace; }
+    </style>
+
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="color:var(--accent-color)">Mi Estudio</h2>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button class="btn-log" style="background:var(--accent-color)" onclick="sys.login()">Entrar</button>
+            <button class="btn-log" style="background:#555" onclick="sys.register()">Crear Cuenta</button>
+            <p id="msg" style="color:red; font-size:0.9rem; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <div id="app-interface" style="display:none; flex-direction: column; height: 100%;">
+        <header>
+            <button onclick="logic.showMenu()" style="background:none; border:none; font-size:1.5rem; cursor:pointer">📚</button>
+            <h1 id="header-title">Biblioteca</h1>
+            <div class="controls">
+                <button onclick="ui.theme()">🌓</button>
+                <button onclick="ui.font(2)">A+</button>
+                <button onclick="ui.font(-2)">A-</button>
+            </div>
+        </header>
+
+        <div id="main-container">
+            <!-- MENÚ PRINCIPAL -->
+            <div id="menu-area">
+                <div class="quarter-card" onclick="logic.loadQuarter('2025-04', 'Lecciones de Josué')">
+                    <span class="badge">ACTUAL</span>
+                    <h3>Lecciones de Josué</h3>
+                    <p>4to Trimestre 2025</p>
+                </div>
+                
+                <div class="quarter-card" onclick="logic.loadQuarter('2025-03', 'El libro de Éxodo')">
+                    <span class="badge">2025-03</span>
+                    <h3>El libro de Éxodo</h3>
+                    <p>Jul-Sep 2025</p>
+                </div>
+
+                <div class="quarter-card" onclick="logic.loadQuarter('2025-02', 'Cristo en el Santuario')">
+                    <span class="badge">2025-02</span>
+                    <h3>Cristo en el Santuario</h3>
+                    <p>Abr-Jun 2025</p>
+                </div>
+                
+                <button onclick="logic.toggleFullLibrary()" style="width:100%; padding:15px; background:#e0f2f1; border:none; border-radius:8px; color:#00695c; font-weight:bold; cursor:pointer;">
+                    📂 Ver Todos los Trimestres Anteriores
+                </button>
+
+                <div id="full-library">
+                    <p style="text-align:center; color:#666">Cargando archivo histórico...</p>
+                </div>
+            </div>
+
+            <!-- ÁREA DE LECTURA -->
+            <div id="content-area"></div>
+            
+            <div id="debug" class="debug"></div>
+        </div>
+
+        <footer id="nav-footer">
+            <button class="nav-btn" onclick="logic.move(-1)">←</button>
+            <button id="chk-btn" style="background:#bbb; border:none; color:white; padding:10px 20px; border-radius:6px;" onclick="logic.check()">Marcar</button>
+            <button class="nav-btn" onclick="logic.move(1)">→</button>
+        </footer>
+    </div>
+
+    <script>
+        // 1. FIREBASE
+        const firebaseConfig = {
+          apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
+          authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
+          databaseURL: "https://miescuelasabatica-fdb06-default-rtdb.firebaseio.com",
+          projectId: "miescuelasabatica-fdb06",
+          storageBucket: "miescuelasabatica-fdb06.firebasestorage.app",
+          messagingSenderId: "832420279762",
+          appId: "1:832420279762:web:4218b0fa30e2e93b12c40b"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const fbAuth = firebase.auth();
+        const fbDb = firebase.database();
+
+        const sys = {
+            login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('password')).catch(e => err(e.message)),
+            register: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('password')).catch(e => err(e.message)),
+            logout: () => location.reload()
+        };
+        function val(id) { return document.getElementById(id).value; }
+        function err(t) { document.getElementById('msg').innerText = t; }
+
+        fbAuth.onAuthStateChanged(u => {
+            if(u) {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('app-interface').style.display = 'flex';
+                logic.init(u);
+            }
+        });
+
+        // 2. FETCH INTELIGENTE
+        const API_BASE = "https://sabbath-school.adventech.io/api/v1/es";
+        function log(t) { document.getElementById('debug').innerText = t; }
+        
+        async function fetchSmart(endpoint) {
+            const cacheBuster = "&cb=" + Math.random(); 
+            const target = encodeURIComponent(API_BASE + endpoint);
+            
+            // Usamos CodeTabs (mejor para listas grandes)
+            const proxies = [
+                `https://api.codetabs.com/v1/proxy?quest=${target}${cacheBuster}`,
+                `https://corsproxy.io/?${target}${cacheBuster}`
+            ];
+            
+            for(let p of proxies) {
+                try {
+                    const r = await fetch(p);
+                    if(r.ok) return await r.json();
+                } catch(e) {}
+            }
+            throw new Error("Sin conexión");
+        }
+
+        const logic = {
+            user: null,
+            quarterlyId: null,
+            lesson: null,
+            days: [],
+            idx: 0,
+            fullList: [],
+
+            init: async function(u) {
+                this.user = u;
+                // Descargar lista completa en segundo plano
+                try {
+                    const list = await fetchSmart("/quarterlies/index.json");
+                    this.fullList = list.sort((a,b) => b.start_date.localeCompare(a.start_date))
+                                        .filter(x => !x.id.includes('cq') && !x.id.includes('teacher'));
+                    this.renderFullLibrary();
+                } catch(e) {
+                    document.getElementById('full-library').innerHTML = "<p style='text-align:center'>No se pudo cargar el historial.</p>";
+                }
+            },
+
+            renderFullLibrary: function() {
+                let html = "";
+                this.fullList.forEach(q => {
+                    html += `
+                    <div class="quarter-card" onclick="logic.loadQuarter('${q.id}', '${q.title}')" style="border-left-color:#ccc">
+                        <span class="badge" style="background:#ddd; color:#333">${q.id}</span>
+                        <h3>${q.title}</h3>
+                        <p>${q.human_date}</p>
+                    </div>`;
+                });
+                document.getElementById('full-library').innerHTML = html;
+            },
+
+            toggleFullLibrary: function() {
+                const el = document.getElementById('full-library');
+                el.style.display = el.style.display === 'block' ? 'none' : 'block';
+            },
+
+            showMenu: function() {
+                document.getElementById('menu-area').style.display = 'block';
+                document.getElementById('content-area').style.display = 'none';
+                document.getElementById('nav-footer').style.display = 'none';
+                document.getElementById('header-title').innerText = "Biblioteca";
+                log("");
+            },
+
+            loadQuarter: async function(qid, title) {
+                document.getElementById('menu-area').style.display = 'none';
+                document.getElementById('content-area').style.display = 'block';
+                document.getElementById('content-area').innerHTML = '<div style="text-align:center; padding:50px; color:#aaa">Cargando Lecciones...</div>';
+                document.getElementById('header-title').innerText = title;
+                
+                this.quarterlyId = qid;
+
+                try {
+                    const lData = await fetchSmart(`/quarterlies/${qid}/lessons/index.json`);
+                    if(!lData || !lData.lessons) throw new Error("Vacío");
+
+                    const today = new Date().toISOString().split('T')[0];
+                    let l = lData.lessons.find(x => today >= x.start_date && today <= x.end_date);
+                    if(!l) l = lData.lessons[0];
+
+                    this.lesson = l;
+                    log(`Abriendo: ${l.title}`);
+                    this.loadDays();
+
+                } catch(e) {
+                    document.getElementById('content-area').innerHTML = `<div style="text-align:center; padding:30px; color:red">
+                        <p>Error cargando carpeta: ${e.message}</p>
+                        <button onclick="logic.showMenu()" style="padding:10px">Volver</button>
+                    </div>`;
+                }
+            },
+
+            loadDays: async function() {
+                try {
+                    const dData = await fetchSmart(`/quarterlies/${this.quarterlyId}/lessons/${this.lesson.id}/days/index.json`);
+                    this.days = dData.days;
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    this.idx = this.days.findIndex(d => d.date === today);
+                    if(this.idx === -1) this.idx = 0;
+
+                    document.getElementById('nav-footer').style.display = 'flex';
+                    this.render();
+                } catch(e) {
+                    log("Error cargando días");
+                }
+            },
+
+            render: async function() {
+                const day = this.days[this.idx];
+                document.getElementById('header-title').innerText = day.title;
+                document.getElementById('content-area').innerHTML = '<div style="text-align:center; padding:50px; color:#aaa">Descargando texto...</div>';
+                
+                fbDb.ref(`users/${this.user.uid}/reads/${day.id}`).on('value', s => {
+                    const ok = !!s.val();
+                    const btn = document.getElementById('chk-btn');
+                    btn.innerText = ok ? "✅ Leído" : "Marcar";
+                    btn.style.background = ok ? "var(--accent-color)" : "#bbb";
+                });
+
+                try {
+                    const data = await fetchSmart(`/quarterlies/${this.quarterlyId}/lessons/${this.lesson.id}/days/${day.id}/read/index.json`);
+                    document.getElementById('content-area').innerHTML = data.content;
+                    document.getElementById('main-container').scrollTop = 0;
+                } catch(e) {
+                    document.getElementById('content-area').innerHTML = "Error visualizando texto.";
+                }
+            },
+
+            check: function() {
+                const id = this.days[this.idx].id;
+                fbDb.ref(`users/${this.user.uid}/reads/${id}`).once('value', s => fbDb.ref(`users/${this.user.uid}/reads/${id}`).set(!s.val()));
+            },
+            move: function(d) {
+                const n = this.idx + d;
+                if(n >= 0 && n < this.days.length) { this.idx = n; this.render(); }
+            }
+        };
+
+        const ui = {
+            theme: () => document.body.classList.toggle('dark-mode'),
+            font: (v) => {
+                const r = document.documentElement;
+                const c = parseInt(getComputedStyle(r).getPropertyValue('--font-size'));
+                r.style.setProperty('--font-size', (c+v)+'px');
+            }
+        };
+    </script>
+</body>
+</html>
