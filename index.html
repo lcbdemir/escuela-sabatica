@@ -3,134 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V31 - Estudio Definitivo</title>
-    <!-- Iconos Material -->
+    <title>Escuela Sabática V32 - Persistencia Total</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
-        /* TEMAS */
         :root {
             --bg: #ffffff;
             --text: #222;
-            --primary: #00695c;
-            --accent: #d81b60;
-            --panel: #f5f5f5;
-            --border: #ddd;
-            --note-icon: #fbc02d;
+            --primary: #004d40;
+            --secondary: #e0f2f1;
+            --accent: #c62828;
+            --ribbon-bg: #263238;
         }
-        [data-theme="sepia"] {
+        body.dark-mode {
+            --bg: #121212;
+            --text: #e0e0e0;
+            --primary: #80cbc4;
+            --secondary: #1e1e1e;
+            --accent: #ef9a9a;
+            --ribbon-bg: #eceff1;
+        }
+        /* Modo Sepia */
+        body.sepia-mode {
             --bg: #f4ecd8;
             --text: #5b4636;
-            --primary: #8d6e63;
-            --accent: #d84315;
-            --panel: #e9e2c9;
-            --border: #d7cbb1;
-        }
-        [data-theme="dark"] {
-            --bg: #121212;
-            --text: #c7c7c7;
-            --primary: #80cbc4;
-            --accent: #f48fb1;
-            --panel: #1e1e1e;
-            --border: #333;
+            --primary: #5d4037;
+            --secondary: #eefebe;
         }
 
-        body { 
-            font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
-            transition: background 0.3s, color 0.3s;
-            -webkit-tap-highlight-color: transparent;
-        }
+        body { font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* HEADER */
-        header {
-            background: var(--panel); padding: 10px; border-bottom: 2px solid var(--primary);
-            display: flex; gap: 10px; align-items: center; z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-wrap: wrap;
-        }
-        .nav-controls { display: flex; gap: 5px; flex: 1; }
-        select {
-            padding: 8px; border-radius: 6px; border: 1px solid var(--border); 
-            font-size: 0.9rem; background: var(--bg); color: var(--text); max-width: 120px;
-        }
-        .tools { display: flex; gap: 2px; }
-        .btn-tool { 
-            background: none; border: 1px solid transparent; cursor: pointer; color: var(--text); 
-            padding: 5px; border-radius: 4px; display: flex; align-items: center;
-        }
-        .btn-tool:hover { background: rgba(128,128,128,0.1); border-color: var(--border); }
+        header { background: var(--secondary); padding: 8px; border-bottom: 2px solid var(--primary); display: flex; gap: 5px; align-items: center; z-index: 100; flex-wrap: wrap;}
+        select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); min-width: 80px;}
+        .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 5px; border-radius: 4px; color: var(--text); }
+        .tool-btn:hover { background: rgba(0,0,0,0.1); }
 
-        /* CONTENIDO */
-        #main-wrapper { 
-            flex: 1; overflow-y: auto; position: relative; scroll-behavior: smooth;
-        }
-        #content { 
-            padding: 20px 20px 100px 20px; max-width: 800px; margin: 0 auto; 
-            font-size: 18px; line-height: 1.8; 
+        /* CONTENIDO EDITABLE */
+        #main-container { 
+            flex: 1; overflow-y: auto; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; 
+            outline: none; /* Quitar borde al editar */
         }
         
-        /* ESTILOS TEXTO */
-        h1 { color: var(--primary); font-size: 1.5em; border-bottom: 1px solid var(--border); }
-        h2 { color: var(--text); font-size: 1.2em; margin-top: 30px; font-weight: bold; }
-        h3 { color: var(--accent); font-size: 1.1em; margin-top: 20px; }
-        blockquote { border-left: 4px solid var(--primary); padding-left: 15px; font-style: italic; opacity: 0.8; margin: 20px 0;}
-        .bible-ref { color: var(--primary); font-weight: bold; text-decoration: underline; cursor: pointer; }
+        /* ESTILOS DEL TEXTO */
+        h1 { color: var(--primary); border-bottom: 1px solid #ccc; font-size: 1.6em; }
+        h2 { color: var(--text); margin-top: 30px; font-weight: bold; font-size: 1.3em; }
+        h3 { color: var(--accent); margin-top: 20px; font-size: 1.1em; }
+        p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
+        blockquote { border-left: 4px solid var(--primary); padding-left: 15px; font-style: italic; color: #555; background: rgba(0,0,0,0.02); padding: 10px; margin: 20px 0; }
+        .bible-link { color: var(--primary); font-weight: bold; text-decoration: underline; cursor: pointer; }
         
-        /* NOTAS EN EL TEXTO */
-        .note-marker { cursor: pointer; vertical-align: middle; color: var(--note-icon); font-size: 1.2em; margin: 0 2px; }
-        
+        /* ICONO DE NOTA */
+        .note-icon { cursor: pointer; font-size: 1.2em; vertical-align: middle; margin: 0 2px; text-decoration: none !important; }
+
         /* CINTA FLOTANTE */
         #ribbon {
-            position: absolute; display: none; background: #222; color: #fff;
-            border-radius: 8px; padding: 5px 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 1000; align-items: center; gap: 8px; white-space: nowrap;
+            position: absolute; display: none; background: var(--ribbon-bg); padding: 5px; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; align-items: center; gap: 8px; flex-wrap: wrap;
         }
-        /* Flechita de la cinta */
+        /* Flecha abajo */
         #ribbon::after {
-            content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px;
-            border-width: 5px; border-style: solid; border-color: #222 transparent transparent transparent;
+            content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: var(--ribbon-bg) transparent transparent transparent;
         }
+        .rib-group { display: flex; align-items: center; gap: 5px; border-right: 1px solid #666; padding-right: 8px; margin-right: 2px;}
+        .rib-group:last-child { border: none; }
+        .rib-btn { background: none; border: none; color: #fff; cursor: pointer; padding: 4px; border-radius: 3px; display: flex; }
+        .rib-btn:hover { background: rgba(255,255,255,0.2); }
+        body.dark-mode .rib-btn { color: #000; }
         
-        .color-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #555; cursor: pointer; flex-shrink: 0; }
-        .color-swatch.active { border-color: #fff; transform: scale(1.1); }
-        .ribbon-sep { width: 1px; height: 20px; background: #555; margin: 0 5px; }
-        .rib-btn { background: none; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; padding: 5px; border-radius: 4px; }
-        .rib-btn:hover { background: #444; }
+        /* Inputs de Color */
+        .color-wrapper { position: relative; width: 24px; height: 24px; border-radius: 50%; overflow: hidden; border: 2px solid #fff; }
+        input[type="color"] { border: none; width: 150%; height: 150%; margin: -25%; cursor: pointer; padding: 0; }
 
-        /* MODALES (Biblia, Notas, Config Colores) */
-        .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
-            display: none; align-items: center; justify-content: center;
-        }
-        .modal-box {
-            background: var(--bg); width: 90%; max-width: 500px; max-height: 80vh;
-            border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .modal-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; font-weight: bold; }
-        .modal-body { padding: 15px; overflow-y: auto; flex: 1; }
+        /* MODALES */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-box { background: var(--bg); padding: 20px; border-radius: 10px; width: 90%; max-width: 500px; max-height: 80%; display: flex; flex-direction: column; }
+        textarea#note-input { width: 100%; height: 150px; margin: 10px 0; padding: 10px; box-sizing: border-box; resize: none; font-size: 16px;}
         
-        /* Editor de Notas */
-        textarea#note-editor { width: 100%; height: 150px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 10px; border-radius: 8px; resize: none; font-family: sans-serif; box-sizing: border-box; }
-
-        /* Configuración de Colores */
-        .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .palette-item input { width: 100%; height: 40px; border: none; cursor: pointer; background: none; }
-
-        /* FOOTER NAV */
-        footer {
-            background: var(--panel); padding: 10px; border-top: 1px solid var(--border);
-            display: flex; justify-content: space-between;
-        }
-        .nav-btn {
-            background: var(--primary); color: white; border: none; padding: 10px 20px;
-            border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;
-        }
-
         /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: var(--panel); padding: 30px; border-radius: 12px; width: 300px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .inp { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; background: var(--bg); color: var(--text); }
-        
+        .login-card { background: var(--secondary); padding: 30px; border-radius: 12px; width: 300px; text-align: center; }
+        .inp { width: 100%; padding: 10px; margin: 10px 0; }
+        .btn-log { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
+
         .hidden { display: none !important; }
     </style>
 
@@ -147,107 +102,90 @@
             <h2 style="color:var(--primary)">Mi Estudio</h2>
             <input id="email" class="inp" type="email" placeholder="Email">
             <input id="pass" class="inp" type="password" placeholder="Contraseña">
-            <button class="nav-btn" style="width:100%" onclick="auth.login()">Ingresar</button>
-            <button class="nav-btn" style="width:100%; background:#555; margin-top:10px" onclick="auth.reg()">Registrar</button>
-            <p id="msg" style="color:red; margin-top:10px; font-size:0.8rem"></p>
+            <button class="btn-log" onclick="auth.login()">Ingresar</button>
+            <p id="msg" style="color:red; font-size:0.8rem"></p>
         </div>
     </div>
 
     <!-- APP -->
     <div id="app" class="hidden">
         <header>
-            <div class="nav-controls">
-                <select id="q-sel" onchange="nav.loadLessons()">
-                    <option value="2025-04">Josué</option>
-                    <option value="2025-03">Éxodo</option>
-                    <option value="2025-02">Santuario</option>
-                    <option value="2025-01">Conflicto</option>
-                </select>
-                <select id="l-sel" onchange="nav.loadDays()">
-                    <option>Lección...</option>
-                </select>
-                <select id="d-sel" onchange="reader.load()">
-                    <option>Día...</option>
-                </select>
-            </div>
-            <div class="tools">
-                <button class="btn-tool" onclick="ui.toggleTheme()" title="Tema"><i class="material-icons">brightness_6</i></button>
-                <button class="btn-tool" onclick="ui.font(2)" title="Más Grande">A+</button>
-                <button class="btn-tool" onclick="ui.font(-2)" title="Más Pequeño">A-</button>
-            </div>
+            <select id="sel-q" onchange="nav.changeQuarter()"></select>
+            <select id="sel-l" onchange="nav.changeLesson()"></select>
+            <select id="sel-d" onchange="loader.loadDay()"></select>
+            
+            <button class="tool-btn" onclick="ui.cycleTheme()" title="Cambiar Tema"><i class="material-icons">brightness_medium</i></button>
+            <button class="tool-btn" onclick="ui.font(2)">A+</button>
+            <button class="tool-btn" onclick="ui.font(-2)">A-</button>
+            <button class="tool-btn" onclick="auth.logout()" style="color:red"><i class="material-icons">logout</i></button>
         </header>
 
-        <div id="main-wrapper" onscroll="ribbon.hide()">
-            <div id="content" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
-                <p style="text-align:center; padding-top:50px; color:#888">Cargando...</p>
+        <!-- CONTENIDO EDITABLE -->
+        <!-- contenteditable="true" permite que execCommand funcione nativamente -->
+        <div id="main-container" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
+            <div id="content">
+                <p style="text-align:center; margin-top:50px">Cargando...</p>
             </div>
         </div>
-
-        <footer>
-            <button class="nav-btn" onclick="nav.prev()"><i class="material-icons">arrow_back</i> Ant</button>
-            <button class="nav-btn" onclick="nav.next()">Sig <i class="material-icons">arrow_forward</i></button>
-        </footer>
 
         <!-- CINTA FLOTANTE -->
         <div id="ribbon">
-            <!-- 6 Colores Personalizables -->
-            <div id="color-palette" style="display:flex; gap:5px"></div>
-            
-            <div class="ribbon-sep"></div>
-            
-            <!-- Botón Config Colores -->
-            <button class="rib-btn" onclick="colors.openConfig()" title="Configurar Colores"><i class="material-icons" style="font-size:16px">palette</i></button>
-            
-            <div class="ribbon-sep"></div>
+            <!-- Colores de Fondo (Resaltado) -->
+            <div class="rib-group">
+                <i class="material-icons" style="font-size:14px; color:#fff; margin-right:3px">format_paint</i>
+                <div class="color-wrapper" title="Resaltar Amarillo" style="background:yellow"><div onclick="tools.highlight('#ffff00')" style="width:100%;height:100%"></div></div>
+                <div class="color-wrapper" title="Resaltar Verde" style="background:#a5d6a7"><div onclick="tools.highlight('#a5d6a7')" style="width:100%;height:100%"></div></div>
+                <div class="color-wrapper" title="Resaltar Azul" style="background:#90caf9"><div onclick="tools.highlight('#90caf9')" style="width:100%;height:100%"></div></div>
+                <!-- Personalizable -->
+                <div class="color-wrapper" title="Color Personalizado">
+                    <input type="color" onchange="tools.highlight(this.value)">
+                </div>
+            </div>
 
-            <!-- Subrayados -->
-            <button class="rib-btn" onclick="highlighter.style('underline')" title="Subrayar"><i class="material-icons" style="font-size:18px">format_underlined</i></button>
-            
-            <!-- Nota -->
-            <button class="rib-btn" onclick="notes.add()" title="Nota"><i class="material-icons" style="font-size:18px">comment</i></button>
-            
-            <!-- Borrar -->
-            <button class="rib-btn" onclick="highlighter.clear()" title="Limpiar"><i class="material-icons" style="font-size:18px">format_clear</i></button>
+            <!-- Color de Texto -->
+            <div class="rib-group">
+                <i class="material-icons" style="font-size:14px; color:#fff; margin-right:3px">text_format</i>
+                <div class="color-wrapper" title="Texto Rojo" style="background:red"><div onclick="tools.textColor('red')" style="width:100%;height:100%"></div></div>
+                <div class="color-wrapper" title="Elegir Color Texto">
+                    <input type="color" onchange="tools.textColor(this.value)">
+                </div>
+            </div>
+
+            <!-- Estilos y Notas -->
+            <div class="rib-group">
+                <button class="rib-btn" onclick="tools.format('underline')" title="Subrayar"><i class="material-icons">format_underlined</i></button>
+                <button class="rib-btn" onclick="tools.format('strikeThrough')" title="Tachar"><i class="material-icons">strikethrough_s</i></button>
+                <button class="rib-btn" onclick="tools.addNote()" title="Agregar Nota"><i class="material-icons">note_add</i></button>
+                <button class="rib-btn" onclick="tools.clear()" title="Limpiar Formato"><i class="material-icons">format_clear</i></button>
+            </div>
         </div>
 
-        <!-- MODAL NOTAS -->
+        <!-- MODAL NOTA -->
         <div id="note-modal" class="modal">
             <div class="modal-box">
-                <div class="modal-header">Editar Nota <span onclick="ui.closeModals()" style="cursor:pointer">✕</span></div>
-                <div class="modal-body">
-                    <textarea id="note-editor"></textarea>
-                </div>
-                <div style="padding:15px; text-align:right">
-                    <button class="nav-btn" onclick="notes.save()">Guardar</button>
+                <h3>Editar Nota</h3>
+                <textarea id="note-input" placeholder="Escribe aquí..."></textarea>
+                <div style="display:flex; justify-content:space-between">
+                    <button class="btn-log" style="background:#d32f2f; width:auto" onclick="notes.delete()">Eliminar</button>
+                    <button class="btn-log" style="background:var(--primary); width:auto" onclick="notes.save()">Guardar</button>
                 </div>
             </div>
         </div>
 
         <!-- MODAL BIBLIA -->
         <div id="bible-modal" class="modal">
-            <div class="modal-box" style="height:80vh; max-width:600px">
-                <div class="modal-header">Biblia <span onclick="ui.closeModals()" style="cursor:pointer">✕</span></div>
+            <div class="modal-box" style="height:80%; max-width:600px">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                    <h3 style="margin:0">Biblia RVR1960</h3>
+                    <button onclick="document.getElementById('bible-modal').style.display='none'">✕</button>
+                </div>
                 <iframe id="bible-frame" style="flex:1; border:none" src=""></iframe>
-            </div>
-        </div>
-
-        <!-- MODAL CONFIG COLORES -->
-        <div id="color-modal" class="modal">
-            <div class="modal-box">
-                <div class="modal-header">Personalizar Paleta <span onclick="ui.closeModals()" style="cursor:pointer">✕</span></div>
-                <div class="modal-body">
-                    <p>Elige tus 6 colores favoritos:</p>
-                    <div class="palette-grid" id="palette-config"></div>
-                </div>
-                <div style="padding:15px; text-align:right">
-                    <button class="nav-btn" onclick="colors.saveConfig()">Guardar Cambios</button>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIG FIREBASE
+        // --- CONFIG ---
         const firebaseConfig = {
           apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
           authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
@@ -261,18 +199,12 @@
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
 
-        // ESTADO
-        const state = { 
-            user: null, q: '2025-04', l: '01', d: '01', 
-            selRange: null, activeNoteId: null,
-            myColors: ['#ffeb3b', '#a5d6a7', '#90caf9', '#ffcc80', '#ce93d8', '#ef9a9a']
-        };
+        const state = { user: null, q: '2025-04', l: '01', d: '01', currentNoteId: null };
 
-        // AUTH
+        // --- AUTH ---
         const auth = {
             login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
-            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
-            logout: () => location.reload()
+            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
         };
         function val(id){ return document.getElementById(id).value; }
         function msg(t){ document.getElementById('msg').innerText = t; }
@@ -282,256 +214,274 @@
                 state.user = u;
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
-                colors.init();
                 nav.init();
-                // Listener teclado PC
-                document.addEventListener('keydown', (e) => {
-                    if(e.key === "ArrowLeft") nav.prev();
-                    if(e.key === "ArrowRight") nav.next();
-                });
             }
         });
 
-        // NAVEGACIÓN
+        // --- NAVEGACIÓN AUTOMÁTICA ---
         const nav = {
             init: () => {
-                // Generar lecciones 1-14
-                const lSel = document.getElementById('l-sel');
-                lSel.innerHTML = "";
-                for(let i=1; i<=14; i++){
+                // Generar Trimestres (Manuales 2025)
+                const qSel = document.getElementById('sel-q');
+                qSel.add(new Option("Josué (Actual)", "2025-04"));
+                qSel.add(new Option("Éxodo", "2025-03"));
+                qSel.add(new Option("Santuario", "2025-02"));
+                
+                // Generar Lecciones 1-14
+                const lSel = document.getElementById('sel-l');
+                for(let i=1; i<=14; i++) {
                     let n = i<10 ? "0"+i : ""+i;
-                    lSel.add(new Option("Lección "+n, n));
+                    lSel.add(new Option("Lec "+n, n));
                 }
-                nav.loadDays();
-            },
-            loadDays: () => {
+
+                // Generar Días
+                const dSel = document.getElementById('sel-d');
                 const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
                 const codes = ["01","02","03","04","05","06","07"];
-                const dSel = document.getElementById('d-sel');
-                dSel.innerHTML = "";
                 days.forEach((d,i) => dSel.add(new Option(d, codes[i])));
-                reader.load();
+
+                // CALCULAR FECHA DE HOY PARA IR AL GRANO
+                nav.autoSelectDate();
             },
-            prev: () => {
-                let curr = document.getElementById('d-sel').selectedIndex;
-                if(curr > 0) { document.getElementById('d-sel').selectedIndex = curr - 1; reader.load(); }
+            
+            autoSelectDate: () => {
+                // Cálculo aproximado para ir a la lección de hoy
+                // Inicio Trimestre 4 2025: Sábado 27 Sep (aprox)
+                // Usamos fecha fija de inicio para calcular offset
+                const startQ4 = new Date('2025-09-27').getTime();
+                const now = new Date().getTime();
+                const diffDays = Math.floor((now - startQ4) / (1000 * 60 * 60 * 24));
+                
+                if (diffDays >= 0 && diffDays < 98) { // Estamos en el trimestre
+                    let l = Math.floor(diffDays / 7) + 1;
+                    let d = (diffDays % 7) + 1; // 1=Sab
+                    
+                    let lStr = l < 10 ? "0"+l : ""+l;
+                    let dStr = "0" + d; // Simple mapping for now
+                    
+                    document.getElementById('sel-l').value = lStr;
+                    document.getElementById('sel-d').value = dStr;
+                }
+                
+                loader.loadDay();
             },
-            next: () => {
-                let curr = document.getElementById('d-sel').selectedIndex;
-                let max = document.getElementById('d-sel').options.length - 1;
-                if(curr < max) { document.getElementById('d-sel').selectedIndex = curr + 1; reader.load(); }
-            }
+
+            changeQuarter: () => { state.q = document.getElementById('sel-q').value; loader.loadDay(); },
+            changeLesson: () => { state.l = document.getElementById('sel-l').value; loader.loadDay(); }
         };
 
-        // LECTOR
-        const reader = {
-            load: async () => {
+        // --- CARGADOR Y GUARDADO (EL CEREBRO) ---
+        const loader = {
+            loadDay: async () => {
                 ribbon.hide();
-                state.q = document.getElementById('q-sel').value;
-                state.l = document.getElementById('l-sel').value;
-                state.d = document.getElementById('d-sel').value;
+                state.q = document.getElementById('sel-q').value;
+                state.l = document.getElementById('sel-l').value;
+                state.d = document.getElementById('sel-d').value;
                 
+                const container = document.getElementById('content');
+                container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
+
+                // 1. INTENTAR CARGAR VERSIÓN GUARDADA EN FIREBASE (PERSISTENCIA)
+                const refPath = `users/${state.user.uid}/saved_days/${state.q}-${state.l}-${state.d}`;
+                
+                fbDb.ref(refPath).once('value', async (s) => {
+                    const savedHTML = s.val();
+                    
+                    if (savedHTML) {
+                        // Si existe guardado, mostrar eso
+                        container.innerHTML = savedHTML;
+                        loader.attachEvents(); // Reconectar eventos a las notas
+                    } else {
+                        // Si no, descargar de GitHub
+                        await loader.fetchFromGitHub();
+                    }
+                });
+            },
+
+            fetchFromGitHub: async () => {
                 const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
-                
                 try {
                     const r = await fetch(url);
                     if(!r.ok) throw new Error();
-                    let md = await r.text();
+                    const md = await r.text();
                     document.getElementById('content').innerHTML = parser(md);
-                    notes.restore();
+                    loader.attachEvents();
                 } catch(e) {
-                    document.getElementById('content').innerHTML = "<p style='text-align:center; color:red'>Lección no disponible.</p>";
+                    document.getElementById('content').innerHTML = "<p>Contenido no disponible.</p>";
                 }
+            },
+
+            saveWork: () => {
+                // GUARDAR TODO EL HTML ACTUAL (Con colores y notas)
+                const html = document.getElementById('content').innerHTML;
+                const refPath = `users/${state.user.uid}/saved_days/${state.q}-${state.l}-${state.d}`;
+                fbDb.ref(refPath).set(html);
+            },
+
+            attachEvents: () => {
+                // Reconectar clics a notas y biblias después de inyectar HTML
+                document.querySelectorAll('.note-icon').forEach(el => {
+                    el.onclick = (e) => { e.stopPropagation(); notes.open(el.dataset.id); };
+                });
+                document.querySelectorAll('.bible-link').forEach(el => {
+                    el.onclick = (e) => { e.stopPropagation(); bible.open(el.innerText); };
+                });
             }
         };
 
-        function parser(md) {
-            md = md.replace(/^---[\s\S]*?---/, ""); // Header
-            md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-            md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            md = md.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
-            md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
-            
-            // Referencias
-            md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, 
-                '<span class="bible-ref" onclick="bible.open(\'$1\')">$1</span>');
-                
-            return md.split('\n').map(l => l.trim() ? `<p>${l}</p>` : '').join('');
-        }
-
-        // SWIPE
-        let touchstartX = 0;
-        let touchendX = 0;
-        const zone = document.getElementById('main-wrapper');
-        zone.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX);
-        zone.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX;
-            if (touchendX < touchstartX - 50) nav.next();
-            if (touchendX > touchstartX + 50) nav.prev();
-        });
-
-        // CINTA Y HERRAMIENTAS
-        const ribbon = {
-            show: () => {
-                setTimeout(() => {
-                    const sel = window.getSelection();
-                    if(sel.toString().length > 0 && !sel.isCollapsed) {
-                        state.selRange = sel.getRangeAt(0).cloneRange();
-                        const rect = state.selRange.getBoundingClientRect();
-                        const rib = document.getElementById('ribbon');
-                        rib.style.display = 'flex';
-                        rib.style.top = (rect.top + window.scrollY - 50) + 'px';
-                        // Centrar y evitar salirse
-                        let left = rect.left + (rect.width/2) - (rib.offsetWidth/2);
-                        left = Math.max(10, Math.min(window.innerWidth - rib.offsetWidth - 10, left));
-                        rib.style.left = left + 'px';
-                    }
-                }, 50); // Delay
-            },
-            hide: () => document.getElementById('ribbon').style.display = 'none'
-        };
-
-        const highlighter = {
-            apply: (color) => {
+        // --- HERRAMIENTAS DE TEXTO ---
+        const tools = {
+            highlight: (color) => {
                 document.designMode = "on";
                 document.execCommand("BackColor", false, color);
                 document.designMode = "off";
                 ribbon.hide();
+                loader.saveWork(); // Guardar cambio
             },
-            style: (type) => {
-                // Subrayado seguro (no cambia tamaño)
+            textColor: (color) => {
                 document.designMode = "on";
-                document.execCommand("Underline", false, null);
+                document.execCommand("ForeColor", false, color);
                 document.designMode = "off";
                 ribbon.hide();
+                loader.saveWork();
+            },
+            format: (cmd) => {
+                document.designMode = "on";
+                document.execCommand(cmd, false, null);
+                document.designMode = "off";
+                ribbon.hide();
+                loader.saveWork();
             },
             clear: () => {
                 document.designMode = "on";
                 document.execCommand("removeFormat", false, null);
                 document.designMode = "off";
                 ribbon.hide();
-            }
-        };
-
-        // GESTIÓN DE COLORES
-        const colors = {
-            init: () => {
-                const stored = localStorage.getItem('myColors');
-                if(stored) state.myColors = JSON.parse(stored);
-                colors.renderRibbon();
+                loader.saveWork();
             },
-            renderRibbon: () => {
-                const container = document.getElementById('color-palette');
-                container.innerHTML = "";
-                state.myColors.forEach(c => {
-                    let d = document.createElement('div');
-                    d.className = 'color-swatch';
-                    d.style.backgroundColor = c;
-                    d.onclick = () => highlighter.apply(c);
-                    container.appendChild(d);
-                });
-            },
-            openConfig: () => {
-                ui.showModal('color-modal');
-                const grid = document.getElementById('palette-config');
-                grid.innerHTML = "";
-                state.myColors.forEach((c, i) => {
-                    let inp = document.createElement('input');
-                    inp.type = 'color';
-                    inp.value = c;
-                    inp.id = 'conf-col-'+i;
-                    let div = document.createElement('div');
-                    div.className = 'palette-item';
-                    div.appendChild(inp);
-                    grid.appendChild(div);
-                });
-            },
-            saveConfig: () => {
-                const newColors = [];
-                for(let i=0; i<6; i++) {
-                    newColors.push(document.getElementById('conf-col-'+i).value);
-                }
-                state.myColors = newColors;
-                localStorage.setItem('myColors', JSON.stringify(newColors));
-                colors.renderRibbon();
-                ui.closeModals();
-            }
-        };
-
-        // NOTAS
-        const notes = {
-            add: () => {
+            addNote: () => {
                 const sel = window.getSelection();
                 if(!sel.rangeCount) return;
                 
-                // Generar ID único para la nota
-                const noteId = Date.now().toString();
-                
-                // Insertar icono marcador
-                const marker = document.createElement("span");
-                marker.className = "note-marker";
-                marker.innerHTML = "📝";
-                marker.dataset.id = noteId;
-                marker.onclick = (e) => { e.stopPropagation(); notes.open(noteId); };
-                
-                state.selRange.collapse(false); // Ir al final de la selección
-                state.selRange.insertNode(marker);
+                // Expandir a palabra completa para no romper
+                const range = sel.getRangeAt(0);
+                if (sel.isCollapsed) {
+                    // Lógica simple de expansión (opcional, por ahora inserta ahí)
+                }
+
+                const id = Date.now().toString();
+                const icon = document.createElement('span');
+                icon.className = "note-icon";
+                icon.innerHTML = "📝";
+                icon.dataset.id = id;
+                icon.contentEditable = "false"; // Importante para no borrarlo al escribir
+                icon.onclick = (e) => { e.stopPropagation(); notes.open(id); };
+
+                // Insertar
+                range.collapse(false);
+                range.insertNode(icon);
                 
                 ribbon.hide();
-                notes.open(noteId);
-            },
-            open: (id) => {
-                state.activeNoteId = id;
-                ui.showModal('note-modal');
-                // Cargar contenido
-                fbDb.ref(`users/${state.user.uid}/notes/${id}`).once('value', s => {
-                    document.getElementById('note-editor').value = s.val() || "";
-                });
-            },
-            save: () => {
-                const txt = document.getElementById('note-editor').value;
-                if(state.activeNoteId) {
-                    fbDb.ref(`users/${state.user.uid}/notes/${state.activeNoteId}`).set(txt);
-                }
-                ui.closeModals();
-            },
-            restore: () => {
-                // En esta versión simplificada, las notas se guardan en BD
-                // Restaurarlas visualmente sobre texto dinámico es complejo
-                // Aquí solo se habilita la creación de nuevas.
+                notes.open(id); // Abrir para editar inmediatamente
+                loader.saveWork();
             }
         };
 
-        // BIBLIA
+        // --- GESTOR DE NOTAS ---
+        const notes = {
+            open: (id) => {
+                state.currentNoteId = id;
+                document.getElementById('note-modal').style.display = 'flex';
+                // Buscar contenido en Firebase (guardamos el texto de la nota separado para facilitar edición)
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
+                    document.getElementById('note-input').value = s.val() || "";
+                });
+            },
+            save: () => {
+                const txt = document.getElementById('note-input').value;
+                const id = state.currentNoteId;
+                
+                // Si está vacío, borrar nota
+                if (!txt.trim()) {
+                    notes.delete();
+                    return;
+                }
+
+                // Guardar contenido
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).set(txt);
+                document.getElementById('note-modal').style.display = 'none';
+                loader.saveWork(); // Guardar el icono en el HTML
+            },
+            delete: () => {
+                const id = state.currentNoteId;
+                // Borrar datos
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
+                
+                // Borrar icono del DOM
+                const icon = document.querySelector(`.note-icon[data-id="${id}"]`);
+                if(icon) icon.remove();
+                
+                document.getElementById('note-modal').style.display = 'none';
+                loader.saveWork();
+            }
+        };
+
+        // --- CINTA Y UI ---
+        const ribbon = {
+            show: () => {
+                setTimeout(() => {
+                    const sel = window.getSelection();
+                    if(sel.toString().length > 0 && !sel.isCollapsed) {
+                        const range = sel.getRangeAt(0);
+                        const rect = range.getBoundingClientRect();
+                        const menu = document.getElementById('ribbon');
+                        
+                        menu.style.display = 'flex';
+                        menu.style.top = (rect.top + window.scrollY - 50) + 'px';
+                        let left = rect.left + (rect.width/2) - (menu.offsetWidth/2);
+                        // Ajuste bordes pantalla
+                        if(left < 10) left = 10; 
+                        menu.style.left = left + 'px';
+                    }
+                }, 100);
+            },
+            hide: () => document.getElementById('ribbon').style.display = 'none'
+        };
+
+        const ui = {
+            cycleTheme: () => {
+                const b = document.body;
+                if(!b.className) b.className = 'sepia-mode';
+                else if(b.className === 'sepia-mode') b.className = 'dark-mode';
+                else b.className = '';
+            },
+            font: (v) => {
+                const el = document.getElementById('content');
+                const s = parseInt(window.getComputedStyle(el).fontSize);
+                el.style.fontSize = (s+v) + 'px';
+            }
+        };
+
         const bible = {
             open: (ref) => {
-                ui.showModal('bible-modal');
+                document.getElementById('bible-modal').style.display = 'flex';
                 const url = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960&interface=print`;
                 document.getElementById('bible-frame').src = url;
             }
         };
 
-        const ui = {
-            toggleTheme: () => {
-                const b = document.body;
-                if(!b.hasAttribute('data-theme')) b.setAttribute('data-theme', 'sepia');
-                else if(b.getAttribute('data-theme') === 'sepia') b.setAttribute('data-theme', 'dark');
-                else b.removeAttribute('data-theme');
-            },
-            font: (v) => {
-                const el = document.getElementById('content');
-                const s = parseInt(window.getComputedStyle(el).fontSize);
-                el.style.fontSize = (s + v) + 'px';
-            },
-            showModal: (id) => {
-                document.getElementById(id).style.display = 'flex';
-                ribbon.hide();
-            },
-            closeModals: () => {
-                document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-            }
-        };
+        // Parser Simple
+        function parser(md) {
+            md = md.replace(/^---[\s\S]*?---/, "");
+            md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            md = md.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
+            md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
+            // Citas Bíblicas
+            md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
+            return md.split('\n').map(l => l.trim() ? `<p>${l}</p>` : '').join('');
+        }
     </script>
 </body>
 </html>
