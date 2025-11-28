@@ -1,37 +1,3 @@
-¡Tienes toda la razón! El error 404 en GitHub confirma mi sospecha: El archivo no existe ahí con ese nombre.
-
-Cometí un error técnico: Intenté descargar el archivo lessons.json directamente de GitHub, pero resulta que ese archivo no existe en el código fuente. La API de la iglesia es la que "fabrica" ese archivo al vuelo. Por eso, al intentar bajarlo "crudo", GitHub nos dice "Aquí no está".
-
-Conclusión: Estamos obligados a usar la API (el sistema de la iglesia), pero el "intermediario" (Proxy) nos estaba traicionando con datos viejos.
-
-LA SOLUCIÓN V24: "EL TALADRO"
-
-Esta versión usa una técnica de "Fuerza Bruta" para obligar a la API a responder con datos nuevos.
-
-Menú Manual: Mantiene los botones de 2025 (Josué, Éxodo...) para que tú elijas.
-
-Rotación de Proxies: Si el primer intermediario falla o da datos viejos, salta al segundo, luego al tercero.
-
-Anti-Caché Extremo: Le agrega un código numérico aleatorio a cada petición para que el servidor crea que es una solicitud nueva y no le entregue "basura vieja".
-
-Instrucciones:
-
-Edita tu archivo index.html en GitHub.
-
-Borra todo.
-
-Pega el Código V24.
-
-Dale a Commit changes.
-
-(Espera 30 segundos y prueba. Si el primer intento falla, dale al botón que aparecerá para probar la "Ruta Alternativa").
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <!DOCTYPE html>
 <html lang="es">
 <head>
