@@ -3,118 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V30 - Suite de Estudio</title>
-    <!-- Iconos Material Design -->
+    <title>Escuela Sabática V31 - Estudio Definitivo</title>
+    <!-- Iconos Material -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
+        /* TEMAS */
         :root {
             --bg: #ffffff;
             --text: #222;
-            --primary: #004d40;
+            --primary: #00695c;
             --accent: #d81b60;
-            --paper: #f4f6f8;
-            --ribbon-bg: #222;
-            --ribbon-text: #fff;
+            --panel: #f5f5f5;
+            --border: #ddd;
+            --note-icon: #fbc02d;
         }
-        body.dark-mode {
+        [data-theme="sepia"] {
+            --bg: #f4ecd8;
+            --text: #5b4636;
+            --primary: #8d6e63;
+            --accent: #d84315;
+            --panel: #e9e2c9;
+            --border: #d7cbb1;
+        }
+        [data-theme="dark"] {
             --bg: #121212;
-            --text: #e0e0e0;
+            --text: #c7c7c7;
             --primary: #80cbc4;
             --accent: #f48fb1;
-            --paper: #1e1e1e;
-            --ribbon-bg: #fff;
-            --ribbon-text: #000;
+            --panel: #1e1e1e;
+            --border: #333;
         }
+
         body { 
             font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); 
             height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+            transition: background 0.3s, color 0.3s;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* HEADER DE NAVEGACIÓN */
+        /* HEADER */
         header {
-            background: var(--paper); padding: 10px; border-bottom: 2px solid var(--primary);
+            background: var(--panel); padding: 10px; border-bottom: 2px solid var(--primary);
             display: flex; gap: 10px; align-items: center; z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-wrap: wrap;
         }
+        .nav-controls { display: flex; gap: 5px; flex: 1; }
         select {
-            flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ccc; 
-            font-size: 0.9rem; background: var(--bg); color: var(--text);
+            padding: 8px; border-radius: 6px; border: 1px solid var(--border); 
+            font-size: 0.9rem; background: var(--bg); color: var(--text); max-width: 120px;
         }
-        .btn-icon { 
-            background: none; border: none; cursor: pointer; color: var(--text); 
-            padding: 5px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        .tools { display: flex; gap: 2px; }
+        .btn-tool { 
+            background: none; border: 1px solid transparent; cursor: pointer; color: var(--text); 
+            padding: 5px; border-radius: 4px; display: flex; align-items: center;
         }
-        .btn-icon:hover { background: rgba(0,0,0,0.1); }
+        .btn-tool:hover { background: rgba(128,128,128,0.1); border-color: var(--border); }
 
-        /* ÁREA DE CONTENIDO */
-        #main-container { 
-            flex: 1; overflow-y: auto; padding: 20px 20px 100px 20px; 
-            max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; 
-            position: relative;
+        /* CONTENIDO */
+        #main-wrapper { 
+            flex: 1; overflow-y: auto; position: relative; scroll-behavior: smooth;
+        }
+        #content { 
+            padding: 20px 20px 100px 20px; max-width: 800px; margin: 0 auto; 
+            font-size: 18px; line-height: 1.8; 
         }
         
-        /* TIPOGRAFÍA */
-        #content h1 { color: var(--primary); font-size: 1.6rem; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-        #content h2 { color: var(--text); font-size: 1.3rem; margin-top: 30px; font-weight: bold; }
-        #content h3 { color: var(--accent); font-size: 1.1rem; margin-top: 25px; }
-        #content p { line-height: 1.8; font-size: 1.15rem; margin-bottom: 15px; }
-        blockquote { border-left: 4px solid var(--primary); padding-left: 15px; color: #666; font-style: italic; margin: 20px 0; background: rgba(0,0,0,0.03); padding: 10px; }
-        .bible-ref { color: var(--primary); font-weight: bold; text-decoration: underline; cursor: pointer; text-decoration-style: dotted; }
-
-        /* CINTA FLOTANTE (POP-UP) */
-        #floating-ribbon {
-            position: absolute; display: none; background: var(--ribbon-bg); color: var(--ribbon-text);
-            border-radius: 8px; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 1000; align-items: center; gap: 8px; flex-wrap: nowrap; white-space: nowrap;
-        }
-        #floating-ribbon::after {
-            content: ''; position: absolute; bottom: -6px; left: 50%; margin-left: -6px;
-            border-width: 6px; border-style: solid; border-color: var(--ribbon-bg) transparent transparent transparent;
-        }
-        .ribbon-btn {
-            background: none; border: none; color: var(--ribbon-text); cursor: pointer;
-            padding: 5px; display: flex; align-items: center; border-radius: 4px;
-        }
-        .ribbon-btn:hover { background: rgba(128,128,128,0.3); }
-        .ribbon-sep { width: 1px; height: 20px; background: #666; margin: 0 2px; }
+        /* ESTILOS TEXTO */
+        h1 { color: var(--primary); font-size: 1.5em; border-bottom: 1px solid var(--border); }
+        h2 { color: var(--text); font-size: 1.2em; margin-top: 30px; font-weight: bold; }
+        h3 { color: var(--accent); font-size: 1.1em; margin-top: 20px; }
+        blockquote { border-left: 4px solid var(--primary); padding-left: 15px; font-style: italic; opacity: 0.8; margin: 20px 0;}
+        .bible-ref { color: var(--primary); font-weight: bold; text-decoration: underline; cursor: pointer; }
         
-        /* Selector de Color en Cinta */
-        input[type="color"] {
-            -webkit-appearance: none; border: none; width: 24px; height: 24px; padding: 0; 
-            border-radius: 50%; overflow: hidden; cursor: pointer;
+        /* NOTAS EN EL TEXTO */
+        .note-marker { cursor: pointer; vertical-align: middle; color: var(--note-icon); font-size: 1.2em; margin: 0 2px; }
+        
+        /* CINTA FLOTANTE */
+        #ribbon {
+            position: absolute; display: none; background: #222; color: #fff;
+            border-radius: 8px; padding: 5px 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000; align-items: center; gap: 8px; white-space: nowrap;
         }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: none; }
+        /* Flechita de la cinta */
+        #ribbon::after {
+            content: ''; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+            border-width: 5px; border-style: solid; border-color: #222 transparent transparent transparent;
+        }
+        
+        .color-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #555; cursor: pointer; flex-shrink: 0; }
+        .color-swatch.active { border-color: #fff; transform: scale(1.1); }
+        .ribbon-sep { width: 1px; height: 20px; background: #555; margin: 0 5px; }
+        .rib-btn { background: none; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; padding: 5px; border-radius: 4px; }
+        .rib-btn:hover { background: #444; }
 
-        /* NOTAS LATERALES / OVERLAY */
-        #note-overlay {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 50%; 
-            background: var(--bg); box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-            z-index: 2000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box;
-            border-top-left-radius: 15px; border-top-right-radius: 15px; transition: transform 0.3s;
+        /* MODALES (Biblia, Notas, Config Colores) */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
         }
-        #note-text { flex: 1; border: 1px solid #ccc; padding: 10px; border-radius: 8px; font-family: sans-serif; resize: none; margin-top: 10px; background: var(--paper); color: var(--text); }
-        .note-header { display: flex; justify-content: space-between; align-items: center; }
+        .modal-box {
+            background: var(--bg); width: 90%; max-width: 500px; max-height: 80vh;
+            border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .modal-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; font-weight: bold; }
+        .modal-body { padding: 15px; overflow-y: auto; flex: 1; }
+        
+        /* Editor de Notas */
+        textarea#note-editor { width: 100%; height: 150px; background: var(--panel); color: var(--text); border: 1px solid var(--border); padding: 10px; border-radius: 8px; resize: none; font-family: sans-serif; box-sizing: border-box; }
 
-        /* BIBLIA MODAL */
-        #bible-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000;
-            display: none; justify-content: center; align-items: center;
+        /* Configuración de Colores */
+        .palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .palette-item input { width: 100%; height: 40px; border: none; cursor: pointer; background: none; }
+
+        /* FOOTER NAV */
+        footer {
+            background: var(--panel); padding: 10px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between;
         }
-        .modal-content {
-            background: #fff; width: 90%; max-width: 600px; height: 80%; border-radius: 8px;
-            display: flex; flex-direction: column; overflow: hidden;
+        .nav-btn {
+            background: var(--primary); color: white; border: none; padding: 10px 20px;
+            border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;
         }
-        .modal-header { padding: 10px; background: #eee; display: flex; justify-content: space-between; color:#333; font-weight:bold;}
-        iframe { flex: 1; border: none; }
 
         /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: var(--paper); padding: 30px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .login-card input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px;}
+        .login-card { background: var(--panel); padding: 30px; border-radius: 12px; width: 300px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .inp { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; background: var(--bg); color: var(--text); }
         
         .hidden { display: none !important; }
     </style>
@@ -130,10 +145,10 @@
     <div id="login-screen">
         <div class="login-card">
             <h2 style="color:var(--primary)">Mi Estudio</h2>
-            <input id="email" type="email" placeholder="Correo">
-            <input id="pass" type="password" placeholder="Contraseña">
-            <button class="btn-main" onclick="auth.login()">Ingresar</button>
-            <button class="btn-main" style="background:#555" onclick="auth.reg()">Registrarme</button>
+            <input id="email" class="inp" type="email" placeholder="Email">
+            <input id="pass" class="inp" type="password" placeholder="Contraseña">
+            <button class="nav-btn" style="width:100%" onclick="auth.login()">Ingresar</button>
+            <button class="nav-btn" style="width:100%; background:#555; margin-top:10px" onclick="auth.reg()">Registrar</button>
             <p id="msg" style="color:red; margin-top:10px; font-size:0.8rem"></p>
         </div>
     </div>
@@ -141,64 +156,98 @@
     <!-- APP -->
     <div id="app" class="hidden">
         <header>
-            <select id="sel-quarter" onchange="nav.loadLessons()">
-                <option value="2025-04">Josué (2025-04)</option>
-                <option value="2025-03">Éxodo</option>
-                <option value="2025-02">Santuario</option>
-                <option value="2025-01">Gran Conflicto</option>
-            </select>
-            <select id="sel-lesson" onchange="nav.updateDays()">
-                <option>Lección...</option>
-            </select>
-            <select id="sel-day" onchange="reader.load()">
-                <option>Día...</option>
-            </select>
-            <button class="btn-icon" onclick="ui.theme()"><i class="material-icons">brightness_4</i></button>
-            <button class="btn-icon" onclick="auth.logout()" style="color:red"><i class="material-icons">logout</i></button>
+            <div class="nav-controls">
+                <select id="q-sel" onchange="nav.loadLessons()">
+                    <option value="2025-04">Josué</option>
+                    <option value="2025-03">Éxodo</option>
+                    <option value="2025-02">Santuario</option>
+                    <option value="2025-01">Conflicto</option>
+                </select>
+                <select id="l-sel" onchange="nav.loadDays()">
+                    <option>Lección...</option>
+                </select>
+                <select id="d-sel" onchange="reader.load()">
+                    <option>Día...</option>
+                </select>
+            </div>
+            <div class="tools">
+                <button class="btn-tool" onclick="ui.toggleTheme()" title="Tema"><i class="material-icons">brightness_6</i></button>
+                <button class="btn-tool" onclick="ui.font(2)" title="Más Grande">A+</button>
+                <button class="btn-tool" onclick="ui.font(-2)" title="Más Pequeño">A-</button>
+            </div>
         </header>
 
-        <div id="main-container" onmouseup="ribbon.check(event)" ontouchend="ribbon.check(event)">
-            <div id="content">
-                <p style="text-align:center; padding-top:50px; color:#888">Selecciona una lección arriba.</p>
+        <div id="main-wrapper" onscroll="ribbon.hide()">
+            <div id="content" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
+                <p style="text-align:center; padding-top:50px; color:#888">Cargando...</p>
             </div>
         </div>
+
+        <footer>
+            <button class="nav-btn" onclick="nav.prev()"><i class="material-icons">arrow_back</i> Ant</button>
+            <button class="nav-btn" onclick="nav.next()">Sig <i class="material-icons">arrow_forward</i></button>
+        </footer>
 
         <!-- CINTA FLOTANTE -->
-        <div id="floating-ribbon">
-            <input type="color" id="color-picker" onchange="highlighter.applyColor(this.value)" value="#ffff00" title="Elegir Color">
+        <div id="ribbon">
+            <!-- 6 Colores Personalizables -->
+            <div id="color-palette" style="display:flex; gap:5px"></div>
+            
             <div class="ribbon-sep"></div>
-            <button class="ribbon-btn" onclick="highlighter.style('solid')" title="Resaltar Fondo"><i class="material-icons" style="font-size:18px">border_color</i></button>
-            <button class="ribbon-btn" onclick="highlighter.style('underline')" title="Subrayar"><i class="material-icons" style="font-size:18px">format_underlined</i></button>
-            <button class="ribbon-btn" onclick="highlighter.style('wavy')" title="Ondulado"><i class="material-icons" style="font-size:18px">waves</i></button>
+            
+            <!-- Botón Config Colores -->
+            <button class="rib-btn" onclick="colors.openConfig()" title="Configurar Colores"><i class="material-icons" style="font-size:16px">palette</i></button>
+            
             <div class="ribbon-sep"></div>
-            <button class="ribbon-btn" onclick="notes.open()" title="Añadir Nota"><i class="material-icons" style="font-size:18px">note_add</i></button>
-            <!-- <button class="ribbon-btn" onclick="highlighter.clear()" title="Borrar"><i class="material-icons" style="font-size:18px">format_clear</i></button> -->
+
+            <!-- Subrayados -->
+            <button class="rib-btn" onclick="highlighter.style('underline')" title="Subrayar"><i class="material-icons" style="font-size:18px">format_underlined</i></button>
+            
+            <!-- Nota -->
+            <button class="rib-btn" onclick="notes.add()" title="Nota"><i class="material-icons" style="font-size:18px">comment</i></button>
+            
+            <!-- Borrar -->
+            <button class="rib-btn" onclick="highlighter.clear()" title="Limpiar"><i class="material-icons" style="font-size:18px">format_clear</i></button>
         </div>
 
-        <!-- EDITOR DE NOTAS -->
-        <div id="note-overlay">
-            <div class="note-header">
-                <strong>Nota Personal</strong>
-                <button onclick="notes.saveAndClose()" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:4px;">Guardar</button>
+        <!-- MODAL NOTAS -->
+        <div id="note-modal" class="modal">
+            <div class="modal-box">
+                <div class="modal-header">Editar Nota <span onclick="ui.closeModals()" style="cursor:pointer">✕</span></div>
+                <div class="modal-body">
+                    <textarea id="note-editor"></textarea>
+                </div>
+                <div style="padding:15px; text-align:right">
+                    <button class="nav-btn" onclick="notes.save()">Guardar</button>
+                </div>
             </div>
-            <textarea id="note-text" placeholder="Escribe aquí tu pensamiento, pega imágenes o diagramas..."></textarea>
-            <div style="font-size:0.7rem; color:#666; margin-top:5px;">Esta nota se guardará sincronizada con tu cuenta.</div>
         </div>
-    </div>
 
-    <!-- BIBLIA -->
-    <div id="bible-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Santa Biblia</span>
-                <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.2rem">✕</button>
+        <!-- MODAL BIBLIA -->
+        <div id="bible-modal" class="modal">
+            <div class="modal-box" style="height:80vh; max-width:600px">
+                <div class="modal-header">Biblia <span onclick="ui.closeModals()" style="cursor:pointer">✕</span></div>
+                <iframe id="bible-frame" style="flex:1; border:none" src=""></iframe>
             </div>
-            <iframe id="bible-frame" src=""></iframe>
+        </div>
+
+        <!-- MODAL CONFIG COLORES -->
+        <div id="color-modal" class="modal">
+            <div class="modal-box">
+                <div class="modal-header">Personalizar Paleta <span onclick="ui.closeModals()" style="cursor:pointer">✕</span></div>
+                <div class="modal-body">
+                    <p>Elige tus 6 colores favoritos:</p>
+                    <div class="palette-grid" id="palette-config"></div>
+                </div>
+                <div style="padding:15px; text-align:right">
+                    <button class="nav-btn" onclick="colors.saveConfig()">Guardar Cambios</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIG
+        // CONFIG FIREBASE
         const firebaseConfig = {
           apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
           authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
@@ -212,7 +261,12 @@
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
 
-        const state = { user: null, q: '2025-04', l: '01', d: '01', selection: null };
+        // ESTADO
+        const state = { 
+            user: null, q: '2025-04', l: '01', d: '01', 
+            selRange: null, activeNoteId: null,
+            myColors: ['#ffeb3b', '#a5d6a7', '#90caf9', '#ffcc80', '#ce93d8', '#ef9a9a']
+        };
 
         // AUTH
         const auth = {
@@ -228,181 +282,255 @@
                 state.user = u;
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
+                colors.init();
                 nav.init();
+                // Listener teclado PC
+                document.addEventListener('keydown', (e) => {
+                    if(e.key === "ArrowLeft") nav.prev();
+                    if(e.key === "ArrowRight") nav.next();
+                });
             }
         });
 
         // NAVEGACIÓN
         const nav = {
-            init: () => nav.loadLessons(),
-            loadLessons: () => {
-                const sel = document.getElementById('sel-lesson');
-                sel.innerHTML = "";
+            init: () => {
+                // Generar lecciones 1-14
+                const lSel = document.getElementById('l-sel');
+                lSel.innerHTML = "";
                 for(let i=1; i<=14; i++){
                     let n = i<10 ? "0"+i : ""+i;
-                    let opt = document.createElement('option');
-                    opt.value = n; opt.innerText = "Lección " + n;
-                    sel.appendChild(opt);
+                    lSel.add(new Option("Lección "+n, n));
                 }
-                nav.updateDays();
+                nav.loadDays();
             },
-            updateDays: () => {
-                const days = ["Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
-                const codes = ["01", "02", "03", "04", "05", "06", "07"];
-                const sel = document.getElementById('sel-day');
-                sel.innerHTML = "";
-                days.forEach((d, i) => {
-                    let opt = document.createElement('option');
-                    opt.value = codes[i]; opt.innerText = d;
-                    sel.appendChild(opt);
-                });
+            loadDays: () => {
+                const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
+                const codes = ["01","02","03","04","05","06","07"];
+                const dSel = document.getElementById('d-sel');
+                dSel.innerHTML = "";
+                days.forEach((d,i) => dSel.add(new Option(d, codes[i])));
                 reader.load();
+            },
+            prev: () => {
+                let curr = document.getElementById('d-sel').selectedIndex;
+                if(curr > 0) { document.getElementById('d-sel').selectedIndex = curr - 1; reader.load(); }
+            },
+            next: () => {
+                let curr = document.getElementById('d-sel').selectedIndex;
+                let max = document.getElementById('d-sel').options.length - 1;
+                if(curr < max) { document.getElementById('d-sel').selectedIndex = curr + 1; reader.load(); }
             }
         };
 
         // LECTOR
         const reader = {
             load: async () => {
-                state.q = document.getElementById('sel-quarter').value;
-                state.l = document.getElementById('sel-lesson').value;
-                state.d = document.getElementById('sel-day').value;
+                ribbon.hide();
+                state.q = document.getElementById('q-sel').value;
+                state.l = document.getElementById('l-sel').value;
+                state.d = document.getElementById('d-sel').value;
                 
-                const container = document.getElementById('content');
-                container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
-
                 const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
                 
                 try {
                     const r = await fetch(url);
-                    if(!r.ok) throw new Error("No encontrado");
+                    if(!r.ok) throw new Error();
                     let md = await r.text();
-                    container.innerHTML = markdownParser(md);
-                    notes.loadAll(); // Cargar notas globales del día
+                    document.getElementById('content').innerHTML = parser(md);
+                    notes.restore();
                 } catch(e) {
-                    container.innerHTML = `<p style="color:red; text-align:center">Error cargando lección.</p>`;
+                    document.getElementById('content').innerHTML = "<p style='text-align:center; color:red'>Lección no disponible.</p>";
                 }
             }
         };
 
-        function markdownParser(md) {
-            md = md.replace(/^---[\s\S]*?---/, "");
+        function parser(md) {
+            md = md.replace(/^---[\s\S]*?---/, ""); // Header
             md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
             md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
             md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
             md = md.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
-            md = md.replace(/\*(.*)\*/gim, '<em>$1</em>');
             md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
             
-            // Referencias Bíblicas
-            const bibleRegex = /([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g;
-            md = md.replace(bibleRegex, '<span class="bible-ref" onclick="bible.open(\'$1\')">$1</span>');
-            
-            // Párrafos
-            return md.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('');
+            // Referencias
+            md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, 
+                '<span class="bible-ref" onclick="bible.open(\'$1\')">$1</span>');
+                
+            return md.split('\n').map(l => l.trim() ? `<p>${l}</p>` : '').join('');
         }
 
-        // CINTA FLOTANTE
+        // SWIPE
+        let touchstartX = 0;
+        let touchendX = 0;
+        const zone = document.getElementById('main-wrapper');
+        zone.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX);
+        zone.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            if (touchendX < touchstartX - 50) nav.next();
+            if (touchendX > touchstartX + 50) nav.prev();
+        });
+
+        // CINTA Y HERRAMIENTAS
         const ribbon = {
-            check: (e) => {
-                // Pequeño delay para asegurar que la selección terminó
+            show: () => {
                 setTimeout(() => {
                     const sel = window.getSelection();
-                    const menu = document.getElementById('floating-ribbon');
-                    
-                    if (sel.toString().length > 0 && !sel.isCollapsed) {
-                        const range = sel.getRangeAt(0);
-                        const rect = range.getBoundingClientRect();
-                        
-                        // Posicionar encima
-                        menu.style.display = 'flex';
-                        menu.style.top = (rect.top + window.scrollY - 50) + 'px';
-                        
-                        // Centrar horizontalmente pero mantener en pantalla
-                        let left = rect.left + (rect.width / 2) - (menu.offsetWidth / 2);
-                        if(left < 10) left = 10;
-                        if(left + menu.offsetWidth > window.innerWidth) left = window.innerWidth - menu.offsetWidth - 10;
-                        
-                        menu.style.left = left + 'px';
-                        state.selection = range; // Guardar rango
-                    } else {
-                        // Si hace clic en el menú, no cerrar
-                        if (!menu.contains(e.target)) {
-                            menu.style.display = 'none';
-                        }
+                    if(sel.toString().length > 0 && !sel.isCollapsed) {
+                        state.selRange = sel.getRangeAt(0).cloneRange();
+                        const rect = state.selRange.getBoundingClientRect();
+                        const rib = document.getElementById('ribbon');
+                        rib.style.display = 'flex';
+                        rib.style.top = (rect.top + window.scrollY - 50) + 'px';
+                        // Centrar y evitar salirse
+                        let left = rect.left + (rect.width/2) - (rib.offsetWidth/2);
+                        left = Math.max(10, Math.min(window.innerWidth - rib.offsetWidth - 10, left));
+                        rib.style.left = left + 'px';
                     }
-                }, 100);
-            }
+                }, 50); // Delay
+            },
+            hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
-        // RESALTADOR Y ESTILOS
         const highlighter = {
-            applyColor: (color) => {
+            apply: (color) => {
                 document.designMode = "on";
                 document.execCommand("BackColor", false, color);
                 document.designMode = "off";
-                document.getElementById('floating-ribbon').style.display = 'none';
+                ribbon.hide();
             },
             style: (type) => {
-                const sel = window.getSelection();
-                if (!sel.rangeCount) return;
-                
-                const span = document.createElement("span");
-                span.textContent = sel.toString();
-                
-                if (type === 'underline') span.style.textDecoration = "underline";
-                if (type === 'wavy') { span.style.textDecoration = "underline"; span.style.textDecorationStyle = "wavy"; span.style.textDecorationColor = "red"; }
-                if (type === 'solid') span.style.borderBottom = "3px solid var(--primary)";
-                
-                const range = sel.getRangeAt(0);
-                range.deleteContents();
-                range.insertNode(span);
-                
-                document.getElementById('floating-ribbon').style.display = 'none';
+                // Subrayado seguro (no cambia tamaño)
+                document.designMode = "on";
+                document.execCommand("Underline", false, null);
+                document.designMode = "off";
+                ribbon.hide();
             },
             clear: () => {
                 document.designMode = "on";
                 document.execCommand("removeFormat", false, null);
                 document.designMode = "off";
+                ribbon.hide();
+            }
+        };
+
+        // GESTIÓN DE COLORES
+        const colors = {
+            init: () => {
+                const stored = localStorage.getItem('myColors');
+                if(stored) state.myColors = JSON.parse(stored);
+                colors.renderRibbon();
+            },
+            renderRibbon: () => {
+                const container = document.getElementById('color-palette');
+                container.innerHTML = "";
+                state.myColors.forEach(c => {
+                    let d = document.createElement('div');
+                    d.className = 'color-swatch';
+                    d.style.backgroundColor = c;
+                    d.onclick = () => highlighter.apply(c);
+                    container.appendChild(d);
+                });
+            },
+            openConfig: () => {
+                ui.showModal('color-modal');
+                const grid = document.getElementById('palette-config');
+                grid.innerHTML = "";
+                state.myColors.forEach((c, i) => {
+                    let inp = document.createElement('input');
+                    inp.type = 'color';
+                    inp.value = c;
+                    inp.id = 'conf-col-'+i;
+                    let div = document.createElement('div');
+                    div.className = 'palette-item';
+                    div.appendChild(inp);
+                    grid.appendChild(div);
+                });
+            },
+            saveConfig: () => {
+                const newColors = [];
+                for(let i=0; i<6; i++) {
+                    newColors.push(document.getElementById('conf-col-'+i).value);
+                }
+                state.myColors = newColors;
+                localStorage.setItem('myColors', JSON.stringify(newColors));
+                colors.renderRibbon();
+                ui.closeModals();
             }
         };
 
         // NOTAS
         const notes = {
-            open: () => {
-                document.getElementById('note-overlay').style.display = 'flex';
-                document.getElementById('floating-ribbon').style.display = 'none';
-                document.getElementById('note-text').focus();
+            add: () => {
+                const sel = window.getSelection();
+                if(!sel.rangeCount) return;
+                
+                // Generar ID único para la nota
+                const noteId = Date.now().toString();
+                
+                // Insertar icono marcador
+                const marker = document.createElement("span");
+                marker.className = "note-marker";
+                marker.innerHTML = "📝";
+                marker.dataset.id = noteId;
+                marker.onclick = (e) => { e.stopPropagation(); notes.open(noteId); };
+                
+                state.selRange.collapse(false); // Ir al final de la selección
+                state.selRange.insertNode(marker);
+                
+                ribbon.hide();
+                notes.open(noteId);
             },
-            saveAndClose: () => {
-                const text = document.getElementById('note-text').value;
-                if(text) {
-                    const id = `note-${state.q}-${state.l}-${state.d}`;
-                    // Guardar como array de notas o concatenar
-                    fbDb.ref(`users/${state.user.uid}/notes/${id}`).push({
-                        text: text,
-                        date: new Date().toISOString()
-                    });
-                    alert("Nota guardada");
-                    document.getElementById('note-text').value = "";
+            open: (id) => {
+                state.activeNoteId = id;
+                ui.showModal('note-modal');
+                // Cargar contenido
+                fbDb.ref(`users/${state.user.uid}/notes/${id}`).once('value', s => {
+                    document.getElementById('note-editor').value = s.val() || "";
+                });
+            },
+            save: () => {
+                const txt = document.getElementById('note-editor').value;
+                if(state.activeNoteId) {
+                    fbDb.ref(`users/${state.user.uid}/notes/${state.activeNoteId}`).set(txt);
                 }
-                document.getElementById('note-overlay').style.display = 'none';
+                ui.closeModals();
             },
-            loadAll: () => {
-                // Aquí podrías cargar las notas y mostrarlas al final o como iconos
+            restore: () => {
+                // En esta versión simplificada, las notas se guardan en BD
+                // Restaurarlas visualmente sobre texto dinámico es complejo
+                // Aquí solo se habilita la creación de nuevas.
             }
         };
 
         // BIBLIA
         const bible = {
             open: (ref) => {
-                document.getElementById('bible-modal').style.display = 'flex';
+                ui.showModal('bible-modal');
                 const url = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960&interface=print`;
                 document.getElementById('bible-frame').src = url;
             }
         };
 
         const ui = {
-            theme: () => document.body.classList.toggle('dark-mode')
+            toggleTheme: () => {
+                const b = document.body;
+                if(!b.hasAttribute('data-theme')) b.setAttribute('data-theme', 'sepia');
+                else if(b.getAttribute('data-theme') === 'sepia') b.setAttribute('data-theme', 'dark');
+                else b.removeAttribute('data-theme');
+            },
+            font: (v) => {
+                const el = document.getElementById('content');
+                const s = parseInt(window.getComputedStyle(el).fontSize);
+                el.style.fontSize = (s + v) + 'px';
+            },
+            showModal: (id) => {
+                document.getElementById(id).style.display = 'flex';
+                ribbon.hide();
+            },
+            closeModals: () => {
+                document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            }
         };
     </script>
 </body>
