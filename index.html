@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V53 - Nota Inteligente</title>
+    <title>Escuela Sabática V54 - Teclado Inteligente</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
@@ -14,26 +14,21 @@
             --secondary: #e0f2f1;
             --accent: #c62828;
             --ribbon-bg: #333;
-            --note-icon-color: #ff9800;
         }
-        /* TEMAS */
         body.sepia { --bg: #f4ecd8; --text: #5b4636; --primary: #5d4037; --secondary: #eefebe; }
         body.dark { --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; --secondary: #1e1e1e; --accent: #ef9a9a; --ribbon-bg: #eee; }
         body.amber { --bg: #000000; --text: #ffb74d; --primary: #e65100; --secondary: #1a1a1a; }
 
         body { font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* HEADER */
         header { background: var(--secondary); padding: 8px; border-bottom: 2px solid var(--primary); display: flex; gap: 5px; align-items: center; z-index: 50; flex-shrink: 0;}
         select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 16px; min-width: 80px; }
         .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text); font-weight: bold; }
 
-        /* CONTENEDOR */
         #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
-        #main-container { flex: 1; overflow-y: auto; padding: 20px 50px; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
+        #main-container { flex: 1; overflow-y: auto; padding: 20px 50px; box-sizing: border-box; -webkit-overflow-scrolling: touch; outline: none; }
         @media (max-width: 600px) { #main-container { padding: 15px; } }
 
-        /* FLECHAS */
         .nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(0,0,0,0.05); border: none; color: var(--text);
@@ -43,7 +38,6 @@
         .nav-arrow:hover { background: var(--primary); color: var(--bg); }
         #prev-btn { left: 0; } #next-btn { right: 0; }
 
-        /* TEXTO */
         h1 { color: var(--primary); border-bottom: 1px solid #ccc; font-size: 1.5em; }
         h2 { color: var(--text); margin-top: 25px; font-weight: bold; font-size: 1.2em; }
         h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
@@ -54,16 +48,15 @@
             cursor: pointer; padding: 0 2px; border-radius: 3px;
         }
 
-        /* NOTAS SUPERÍNDICE (Botón pequeño) */
+        /* NOTA SUPERÍNDICE MEJORADA */
         .note-sup {
             font-size: 0.6em; vertical-align: super; cursor: pointer;
-            color: var(--note-icon-color); text-decoration: none !important; border: none; 
-            user-select: none; font-weight: bold; margin-left: 1px;
+            color: var(--accent); text-decoration: none !important; border: none; 
+            user-select: none; font-weight: bold; margin-left: 1px; display: inline-block;
         }
         .note-sup::before { content: '📝'; }
-        .note-sup:hover { transform: scale(1.2); }
+        .note-sup:hover { transform: scale(1.3); }
 
-        /* CAJAS DE RESPUESTA */
         .question-label { display: block; font-family: sans-serif; font-weight: bold; color: var(--accent); margin-top: 10px; font-size: 0.9em; }
         .rich-box {
             width: 100%; min-height: 100px; padding: 10px; margin: 5px 0 15px 0;
@@ -72,7 +65,6 @@
         }
         .rich-box img { max-width: 100%; display: block; margin: 5px 0; border-radius: 4px; }
 
-        /* CINTA FLOTANTE */
         #ribbon {
             position: absolute; display: none; background: var(--ribbon-bg); padding: 8px; border-radius: 8px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 2000; flex-direction: column; gap: 6px;
@@ -84,7 +76,6 @@
         .rib-lbl { color: #aaa; font-size: 10px; text-transform: uppercase; width: 40px;}
         body.dark .rib-lbl { color: #555; }
 
-        /* Selector de Color (Instantáneo) */
         .swatch { 
             width: 24px; height: 24px; border: 1px solid #fff; border-radius: 4px; 
             cursor: pointer; flex-shrink: 0; position: relative; overflow: hidden;
@@ -94,16 +85,13 @@
         .rib-btn { background: #555; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
         body.dark .rib-btn { background: #ccc; color: #000; }
 
-        /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-box { background: var(--bg); width: 90%; max-width: 600px; max-height: 80%; border-radius: 8px; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
         .modal-head { padding: 10px; background: var(--secondary); display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; }
         .modal-body { padding: 15px; overflow-y: auto; flex: 1; }
         
-        /* EDITOR NOTA */
-        #note-editor { width: 100%; height: 200px; border: 1px solid #ccc; padding: 10px; background: var(--bg); color: var(--text); font-family: sans-serif; overflow: auto; }
+        #note-editor { width: 100%; height: 200px; border: 1px solid #ccc; padding: 10px; background: var(--bg); color: var(--text); font-family: sans-serif; overflow: auto; outline:none; }
 
-        /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
         .login-box { text-align: center; padding: 30px; border: 1px solid var(--border); border-radius: 10px; width: 300px; background: var(--secondary); }
         .login-inp { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #999; border-radius: 4px; box-sizing: border-box; }
@@ -111,14 +99,12 @@
         .hidden { display: none !important; }
     </style>
 
-    <!-- FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-    <!-- LOGIN -->
     <div id="login-screen">
         <div class="login-box">
             <h2 style="color:var(--primary)">Mi Estudio</h2>
@@ -130,13 +116,12 @@
         </div>
     </div>
 
-    <!-- APP -->
     <div id="app" class="hidden">
         <header>
             <select id="sel-q" onchange="nav.changeQuarter()"></select>
             <select id="sel-l" onchange="nav.changeLesson()"></select>
             <select id="sel-d" onchange="loader.load()"></select>
-            <button class="tool-btn" onclick="ui.cycleMode()" title="Tema">🎨</button>
+            <button class="tool-btn" onclick="ui.cycleMode()">🎨</button>
             <button class="tool-btn" onclick="ui.font(2)">A+</button>
             <button class="tool-btn" onclick="ui.font(-2)">A-</button>
             <button class="tool-btn" onclick="loader.resetDay()" style="color:red" title="Borrar día">🗑️</button>
@@ -153,31 +138,22 @@
             </div>
         </div>
 
-        <!-- CINTA DE HERRAMIENTAS -->
         <div id="ribbon" onmousedown="event.preventDefault()">
-            <!-- Fondo -->
             <div class="rib-row">
                 <span class="rib-lbl">Fondo</span>
                 <div class="swatch" style="background:#ffff00" onclick="tools.bg('#ffff00')"></div>
                 <div class="swatch" style="background:#a5d6a7" onclick="tools.bg('#a5d6a7')"></div>
                 <div class="swatch" style="background:#90caf9" onclick="tools.bg('#90caf9')"></div>
-                <div class="swatch" style="background:#ffcc80" onclick="tools.bg('#ffcc80')"></div>
-                <div class="swatch" style="background:conic-gradient(red,blue,green)" title="Personalizado">
-                    <input type="color" oninput="tools.bg(this.value)"> <!-- ONINPUT = INSTANTANEO -->
-                </div>
-                <button class="rib-btn" onclick="tools.bg('transparent')" title="Quitar">🚫</button>
+                <div class="swatch" style="background:conic-gradient(red,blue,green)"><input type="color" oninput="tools.bg(this.value)"></div>
+                <button class="rib-btn" onclick="tools.bg('transparent')">🚫</button>
             </div>
-            <!-- Letra -->
             <div class="rib-row">
                 <span class="rib-lbl">Letra</span>
-                <div class="swatch" style="background:#000" onclick="tools.fg('#000')"></div>
                 <div class="swatch" style="background:#d32f2f" onclick="tools.fg('#d32f2f')"></div>
                 <div class="swatch" style="background:#1565c0" onclick="tools.fg('#1565c0')"></div>
-                <div class="swatch" style="background:conic-gradient(black,white)" title="Personalizado">
-                    <input type="color" oninput="tools.fg(this.value)">
-                </div>
+                <div class="swatch" style="background:#2e7d32" onclick="tools.fg('#2e7d32')"></div>
+                <div class="swatch" style="background:conic-gradient(black,white)"><input type="color" oninput="tools.fg(this.value)"></div>
             </div>
-            <!-- Estilos -->
             <div class="rib-row" style="border-top:1px solid #666; padding-top:5px; margin-top:5px; justify-content:space-between">
                 <div style="display:flex; gap:3px">
                     <button class="rib-btn" onclick="tools.exec('bold')"><b>B</b></button>
@@ -190,37 +166,36 @@
             </div>
         </div>
 
-        <!-- MODAL NOTA -->
         <div id="note-modal" class="modal">
             <div class="modal-box">
                 <div class="modal-head">
                     <b>Nota</b> <button onclick="notes.close()">✕</button>
                 </div>
                 <div class="modal-body">
-                    <div style="font-size:0.8em; color:#777; margin-bottom:5px">Puedes pegar imágenes (Ctrl+V).</div>
-                    <div id="note-editor" class="rich-box" contenteditable="true" style="border:1px solid #ccc; min-height:150px"></div>
+                    <div style="font-size:0.8em; color:#777; margin-bottom:5px">Pega imágenes (Ctrl+V). Se guarda al escribir.</div>
+                    <!-- contenteditable con oninput para autoguardado -->
+                    <div id="note-editor" contenteditable="true" oninput="notes.autoSave()"></div>
+                    <div id="save-status" style="font-size:0.7em; color:green; text-align:right; height:15px"></div>
                 </div>
                 <div style="padding:10px; display:flex; justify-content:space-between; background:var(--secondary)">
                     <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Eliminar</button>
-                    <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Guardar</button>
+                    <button onclick="notes.close()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Cerrar</button>
                 </div>
             </div>
         </div>
 
-        <!-- MODAL BIBLIA -->
         <div id="bible-modal" class="modal">
             <div class="modal-box">
                 <div class="modal-head">
                     <span id="bible-title">Biblia</span>
                     <button onclick="document.getElementById('bible-modal').style.display='none'">✕</button>
                 </div>
-                <div id="bible-content" class="bible-text">Cargando...</div>
+                <div id="bible-content" class="modal-body">Cargando...</div>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk", authDomain: "miescuelasabatica-fdb06.firebaseapp.com", databaseURL: "https://miescuelasabatica-fdb06-default-rtdb.firebaseio.com", projectId: "miescuelasabatica-fdb06", storageBucket: "miescuelasabatica-fdb06.firebasestorage.app", messagingSenderId: "832420279762", appId: "1:832420279762:web:4218b0fa30e2e93b12c40b" };
         firebase.initializeApp(firebaseConfig);
         const fbAuth = firebase.auth();
@@ -229,7 +204,6 @@
 
         const state = { user: null, q: '2025-04', l: '01', d: '01', activeNoteId: null };
 
-        // AUTH
         const auth = {
             login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
             reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
@@ -246,7 +220,6 @@
             }
         });
 
-        // NAVEGACIÓN
         const nav = {
             init: () => {
                 const qSel = document.getElementById('sel-q');
@@ -260,7 +233,7 @@
                 const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
                 days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
                 dSel.add(new Option("--- Extras ---", "disabled", true, true));
-                dSel.add(new Option("Maestros", "08"));
+                dSel.add(new Option("Maestros / Auxiliar", "08"));
                 dSel.add(new Option("Misionero", "09"));
 
                 const now = new Date();
@@ -283,10 +256,9 @@
             }
         };
 
-        // CARGADOR
         const loader = {
             load: async () => {
-                ribbon.hide();
+                ribbon.hide(); notes.close();
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
@@ -349,7 +321,28 @@
             }
         };
 
-        // HERRAMIENTAS INTELIGENTES
+        function enablePasteImage() {
+            const handle = (e) => {
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                for (let i in items) {
+                    if (items[i].kind === 'file') {
+                        const blob = items[i].getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = (evt) => {
+                            document.execCommand('insertImage', false, evt.target.result);
+                            // Auto-guardar dependiente de donde se pegó
+                            if(document.getElementById('note-modal').style.display==='flex') notes.autoSave();
+                            else loader.save();
+                        };
+                        reader.readAsDataURL(blob);
+                        e.preventDefault();
+                    }
+                }
+            };
+            document.getElementById('note-editor').onpaste = handle;
+            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = handle);
+        }
+
         const tools = {
             exec: (cmd, val) => {
                 document.designMode = "on";
@@ -361,14 +354,11 @@
             bg: (c) => tools.exec("BackColor", c),
             fg: (c) => tools.exec("ForeColor", c),
             clear: () => { tools.exec("removeFormat", null); ribbon.hide(); },
-            
             addNote: () => {
                 const sel = window.getSelection();
                 if(!sel.rangeCount || sel.isCollapsed) return;
                 
-                // TRUCO: Mover selección al final de la palabra/bloque para no romper
-                // Usamos la funcionalidad del navegador para 'extender' al final de la palabra
-                // (Soporte limitado, fallback a fin de selección)
+                // TRUCO: Mover cursor al final para no romper
                 sel.collapseToEnd();
 
                 const id = Date.now().toString();
@@ -387,7 +377,6 @@
             }
         };
 
-        // GESTIÓN DE NOTAS
         const notes = {
             open: (id) => {
                 state.activeNoteId = id;
@@ -397,73 +386,20 @@
                 });
             },
             close: () => document.getElementById('note-modal').style.display = 'none',
-            save: () => {
+            autoSave: () => {
                 const html = document.getElementById('note-editor').innerHTML;
-                if(!html.trim()) { notes.delete(); return; }
                 fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
-                document.getElementById('note-modal').style.display = 'none';
+                document.getElementById('save-status').innerText = "Guardado...";
+                setTimeout(()=>document.getElementById('save-status').innerText="", 1000);
             },
+            save: () => { notes.autoSave(); notes.close(); },
             delete: () => {
                 const id = state.activeNoteId;
                 fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
                 const el = document.querySelector(`.note-sup[data-id="${id}"]`);
                 if(el) el.remove();
-                document.getElementById('note-modal').style.display = 'none';
+                notes.close();
                 loader.save();
-            }
-        };
-
-        function enablePasteImage() {
-            const handle = (e) => {
-                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-                for (let i in items) {
-                    if (items[i].kind === 'file') {
-                        const blob = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = (evt) => {
-                            document.execCommand('insertImage', false, evt.target.result);
-                            // Guardar según contexto
-                            if(document.getElementById('note-modal').style.display === 'flex') notes.save();
-                            else loader.save();
-                        };
-                        reader.readAsDataURL(blob);
-                        e.preventDefault();
-                    }
-                }
-            };
-            document.getElementById('note-editor').onpaste = handle;
-            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = handle);
-        }
-
-        // BIBLIA API DIRECTA
-        const bible = {
-            fetch: (ref) => {
-                document.getElementById('bible-modal').style.display = 'flex';
-                document.getElementById('bible-title').innerText = ref;
-                document.getElementById('bible-content').innerHTML = '<p style="text-align:center">Cargando...</p>';
-                
-                let cleanRef = ref.replace(/\s/g, '');
-                const url = `https://bible-api.com/${encodeURIComponent(cleanRef)}?translation=almeida`;
-                
-                fetch(url).then(r => r.json()).then(d => {
-                    if(d.text) document.getElementById('bible-content').innerText = d.text;
-                    else document.getElementById('bible-content').innerText = "Texto no encontrado.";
-                }).catch(()=>document.getElementById('bible-content').innerText="Error de red.");
-            }
-        };
-
-        const ui = {
-            cycleMode: () => {
-                const b = document.body;
-                if(!b.className) b.className = 'sepia';
-                else if(b.className === 'sepia') b.className = 'amber';
-                else if(b.className === 'amber') b.className = 'dark';
-                else b.className = '';
-            },
-            font: (v) => {
-                const el = document.getElementById('content');
-                const s = parseInt(window.getComputedStyle(el).fontSize);
-                el.style.fontSize = (s+v)+'px';
             }
         };
 
@@ -485,6 +421,34 @@
             hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
+        const bible = {
+            fetch: (ref) => {
+                document.getElementById('bible-modal').style.display = 'flex';
+                document.getElementById('bible-content').innerHTML = '<p style="text-align:center">Cargando...</p>';
+                let cleanRef = ref.replace(/\s/g, ''); 
+                const url = `https://bible-api.com/${encodeURIComponent(cleanRef)}?translation=almeida`;
+                fetch(url).then(r => r.json()).then(d => {
+                    if(d.text) document.getElementById('bible-content').innerText = d.text;
+                    else document.getElementById('bible-content').innerText = "No encontrado.";
+                }).catch(()=>document.getElementById('bible-content').innerText="Error.");
+            }
+        };
+
+        const ui = {
+            cycleMode: () => {
+                const b = document.body;
+                if(!b.className) b.className = 'sepia';
+                else if(b.className === 'sepia') b.className = 'amber';
+                else if(b.className === 'amber') b.className = 'dark';
+                else b.className = '';
+            },
+            font: (v) => {
+                const el = document.getElementById('content');
+                const s = parseInt(window.getComputedStyle(el).fontSize);
+                el.style.fontSize = (s+v)+'px';
+            }
+        };
+
         function parser(md) {
             md = md.replace(/^---[\s\S]*?---/, "");
             md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
@@ -502,13 +466,20 @@
                 if(l.includes('?') || l.includes('Lee')) {
                     let id = `ans-${i}`;
                     h += `<span class="question-label">Tu respuesta:</span>
-                          <div class="rich-box" contenteditable="true" placeholder="Escribe aquí..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
+                          <div class="rich-box" contenteditable="true" placeholder="Escribe aquí..." oninput="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
                 }
             });
             return h;
         }
-        
+
+        // DETECTOR DE TECLAS INTELIGENTE (FIX FINAL)
         document.addEventListener('keydown', e => {
+            const el = document.activeElement;
+            const isEditing = el.isContentEditable || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA';
+            
+            // Si está escribiendo, las flechas NO navegan entre días
+            if (isEditing) return;
+
             if(e.key === "ArrowLeft") nav.prev();
             if(e.key === "ArrowRight") nav.next();
         });
