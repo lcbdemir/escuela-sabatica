@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V51 - Edición Oro</title>
+    <title>Escuela Sabática V52 - Protección de Datos</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
@@ -19,18 +19,18 @@
             --ribbon-bg: #333;
             --ribbon-btn: #555;
         }
-        /* 1. SEPIA */
+        /* SEPIA */
         body.sepia { 
             --bg: #f4ecd8; --text: #5b4636; --primary: #6d4c41; 
             --secondary: #eefebe; --window-bg: #fcf8e3; --border: #d7ccc8;
         }
-        /* 2. ÁMBAR (Científico) */
+        /* ÁMBAR */
         body.amber-mode {
             --bg: #121212; --text: #ffb74d; --primary: #e65100;
             --secondary: #1e1e1e; --accent: #ffd180; --window-bg: #1a1a1a;
             --border: #333; --ribbon-bg: #222;
         }
-        /* 3. OSCURO */
+        /* OSCURO */
         body.dark { 
             --bg: #000000; --text: #e0e0e0; --primary: #80cbc4; 
             --secondary: #1e1e1e; --accent: #ef9a9a; --window-bg: #222; 
@@ -128,7 +128,6 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 2000; flex-direction: column; gap: 6px;
             min-width: 250px;
         }
-        body.dark #ribbon { background: #333; border: 1px solid #555; }
         
         .rib-row { display: flex; align-items: center; gap: 5px; overflow-x: auto; }
         .rib-lbl { color: #aaa; font-size: 10px; text-transform: uppercase; width: 40px;}
@@ -204,11 +203,13 @@
                 </div>
                 <div class="window-body">
                     <div style="font-size:0.8em; opacity:0.7; margin-bottom:5px">Pega imágenes (Ctrl+V) y escribe.</div>
-                    <div id="window-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0; border:1px solid var(--border)"></div>
+                    <!-- Añadimos evento oninput para auto-guardar -->
+                    <div id="window-editor" class="rich-box" contenteditable="true" oninput="notes.autoSave()" style="flex:1; margin:0; border:1px solid var(--border)"></div>
+                    <div id="save-status" style="font-size:0.7em; color:green; text-align:right; height:15px;"></div>
                 </div>
                 <div class="window-footer">
                     <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Eliminar</button>
-                    <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Guardar</button>
+                    <button onclick="notes.close()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Cerrar</button>
                 </div>
             </div>
 
@@ -359,10 +360,11 @@
             }
         };
 
-        // CARGADOR
+        // CARGADOR Y PERSISTENCIA
         const loader = {
             load: async () => {
-                ribbon.hide(); notes.close();
+                ribbon.hide();
+                notes.close();
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
@@ -435,7 +437,12 @@
                         const reader = new FileReader();
                         reader.onload = (evt) => {
                             document.execCommand('insertImage', false, evt.target.result);
-                            loader.save();
+                            // Guardar dependiendo de donde estemos (nota o contenido principal)
+                            if(document.getElementById('note-window').style.display === 'flex'){
+                                notes.save();
+                            } else {
+                                loader.save();
+                            }
                         };
                         reader.readAsDataURL(blob);
                         e.preventDefault();
@@ -483,10 +490,14 @@
                 });
             },
             close: () => document.getElementById('note-window').style.display = 'none',
+            autoSave: () => {
+                 const html = document.getElementById('window-editor').innerHTML;
+                 fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
+                 document.getElementById('save-status').innerText = "Guardado...";
+                 setTimeout(()=>document.getElementById('save-status').innerText = "", 1000);
+            },
             save: () => {
-                const html = document.getElementById('window-editor').innerHTML;
-                if(!html.trim()) { notes.delete(); return; }
-                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
+                notes.autoSave();
                 notes.close();
             },
             delete: () => {
@@ -572,6 +583,11 @@
         }
         
         document.addEventListener('keydown', e => {
+            // Block arrows if editing note
+            const tag = document.activeElement.tagName;
+            const isEditable = document.activeElement.isContentEditable;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || isEditable) return;
+
             if(e.key === "ArrowLeft") nav.prev();
             if(e.key === "ArrowRight") nav.next();
         });
