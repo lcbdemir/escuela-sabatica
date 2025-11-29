@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V35 - Acceso Permanente</title>
+    <title>Escuela Sabática V36 - Estudio Pro</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
         :root {
             --bg: #ffffff;
             --text: #222;
-            --primary: #00695c;
+            --primary: #004d40;
             --secondary: #e0f2f1;
             --accent: #c62828;
-            --ribbon-bg: #222;
+            --ribbon-bg: #263238;
+            --sidebar-width: 300px;
         }
         body.sepia {
             --bg: #f4ecd8;
@@ -35,18 +36,35 @@
         /* HEADER */
         header { background: var(--secondary); padding: 5px; border-bottom: 2px solid var(--primary); display: flex; gap: 5px; align-items: center; z-index: 50; }
         select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 0.9rem; }
-        .tool-btn { background: none; border: 1px solid #ccc; cursor: pointer; padding: 5px 10px; border-radius: 4px; color: var(--text); font-weight: bold; }
+        .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 5px; border-radius: 4px; color: var(--text); font-weight: bold; }
 
-        /* CONTENEDOR */
+        /* CONTENEDOR CON SIDEBAR */
+        #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
+        
         #main-container { 
-            flex: 1; overflow-y: auto; padding: 20px 50px; 
-            max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box; 
-            position: relative;
+            flex: 1; overflow-y: auto; padding: 20px 60px; /* Espacio para flechas */
+            box-sizing: border-box; transition: margin-right 0.3s;
         }
+
+        /* SIDEBAR DE NOTAS */
+        #notes-sidebar {
+            width: var(--sidebar-width); background: var(--secondary); 
+            border-left: 2px solid var(--primary); display: none; flex-direction: column;
+            position: absolute; right: 0; top: 0; bottom: 0; z-index: 100;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+        .sidebar-header { padding: 10px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
+        #note-editor-area { flex: 1; padding: 10px; overflow-y: auto; font-family: sans-serif; }
+        /* Editor Rico Simulado */
+        #rich-editor { 
+            width: 100%; min-height: 200px; border: 1px solid #ccc; background: var(--bg); color: var(--text);
+            padding: 10px; border-radius: 4px; box-sizing: border-box; overflow-y: auto;
+        }
+        #rich-editor img { max-width: 100%; height: auto; }
 
         /* FLECHAS */
         .nav-arrow {
-            position: fixed; top: 50%; transform: translateY(-50%);
+            position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(0,0,0,0.05); border: none; color: var(--text);
             font-size: 2rem; padding: 15px 5px; cursor: pointer; z-index: 40;
             border-radius: 5px; transition: background 0.2s;
@@ -59,17 +77,23 @@
         h1 { color: var(--primary); border-bottom: 1px solid #ccc; font-size: 1.5em; }
         h2 { color: var(--text); margin-top: 25px; font-weight: bold; font-size: 1.2em; }
         h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
-        p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
+        p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; position: relative; }
         .bible-link { color: var(--primary); font-weight: bold; text-decoration: underline; cursor: pointer; }
         
-        /* NOTAS SUPERÍNDICE */
-        .note-sup {
-            font-size: 0.8em; vertical-align: super; cursor: pointer;
-            background: var(--accent); color: white; border-radius: 4px;
-            padding: 0 5px; margin-left: 2px; text-decoration: none !important; border: none;
-            user-select: none; display: inline-block;
+        /* ESTILOS PERSONALIZADOS */
+        .u-simple { text-decoration: underline; }
+        .u-double { border-bottom: 3px double; text-decoration: none; }
+        .u-thick { border-bottom: 2px solid; text-decoration: none; }
+
+        /* NOTAS SUPERÍNDICE MEJORADAS */
+        .note-marker {
+            font-size: 0.6em; vertical-align: super; cursor: pointer;
+            color: var(--accent); font-weight: bold; margin-left: 2px;
+            text-decoration: none !important; border: none; user-select: none;
+            position: relative; top: -0.2em;
         }
-        .note-sup:hover { transform: scale(1.1); }
+        .note-marker::before { content: '📝'; }
+        .note-marker:hover { transform: scale(1.3); display: inline-block; }
 
         /* CAJAS DE RESPUESTA */
         .q-box {
@@ -82,31 +106,28 @@
         #ribbon {
             position: absolute; display: none; background: #333; padding: 8px; border-radius: 8px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 1000; flex-direction: column; gap: 6px;
-            min-width: 280px;
+            min-width: 260px;
         }
         
         .rib-row { display: flex; align-items: center; gap: 4px; overflow-x: auto; }
         .rib-label { color: #aaa; font-size: 0.7rem; min-width: 40px; }
         
-        /* Cajetines de Color */
-        .swatch { width: 24px; height: 24px; border: 1px solid #fff; cursor: pointer; flex-shrink: 0; border-radius: 4px; }
+        .swatch { width: 22px; height: 22px; border: 1px solid #fff; cursor: pointer; flex-shrink: 0; }
         .swatch:hover { transform: scale(1.2); border-color: yellow; }
         
         /* Input Color Personalizado */
-        .custom-color-wrap { width: 24px; height: 24px; border-radius: 4px; overflow: hidden; border: 1px solid #fff; position: relative; background: conic-gradient(red, yellow, green, blue, red);}
+        .custom-color-wrap { width: 22px; height: 22px; border: 1px solid #fff; position: relative; background: conic-gradient(red, yellow, green, blue, red); cursor:pointer;}
         input[type="color"] { opacity: 0; width: 100%; height: 100%; cursor: pointer; position: absolute; top: 0; left: 0; }
 
-        /* Botones Acción */
         .rib-btn { 
             background: #555; border: none; color: white; padding: 6px; border-radius: 4px; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;
         }
         .rib-btn:hover { background: #777; }
 
-        /* MODALES */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-box { background: var(--bg); padding: 15px; border-radius: 10px; width: 90%; max-width: 500px; height: 70%; display: flex; flex-direction: column; }
-        textarea#note-editor { flex: 1; width: 100%; padding: 10px; resize: none; font-size: 1.1em; border: 1px solid #ccc; box-sizing:border-box;}
+        /* MODAL BIBLIA */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-box { background: var(--bg); padding: 15px; border-radius: 10px; width: 90%; max-width: 600px; height: 70%; display: flex; flex-direction: column; }
 
         .hidden { display: none !important; }
     </style>
@@ -118,18 +139,14 @@
 </head>
 <body>
 
-    <!-- LOGIN (Simple) -->
+    <!-- LOGIN -->
     <div id="login-screen" style="position:fixed; inset:0; background:#fff; z-index:5000; display:flex; justify-content:center; align-items:center;">
-        <div style="text-align:center; width:300px; padding:20px; border:1px solid #ccc; border-radius:10px; background:#f9f9f9">
-            <h2 style="color:#004d40; margin-top:0">Bienvenido</h2>
-            <p style="font-size:0.8rem; color:#666">Crea una cuenta nueva si olvidaste la anterior.</p>
-            <input id="email" type="email" placeholder="Nuevo Correo (ej: yo@estudio.com)" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ccc; box-sizing:border-box">
-            <input id="pass" type="password" placeholder="Nueva Contraseña" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ccc; box-sizing:border-box">
-            <div style="display:flex; gap:5px; margin-top:10px">
-                <button onclick="auth.login()" style="flex:1; padding:10px; background:#004d40; color:white; border:none; cursor:pointer; border-radius:4px">Entrar</button>
-                <button onclick="auth.reg()" style="flex:1; padding:10px; background:#d81b60; color:white; border:none; cursor:pointer; border-radius:4px">REGISTRARME</button>
-            </div>
-            <p id="msg" style="color:red; font-size:0.8rem; margin-top:10px"></p>
+        <div style="text-align:center; width:300px;">
+            <h2 style="color:#004d40">Mi Estudio</h2>
+            <input id="email" type="email" placeholder="Email" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ccc;">
+            <input id="pass" type="password" placeholder="Contraseña" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ccc;">
+            <button onclick="auth.login()" style="width:100%; padding:10px; background:#004d40; color:white; border:none; cursor:pointer;">Entrar</button>
+            <p id="msg" style="color:red"></p>
         </div>
     </div>
 
@@ -144,12 +161,33 @@
             <button class="tool-btn" onclick="ui.font(-2)">A-</button>
         </header>
 
-        <button id="prev-btn" class="nav-arrow" onclick="nav.prev()">❮</button>
-        <button id="next-btn" class="nav-arrow" onclick="nav.next()">❯</button>
+        <div id="workspace">
+            <button id="prev-btn" class="nav-arrow" onclick="nav.prev()">❮</button>
+            <button id="next-btn" class="nav-arrow" onclick="nav.next()">❯</button>
 
-        <div id="main-container" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
-            <div id="content">
-                <p style="text-align:center; margin-top:50px">Cargando...</p>
+            <div id="main-container" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
+                <div id="content">
+                    <p style="text-align:center; margin-top:50px">Cargando...</p>
+                </div>
+            </div>
+
+            <!-- SIDEBAR DE NOTAS -->
+            <div id="notes-sidebar">
+                <div class="sidebar-header">
+                    <span>📝 Notas</span>
+                    <button onclick="notes.close()" style="background:none; border:none; color:white; font-size:1.2em; cursor:pointer">✕</button>
+                </div>
+                <div id="note-editor-area">
+                    <div style="margin-bottom:10px; font-size:0.8em; color:#666">
+                        Puedes escribir texto o pegar imágenes (Ctrl+V) aquí.
+                    </div>
+                    <!-- ContentEditable Div para Rich Text -->
+                    <div id="rich-editor" contenteditable="true"></div>
+                    <div style="margin-top:10px; display:flex; justify-content:space-between">
+                        <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px; cursor:pointer">Eliminar</button>
+                        <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px; cursor:pointer">Guardar</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -185,28 +223,13 @@
             <!-- Estilos -->
             <div class="rib-row" style="justify-content:space-between; margin-top:5px; border-top:1px solid #555; padding-top:5px">
                 <div style="display:flex; gap:5px">
-                    <button class="rib-btn" onclick="tools.exec('underline')"><u>S</u></button>
-                    <button class="rib-btn" onclick="tools.exec('italic')"><i>I</i></button>
-                    <button class="rib-btn" onclick="tools.exec('bold')"><b>N</b></button>
+                    <button class="rib-btn" onclick="tools.style('u-simple')"><u>S</u></button>
+                    <button class="rib-btn" onclick="tools.style('u-double')"><span style="border-bottom:3px double white; line-height:0.5">D</span></button>
+                    <button class="rib-btn" onclick="tools.style('u-thick')"><span style="border-bottom:2px solid white; line-height:0.8">G</span></button>
                 </div>
                 <div style="display:flex; gap:5px">
                     <button class="rib-btn" onclick="tools.addNote()" style="background:#7b1fa2">📝 Nota</button>
                     <button class="rib-btn" onclick="ribbon.hide()">✕</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL NOTA -->
-        <div id="note-modal" class="modal">
-            <div class="modal-box">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-                    <b>Nota Personal</b>
-                    <button onclick="document.getElementById('note-modal').style.display='none'">✕</button>
-                </div>
-                <textarea id="note-editor" placeholder="Escribe aquí..."></textarea>
-                <div style="display:flex; justify-content:space-between; margin-top:10px">
-                    <button onclick="notes.delete()" style="background:#d32f2f; color:white; padding:8px; border:none; cursor:pointer">Eliminar</button>
-                    <button onclick="notes.save()" style="background:var(--primary); color:white; padding:8px; border:none; cursor:pointer">Guardar</button>
                 </div>
             </div>
         </div>
@@ -237,17 +260,12 @@
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
 
-        // PERSISTENCIA DE SESIÓN
-        fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
         const state = { user: null, q: '2025-04', l: '01', d: '01', activeNoteId: null };
 
         // AUTH
         const auth = {
-            login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg("Error: " + e.message)),
-            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass'))
-                        .then(() => msg("¡Cuenta creada! Ahora dale a Entrar"))
-                        .catch(e=>msg("Error: " + e.message))
+            login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
+            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
         };
         function val(id){ return document.getElementById(id).value; }
         function msg(t){ document.getElementById('msg').innerText = t; }
@@ -275,12 +293,8 @@
                 const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
                 days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
 
-                // Calcular fecha hoy
                 const now = new Date();
-                // Simulación trimestre 4 (Oct-Dic)
-                // Asumimos lección 9, Noviembre
                 document.getElementById('sel-l').value = "09"; 
-                // Ajustar día semana (Dom=02)
                 let d = now.getDay();
                 let dMap = [2,3,4,5,6,7,1];
                 document.getElementById('sel-d').value = "0" + dMap[d];
@@ -299,16 +313,11 @@
             }
         };
 
-        // TECLADO
-        document.addEventListener('keydown', (e) => {
-            if(e.key === "ArrowLeft") nav.prev();
-            if(e.key === "ArrowRight") nav.next();
-        });
-
         // CARGADOR Y PERSISTENCIA
         const loader = {
             load: async () => {
                 ribbon.hide();
+                notes.close(); // Cerrar sidebar si cambia lección
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
@@ -316,7 +325,6 @@
                 const container = document.getElementById('content');
                 container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
 
-                // 1. Cargar HTML guardado
                 const ref = `users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`;
                 fbDb.ref(ref).once('value', async (s) => {
                     const html = s.val();
@@ -359,7 +367,7 @@
             },
             attachEvents: () => {
                 document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
-                document.querySelectorAll('.note-sup').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
+                document.querySelectorAll('.note-marker').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
             }
         };
 
@@ -370,7 +378,7 @@
                 document.execCommand("BackColor", false, c);
                 document.designMode = "off";
                 loader.save();
-                ribbon.hide(); // Cierra al elegir
+                ribbon.hide();
             },
             fg: (c) => {
                 document.designMode = "on";
@@ -379,27 +387,35 @@
                 loader.save();
                 ribbon.hide();
             },
-            exec: (cmd) => {
-                document.designMode = "on";
-                document.execCommand(cmd, false, null);
-                document.designMode = "off";
-                loader.save();
+            style: (cls) => {
+                const sel = window.getSelection();
+                if(!sel.rangeCount) return;
+                
+                const span = document.createElement("span");
+                span.className = cls;
+                span.textContent = sel.toString();
+                
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(span);
+                
                 ribbon.hide();
+                loader.save();
             },
             addNote: () => {
                 const sel = window.getSelection();
                 if(!sel.rangeCount || sel.isCollapsed) return;
                 
                 const id = Date.now().toString();
+                // Nota Superíndice pequeña
                 const sup = document.createElement("sup");
-                sup.className = "note-sup";
-                sup.innerHTML = "📝";
+                sup.className = "note-marker";
                 sup.dataset.id = id;
                 sup.contentEditable = "false";
                 sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
                 
                 const range = sel.getRangeAt(0);
-                range.collapse(false); 
+                range.collapse(false); // Poner AL FINAL de la palabra
                 range.insertNode(sup);
                 
                 ribbon.hide();
@@ -411,24 +427,30 @@
         const notes = {
             open: (id) => {
                 state.activeNoteId = id;
-                document.getElementById('note-modal').style.display = 'flex';
+                const sidebar = document.getElementById('notes-sidebar');
+                sidebar.style.display = 'flex';
+                
+                // Cargar contenido HTML (Rich Text)
                 fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
-                    document.getElementById('note-editor').value = s.val() || "";
+                    document.getElementById('rich-editor').innerHTML = s.val() || "";
                 });
             },
+            close: () => {
+                document.getElementById('notes-sidebar').style.display = 'none';
+            },
             save: () => {
-                const txt = document.getElementById('note-editor').value;
+                const html = document.getElementById('rich-editor').innerHTML;
                 const id = state.activeNoteId;
-                if(!txt.trim()) { notes.delete(); return; }
-                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).set(txt);
-                document.getElementById('note-modal').style.display = 'none';
+                if(!html.trim()) { notes.delete(); return; }
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).set(html);
+                notes.close();
             },
             delete: () => {
                 const id = state.activeNoteId;
                 fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
-                const el = document.querySelector(`.note-sup[data-id="${id}"]`);
+                const el = document.querySelector(`.note-marker[data-id="${id}"]`);
                 if(el) el.remove();
-                document.getElementById('note-modal').style.display = 'none';
+                notes.close();
                 loader.save();
             }
         };
@@ -493,6 +515,11 @@
             });
             return h;
         }
+        
+        document.addEventListener('keydown', e => {
+            if(e.key === "ArrowLeft") nav.prev();
+            if(e.key === "ArrowRight") nav.next();
+        });
     </script>
 </body>
 </html>
