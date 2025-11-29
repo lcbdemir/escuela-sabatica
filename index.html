@@ -3,132 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V41 - Final Fix</title>
+    <title>Escuela Sabática V42 - Carga Inmediata</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
-        /* TEMA BASE */
-        :root {
-            --bg: #ffffff;
-            --text: #222;
-            --header-bg: #f8f9fa;
-            --primary: #00695c;
-            --accent: #c62828;
-            --border: #ddd;
-        }
-        body.dark {
-            --bg: #121212;
-            --text: #e0e0e0;
-            --header-bg: #1f1f1f;
-            --primary: #80cbc4;
-            --accent: #ef9a9a;
-            --border: #333;
-        }
-        body.sepia {
-            --bg: #f4ecd8;
-            --text: #5b4636;
-            --header-bg: #e9e2c9;
-            --primary: #5d4037;
-            --border: #d7cbb1;
-        }
-
-        /* LAYOUT (GRID SYSTEM PARA ARREGLAR SCROLL) */
-        body { 
-            font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); 
-            height: 100vh; overflow: hidden; /* El body no scrollea */
-            display: grid; grid-template-rows: auto 1fr; /* Encabezado fijo, resto flexible */
-        }
-
-        /* HEADER */
-        header { 
-            background: var(--header-bg); padding: 10px; border-bottom: 2px solid var(--primary); 
-            display: flex; gap: 8px; align-items: center; z-index: 50; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        select { flex: 1; padding: 8px; border: 1px solid #999; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 16px; }
-        .btn-tool { background: none; border: 1px solid var(--border); padding: 5px; border-radius: 4px; color: var(--text); cursor: pointer; }
-
-        /* CONTENEDOR PRINCIPAL (AQUÍ ESTÁ EL SCROLL) */
-        #scroll-container { 
-            overflow-y: auto; padding: 20px 50px; position: relative; scroll-behavior: smooth;
-        }
-        /* Ajuste móvil */
-        @media (max-width: 600px) { #scroll-container { padding: 20px 15px 80px 15px; } }
-
-        /* FLECHAS DE NAVEGACIÓN (FLOTANTES Y FIJAS) */
-        .arrow-btn {
-            position: fixed; top: 50%; transform: translateY(-50%);
-            background: rgba(0,0,0,0.1); border: none; color: var(--text);
-            font-size: 2rem; padding: 20px 5px; cursor: pointer; z-index: 40;
-            border-radius: 5px; transition: 0.2s;
-        }
-        .arrow-btn:hover { background: var(--primary); color: white; }
-        #btn-prev { left: 0; }
-        #btn-next { right: 0; }
-
-        /* TEXTO Y CONTENIDO */
-        #content { max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 19px; padding-bottom: 50px; }
-        h1 { color: var(--primary); border-bottom: 1px solid var(--border); font-size: 1.5em; }
-        h2 { color: var(--text); margin-top: 30px; font-weight: bold; }
-        p { margin-bottom: 15px; }
-        .bible-link { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: bold; }
-
-        /* NOTAS (ICONO MEJORADO) */
-        .note-ref {
-            font-size: 0.7em; vertical-align: super; cursor: pointer; color: var(--accent);
-            text-decoration: none; margin-left: 2px;
-        }
-        .note-ref::before { content: '📄'; } /* Icono de documento */
-
-        /* CAJAS DE RESPUESTA */
-        .rich-box {
-            width: 100%; min-height: 100px; padding: 10px; margin: 15px 0;
-            border: 1px solid var(--border); border-radius: 5px; background: var(--bg); color: var(--text);
-            font-family: sans-serif; overflow-y: auto; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .rich-box:focus { border-color: var(--primary); }
-
-        /* CINTA FLOTANTE */
-        #ribbon {
-            position: absolute; display: none; background: #333; padding: 5px; border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4); z-index: 1000; align-items: center; gap: 5px;
-        }
-        .rib-btn { 
-            background: none; border: none; color: white; padding: 8px; border-radius: 50%; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        .rib-btn:hover { background: #555; }
-
-        /* PALETA DE COLORES (MODAL) */
-        #palette-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--bg); padding: 20px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 2000; display: none; width: 300px; border: 1px solid var(--border);
-        }
-        .palette-section { margin-bottom: 15px; }
-        .palette-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; color: var(--text); }
-        .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
-        .swatch { 
-            width: 30px; height: 30px; border-radius: 50%; border: 1px solid #999; cursor: pointer; 
-        }
-        .swatch:hover { transform: scale(1.1); border-color: var(--text); }
-        /* Picker Nativo Grande */
-        .color-picker-large { width: 100%; height: 40px; border: none; cursor: pointer; margin-top: 5px; }
-
-        /* MODALES */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1500; display: none; }
-        .modal-container { 
-            position: fixed; inset: 20px; background: var(--bg); border-radius: 10px; z-index: 1600; display: none; flex-direction: column; 
-            max-width: 800px; margin: auto;
-        }
-        .modal-head { padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;}
-        .modal-body { flex: 1; padding: 10px; overflow-y: auto; }
-
-        /* LOGIN */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-box { text-align: center; padding: 30px; border: 1px solid var(--border); border-radius: 10px; width: 300px; background: var(--header-bg); }
-        .login-inp { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #999; border-radius: 4px; box-sizing: border-box; }
+        :root { --bg:#fff; --text:#222; --primary:#00695c; --acc:#c62828; --sec:#e0f2f1; }
+        body.sepia { --bg:#f4ecd8; --text:#5b4636; --primary:#5d4037; --sec:#eefebe; }
+        body.dark { --bg:#121212; --text:#e0e0e0; --primary:#80cbc4; --sec:#1e1e1e; --acc:#ef9a9a; }
+        body { font-family:'Georgia',serif; margin:0; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
         
-        .hidden { display: none !important; }
+        header { background:var(--sec); padding:10px; border-bottom:2px solid var(--primary); display:flex; gap:5px; align-items:center; z-index:50; }
+        select { flex:1; padding:8px; border:1px solid #ccc; border-radius:4px; font-size:16px; background:var(--bg); color:var(--text); }
+        .btn { background:none; border:1px solid #ccc; padding:5px; border-radius:4px; color:var(--text); cursor:pointer; }
+        
+        #main { flex:1; overflow-y:auto; padding:20px 40px; position:relative; scroll-behavior:smooth; }
+        .arrow { position:fixed; top:50%; transform:translateY(-50%); font-size:2rem; padding:15px 5px; background:rgba(0,0,0,0.1); border:none; cursor:pointer; z-index:40; color:var(--text); }
+        .arrow:hover { background:var(--primary); color:white; }
+        
+        h1 { color:var(--primary); border-bottom:1px solid #ccc; }
+        .bible { color:var(--primary); font-weight:bold; text-decoration:underline; cursor:pointer; }
+        .note { font-size:0.7em; vertical-align:super; cursor:pointer; color:var(--acc); text-decoration:none; }
+        .note::before { content:'📄'; }
+        
+        .box { width:100%; min-height:100px; padding:10px; margin:15px 0; border:1px solid #ccc; background:var(--bg); color:var(--text); overflow:auto; }
+        
+        /* CINTA */
+        #ribbon { position:absolute; display:none; background:#333; padding:5px; border-radius:50px; z-index:1000; gap:5px; }
+        .rib-btn { background:none; border:none; color:white; padding:8px; cursor:pointer; display:flex; border-radius:50%; }
+        .rib-btn:hover { background:#555; }
+        
+        /* MODALES */
+        .modal { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; z-index:2000; }
+        .m-box { background:var(--bg); padding:20px; border-radius:8px; width:90%; max-width:500px; max-height:80%; display:flex; flex-direction:column; }
+        
+        .hidden { display:none!important; }
     </style>
 
     <!-- FIREBASE -->
@@ -138,397 +46,250 @@
 </head>
 <body>
 
-    <!-- LOGIN -->
-    <div id="login-screen">
-        <div class="login-box">
-            <h2 style="color:var(--primary)">Mi Estudio</h2>
-            <input id="email" class="login-inp" type="email" placeholder="Correo">
-            <input id="pass" class="login-inp" type="password" placeholder="Contraseña">
-            <button onclick="auth.login()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer">Entrar</button>
-            <button onclick="auth.reg()" style="width:100%; padding:10px; background:#555; color:white; border:none; border-radius:4px; margin-top:5px; cursor:pointer">Registrarme</button>
-            <p id="msg" style="color:red; margin-top:10px"></p>
-        </div>
-    </div>
-
-    <!-- NAVEGACIÓN -->
     <header>
-        <select id="sel-q" onchange="nav.changeQuarter()"></select>
-        <select id="sel-l" onchange="nav.changeLesson()"></select>
-        <select id="sel-d" onchange="loader.load()"></select>
-        <button class="btn-tool" onclick="ui.cycleMode()" title="Tema">🎨</button>
-        <button class="btn-tool" onclick="ui.font(2)">A+</button>
-        <button class="btn-tool" onclick="ui.font(-2)">A-</button>
+        <select id="sq" onchange="app.load()"></select>
+        <select id="sl" onchange="app.load()"></select>
+        <select id="sd" onchange="app.load()"></select>
+        <button class="btn" onclick="ui.theme()">🎨</button>
+        <button class="btn" onclick="ui.font(2)">A+</button>
+        <button class="btn" onclick="ui.font(-2)">A-</button>
+        <button id="btn-login" class="btn" onclick="auth.ui()" style="color:var(--primary)">👤</button>
     </header>
 
-    <!-- FLECHAS -->
-    <button id="btn-prev" class="arrow-btn" onclick="nav.prev()">❮</button>
-    <button id="btn-next" class="arrow-btn" onclick="nav.next()">❯</button>
+    <button class="arrow" style="left:0" onclick="nav.move(-1)">❮</button>
+    <button class="arrow" style="right:0" onclick="nav.move(1)">❯</button>
 
-    <!-- ÁREA DE LECTURA (SCROLLABLE) -->
-    <div id="scroll-container" onmouseup="ribbon.check()" ontouchend="ribbon.check()">
-        <div id="content">
-            <p style="text-align:center; padding-top:50px">Cargando...</p>
-        </div>
+    <div id="main" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
+        <div id="content"><p style="text-align:center; margin-top:50px">Iniciando...</p></div>
     </div>
 
-    <!-- CINTA FLOTANTE -->
+    <!-- CINTA -->
     <div id="ribbon" onmousedown="event.preventDefault()">
-        <button class="rib-btn" onclick="palette.open('back')" title="Resaltar Fondo"><i class="material-icons">border_color</i></button>
-        <button class="rib-btn" onclick="palette.open('fore')" title="Color Texto"><i class="material-icons">format_color_text</i></button>
-        <div style="width:1px; height:20px; background:#666; margin:0 5px"></div>
-        <button class="rib-btn" onclick="format.exec('bold')"><b>B</b></button>
-        <button class="rib-btn" onclick="format.exec('underline')"><u>U</u></button>
-        <button class="rib-btn" onclick="notes.add()" title="Añadir Nota"><i class="material-icons">note_add</i></button>
-        <button class="rib-btn" onclick="format.clear()" title="Limpiar"><i class="material-icons">format_clear</i></button>
+        <button class="rib-btn" onclick="fmt.bg('yellow')" style="background:yellow; border:1px solid #fff"></button>
+        <button class="rib-btn" onclick="fmt.bg('#a5d6a7')" style="background:#a5d6a7; border:1px solid #fff"></button>
+        <button class="rib-btn" onclick="fmt.bg('#90caf9')" style="background:#90caf9; border:1px solid #fff"></button>
+        <div style="width:1px; height:20px; background:#666"></div>
+        <button class="rib-btn" onclick="fmt.addNote()">📝</button>
+        <button class="rib-btn" onclick="fmt.clear()">🧹</button>
     </div>
 
-    <!-- MODAL PALETA DE COLORES -->
-    <div id="palette-modal">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-            <b id="pal-title">Color</b>
-            <button onclick="palette.close()" style="border:none; background:none; cursor:pointer">✕</button>
-        </div>
-        
-        <div class="palette-section">
-            <span class="palette-label">Estándar:</span>
-            <div class="color-grid" id="pal-grid"></div>
-        </div>
-        
-        <div class="palette-section">
-            <span class="palette-label">Personalizado (Toca para elegir):</span>
-            <!-- Input Color que aplica AL INSTANTE (oninput) -->
-            <input type="color" class="color-picker-large" id="pal-picker" oninput="palette.applyCustom(this.value)">
+    <!-- LOGIN -->
+    <div id="login-m" class="modal">
+        <div class="m-box" style="text-align:center">
+            <h3>Acceso</h3>
+            <input id="em" type="email" placeholder="Email" style="width:100%; padding:10px; margin:5px 0">
+            <input id="pw" type="password" placeholder="Pass" style="width:100%; padding:10px; margin:5px 0">
+            <button onclick="auth.go(true)" style="padding:10px; width:100%; background:var(--primary); color:white; border:none; margin-top:10px">Entrar / Registrar</button>
+            <button onclick="document.getElementById('login-m').style.display='none'" style="margin-top:10px; background:none; border:none">Cerrar</button>
         </div>
     </div>
 
-    <!-- MODAL NOTAS -->
-    <div id="note-modal" class="modal-overlay">
-        <div class="modal-container" style="max-width:500px; height:60%; top:20%; bottom:20%">
-            <div class="modal-head">
-                <b>Nota / Archivo</b> <button onclick="notes.close()">✕</button>
-            </div>
-            <div class="modal-body" style="display:flex; flex-direction:column">
-                <p style="font-size:0.8rem; color:#666; margin:0 0 5px 0">Pega imágenes con Ctrl+V</p>
-                <div id="note-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0"></div>
-            </div>
-            <div style="padding:10px; display:flex; justify-content:space-between; background:var(--header-bg)">
-                <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Eliminar</button>
-                <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Guardar</button>
+    <!-- NOTA -->
+    <div id="note-m" class="modal">
+        <div class="m-box">
+            <div style="display:flex; justify-content:space-between"><b>Nota</b> <button onclick="notes.close()">✕</button></div>
+            <div id="note-ed" class="box" contenteditable="true"></div>
+            <div style="display:flex; justify-content:space-between">
+                <button onclick="notes.del()" style="background:#c62828; color:white; border:none; padding:8px">Eliminar</button>
+                <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px">Guardar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL BIBLIA -->
-    <div id="bible-modal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-head">
-                <b>Biblia</b> <button onclick="document.getElementById('bible-modal').style.display='none'">✕</button>
-            </div>
-            <iframe id="bible-frame" style="flex:1; border:none" src=""></iframe>
+    <!-- BIBLIA -->
+    <div id="bible-m" class="modal">
+        <div class="m-box" style="height:80%; max-width:600px">
+            <div style="text-align:right"><button onclick="document.getElementById('bible-m').style.display='none'">✕</button></div>
+            <iframe id="bible-fr" style="flex:1; border:none"></iframe>
         </div>
     </div>
 
     <script>
         // CONFIG
-        const firebaseConfig = {
-          apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
-          authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
-          databaseURL: "https://miescuelasabatica-fdb06-default-rtdb.firebaseio.com",
-          projectId: "miescuelasabatica-fdb06",
-          storageBucket: "miescuelasabatica-fdb06.firebasestorage.app",
-          messagingSenderId: "832420279762",
-          appId: "1:832420279762:web:4218b0fa30e2e93b12c40b"
-        };
-        firebase.initializeApp(firebaseConfig);
+        const firebaseConfig = { apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk", authDomain: "miescuelasabatica-fdb06.firebaseapp.com", databaseURL: "https://miescuelasabatica-fdb06-default-rtdb.firebaseio.com", projectId: "miescuelasabatica-fdb06", storageBucket: "miescuelasabatica-fdb06.firebasestorage.app", messagingSenderId: "832420279762", appId: "1:832420279762:web:4218b0fa30e2e93b12c40b" };
+        try { firebase.initializeApp(firebaseConfig); } catch(e){}
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
-        fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
-        const state = { user: null, q: '2025-04', l: '01', d: '01', activeNoteId: null, range: null };
+        let user = null;
+        let activeNote = null;
 
-        // AUTH
-        const auth = {
-            login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
-            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
+        // INICIO INMEDIATO
+        window.onload = () => {
+            nav.init(); // Cargar menús
+            app.load(); // Cargar texto (sin esperar login)
+            
+            // Escuchar login en segundo plano
+            fbAuth.onAuthStateChanged(u => {
+                user = u;
+                document.getElementById('btn-login').style.color = u ? '#4caf50' : 'var(--primary)';
+                if(u) app.loadSaved(); // Si entra, cargar sus datos
+            });
         };
-        function val(id){ return document.getElementById(id).value; }
-        function msg(t){ document.getElementById('msg').innerText = t; }
 
-        fbAuth.onAuthStateChanged(u => {
-            if(u){
-                state.user = u;
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-                nav.init();
-            }
-        });
-
-        // NAVEGACIÓN
         const nav = {
             init: () => {
-                const qSel = document.getElementById('sel-q');
-                qSel.add(new Option("Josué (2025-04)", "2025-04"));
-                qSel.add(new Option("Éxodo (2025-03)", "2025-03"));
+                const add = (id, txt, val) => {
+                    let o = document.createElement('option'); o.text=txt; o.value=val;
+                    document.getElementById(id).add(o);
+                };
+                add('sq','Josué','2025-04'); add('sq','Éxodo','2025-03');
+                for(let i=1; i<=14; i++) add('sl', 'Lección '+i, i<10?"0"+i:""+i);
+                ['Sábado','Domingo','Lunes','Martes','Miércoles','Jueves','Viernes'].forEach((d,i)=> add('sd', d, "0"+(i+1)));
                 
-                const lSel = document.getElementById('sel-l');
-                for(let i=1; i<=14; i++) lSel.add(new Option("Lección "+i, i<10?"0"+i:""+i));
-
-                const dSel = document.getElementById('sel-d');
-                const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
-                days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
-
-                // Ir a hoy (aprox)
-                document.getElementById('sel-l').value = "09"; 
-                document.getElementById('sel-d').value = "06"; 
-                
-                loader.load();
+                // Fecha hoy
+                document.getElementById('sl').value = "09";
+                document.getElementById('sd').value = "0" + (new Date().getDay() || 7);
             },
-            changeQuarter: () => { state.q = document.getElementById('sel-q').value; loader.load(); },
-            changeLesson: () => { state.l = document.getElementById('sel-l').value; loader.load(); },
-            prev: () => {
-                const d = document.getElementById('sel-d');
-                if(d.selectedIndex > 0) { d.selectedIndex--; loader.load(); }
-            },
-            next: () => {
-                const d = document.getElementById('sel-d');
-                if(d.selectedIndex < d.options.length-1) { d.selectedIndex++; loader.load(); }
+            move: (d) => {
+                let s = document.getElementById('sd');
+                if(s.selectedIndex + d >= 0 && s.selectedIndex + d < s.options.length) {
+                    s.selectedIndex += d; app.load();
+                }
             }
         };
 
-        // CARGADOR
-        const loader = {
+        const app = {
             load: async () => {
-                ribbon.hide();
-                state.q = document.getElementById('sel-q').value;
-                state.l = document.getElementById('sel-l').value;
-                state.d = document.getElementById('sel-d').value;
+                const q = document.getElementById('sq').value;
+                const l = document.getElementById('sl').value;
+                const d = document.getElementById('sd').value;
+                const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${q}/${l}/${d}.md`;
                 
-                const container = document.getElementById('content');
-                container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
-
-                const ref = `users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`;
-                fbDb.ref(ref).once('value', async (s) => {
-                    const html = s.val();
-                    if(html) {
-                        container.innerHTML = html;
-                        loader.postLoad();
-                    } else {
-                        await loader.fetchRaw();
-                    }
-                });
-            },
-            fetchRaw: async () => {
-                const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
+                document.getElementById('content').innerHTML = '<p style="text-align:center; margin-top:50px">Cargando...</p>';
+                
                 try {
-                    const r = await fetch(url);
+                    let r = await fetch(url);
                     if(!r.ok) throw new Error();
-                    const md = await r.text();
-                    document.getElementById('content').innerHTML = parser(md);
-                    loader.postLoad();
+                    let txt = await r.text();
+                    document.getElementById('content').innerHTML = parser(txt);
+                    if(user) app.loadSaved(); // Restaurar si hay usuario
                 } catch(e) {
-                    document.getElementById('content').innerHTML = "<p>Contenido no disponible.</p>";
+                    document.getElementById('content').innerHTML = '<p style="text-align:center">No disponible.</p>';
                 }
             },
-            postLoad: () => {
-                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
-                document.querySelectorAll('.note-ref').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
-                enablePasteImage();
-                loader.restoreInputs();
-            },
-            save: () => {
-                const html = document.getElementById('content').innerHTML;
-                fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).set(html);
-            },
-            saveInput: (id, html) => {
-                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}/${id}`).set(html);
-            },
-            restoreInputs: () => {
-                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).once('value', s => {
-                    const d = s.val();
-                    if(d) Object.keys(d).forEach(k => {
-                        const el = document.getElementById(k);
-                        if(el) el.innerHTML = d[k];
+            loadSaved: () => {
+                if(!user) return;
+                const path = `users/${user.uid}/${document.getElementById('sq').value}-${document.getElementById('sl').value}-${document.getElementById('sd').value}`;
+                
+                // 1. Cargar HTML completo guardado
+                fbDb.ref(path + '/html').once('value', s => {
+                    if(s.val()) {
+                        document.getElementById('content').innerHTML = s.val();
+                        // Reconectar eventos
+                        document.querySelectorAll('.bible').forEach(e => e.onclick = () => bible(e.innerText));
+                        document.querySelectorAll('.note').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
+                    }
+                });
+                
+                // 2. Cargar Inputs
+                fbDb.ref(path + '/inputs').once('value', s => {
+                    if(s.val()) Object.keys(s.val()).forEach(k => {
+                        let el = document.getElementById(k);
+                        if(el) el.innerHTML = s.val()[k];
                     });
                 });
+            },
+            save: () => {
+                if(!user) return;
+                const path = `users/${user.uid}/${document.getElementById('sq').value}-${document.getElementById('sl').value}-${document.getElementById('sd').value}`;
+                fbDb.ref(path + '/html').set(document.getElementById('content').innerHTML);
+            },
+            saveInput: (id, val) => {
+                if(!user) return;
+                const path = `users/${user.uid}/${document.getElementById('sq').value}-${document.getElementById('sl').value}-${document.getElementById('sd').value}`;
+                fbDb.ref(path + '/inputs/' + id).set(val);
             }
         };
 
-        // PARSER
-        function parser(md) {
-            md = md.replace(/^---[\s\S]*?---/, "");
-            md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-            md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            md = md.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
-            md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
-            md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
+        const parser = (md) => {
+            md = md.replace(/^---[\s\S]*?---/, "")
+                   .replace(/^# (.*)/gm, '<h1>$1</h1>')
+                   .replace(/^## (.*)/gm, '<h2>$1</h2>')
+                   .replace(/^### (.*)/gm, '<h3>$1</h3>')
+                   .replace(/\*\*(.*)\*\*/gm, '<b>$1</b>')
+                   .replace(/([1-3]? ?[A-ZÑ][a-zñ]+\.? \d+:\d+(?:-\d+)?)/g, '<span class="bible" onclick="bible(\'$1\')">$1</span>');
             
-            let lines = md.split('\n');
-            let h = "";
-            lines.forEach((l, i) => {
-                if(!l.trim()) return;
-                h += `<p>${l}</p>`;
-                if(l.includes('?') || l.includes('Lee')) {
-                    let id = `ans-${i}`;
-                    h += `<div class="rich-box" contenteditable="true" onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
+            let html = "";
+            md.split('\n').forEach((line, i) => {
+                if(line.trim()) {
+                    html += `<p>${line}</p>`;
+                    if(line.includes('?') || line.includes('Lee')) {
+                        html += `<div id="ans-${i}" class="box" contenteditable="true" onblur="app.saveInput('ans-${i}', this.innerHTML)"></div>`;
+                    }
                 }
             });
-            return h;
-        }
-
-        // CINTA Y HERRAMIENTAS
-        const ribbon = {
-            check: () => {
-                setTimeout(() => {
-                    const sel = window.getSelection();
-                    if(sel.toString().length > 0 && !sel.isCollapsed) {
-                        // Guardar rango para no perderlo al abrir modal
-                        state.range = sel.getRangeAt(0);
-                        const r = state.range.getBoundingClientRect();
-                        const m = document.getElementById('ribbon');
-                        m.style.display = 'flex';
-                        m.style.top = (r.top + window.scrollY - 60) + 'px';
-                        let l = r.left;
-                        if(l+m.offsetWidth > window.innerWidth) l = window.innerWidth - m.offsetWidth - 10;
-                        m.style.left = l + 'px';
-                    }
-                }, 50);
-            },
-            hide: () => document.getElementById('ribbon').style.display = 'none'
+            return html;
         };
 
-        const format = {
-            exec: (cmd, val) => {
-                // Restaurar selección si se perdió
-                if(state.range) {
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(state.range);
-                }
-                document.execCommand(cmd, false, val);
-                loader.save();
-                if(cmd !== 'BackColor' && cmd !== 'ForeColor') ribbon.hide();
+        const fmt = {
+            bg: (c) => { document.execCommand('BackColor',false,c); app.save(); },
+            addNote: () => {
+                let id = Date.now();
+                let s = document.createElement('sup'); s.className='note'; s.dataset.id=id; 
+                s.contentEditable="false"; s.onclick=(e)=>{e.stopPropagation(); notes.open(id)};
+                window.getSelection().getRangeAt(0).insertNode(s);
+                notes.open(id); app.save();
             },
-            clear: () => format.exec("removeFormat", null)
-        };
-
-        const palette = {
-            currentMode: 'back', // back or fore
-            open: (mode) => {
-                palette.currentMode = mode;
-                document.getElementById('palette-modal').style.display = 'block';
-                document.getElementById('pal-title').innerText = mode === 'back' ? 'Resaltar Fondo' : 'Color Texto';
-                
-                // Generar colores estándar
-                const colors = ['#ffff00', '#a5d6a7', '#90caf9', '#ef9a9a', '#e1bee7', '#bcaaa4'];
-                const grid = document.getElementById('pal-grid');
-                grid.innerHTML = "";
-                colors.forEach(c => {
-                    let d = document.createElement('div');
-                    d.className = 'swatch';
-                    d.style.backgroundColor = c;
-                    d.onclick = () => { palette.apply(c); palette.close(); };
-                    grid.appendChild(d);
-                });
-            },
-            apply: (c) => {
-                let cmd = palette.currentMode === 'back' ? 'BackColor' : 'ForeColor';
-                format.exec(cmd, c);
-            },
-            applyCustom: (c) => {
-                // Se ejecuta al mover el input (oninput)
-                let cmd = palette.currentMode === 'back' ? 'BackColor' : 'ForeColor';
-                format.exec(cmd, c);
-            },
-            close: () => document.getElementById('palette-modal').style.display = 'none'
+            clear: () => { document.execCommand('removeFormat'); app.save(); }
         };
 
         const notes = {
-            add: () => {
-                if(!state.range) return;
-                const id = Date.now().toString();
-                const sup = document.createElement("sup");
-                sup.className = "note-ref";
-                sup.dataset.id = id;
-                sup.contentEditable = "false";
-                sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
-                
-                state.range.collapse(false);
-                state.range.insertNode(sup);
-                ribbon.hide();
-                notes.open(id);
-                loader.save();
-            },
             open: (id) => {
-                state.activeNoteId = id;
-                document.getElementById('note-modal').style.display = 'flex';
-                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
-                    document.getElementById('note-editor').innerHTML = s.val() || "";
-                });
+                activeNote = id;
+                document.getElementById('note-m').style.display = 'flex';
+                if(user) fbDb.ref(`users/${user.uid}/notes/${id}`).once('value', s => document.getElementById('note-ed').innerHTML = s.val() || "");
             },
             save: () => {
-                const html = document.getElementById('note-editor').innerHTML;
-                if(!html.trim()) { notes.delete(); return; }
-                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
-                document.getElementById('note-modal').style.display = 'none';
+                if(user) fbDb.ref(`users/${user.uid}/notes/${activeNote}`).set(document.getElementById('note-ed').innerHTML);
+                document.getElementById('note-m').style.display = 'none';
             },
-            delete: () => {
-                const id = state.activeNoteId;
-                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
-                const el = document.querySelector(`.note-ref[data-id="${id}"]`);
+            del: () => {
+                if(user) fbDb.ref(`users/${user.uid}/notes/${activeNote}`).remove();
+                let el = document.querySelector(`.note[data-id="${activeNote}"]`);
                 if(el) el.remove();
-                document.getElementById('note-modal').style.display = 'none';
-                loader.save();
+                document.getElementById('note-m').style.display = 'none';
+                app.save();
             },
-            close: () => document.getElementById('note-modal').style.display = 'none'
+            close: () => document.getElementById('note-m').style.display = 'none'
         };
 
-        // BIBLIA & UI
-        const bible = {
-            open: (ref) => {
-                document.getElementById('bible-modal').style.display = 'flex';
-                document.getElementById('bible-frame').src = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+        const bible = (ref) => {
+            document.getElementById('bible-m').style.display = 'flex';
+            document.getElementById('bible-fr').src = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+        };
+
+        const auth = {
+            ui: () => document.getElementById('login-m').style.display = 'flex',
+            go: (isReg) => {
+                let e = document.getElementById('em').value, p = document.getElementById('pw').value;
+                fbAuth.signInWithEmailAndPassword(e,p).catch(() => fbAuth.createUserWithEmailAndPassword(e,p))
+                .then(() => document.getElementById('login-m').style.display = 'none');
+            }
+        };
+
+        const ribbon = {
+            show: () => {
+                setTimeout(() => {
+                    let sel = window.getSelection();
+                    if(!sel.isCollapsed) {
+                        let r = sel.getRangeAt(0).getBoundingClientRect();
+                        let rib = document.getElementById('ribbon');
+                        rib.style.display = 'flex';
+                        rib.style.top = (r.top + window.scrollY - 50) + 'px';
+                        rib.style.left = r.left + 'px';
+                    }
+                }, 100);
             }
         };
 
         const ui = {
-            cycleMode: () => {
-                const b = document.body;
-                if(!b.className) b.className = 'sepia';
-                else if(b.className === 'sepia') b.className = 'dark';
-                else b.className = '';
-            },
+            theme: () => document.body.classList.toggle('sepia'),
             font: (v) => {
-                const el = document.getElementById('content');
-                const s = parseInt(window.getComputedStyle(el).fontSize);
-                el.style.fontSize = (s+v)+'px';
+                let el = document.getElementById('content');
+                el.style.fontSize = (parseInt(window.getComputedStyle(el).fontSize) + v) + 'px';
             }
         };
-
-        function enablePasteImage() {
-            const h = (e) => {
-                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-                for (let i in items) {
-                    if (items[i].kind === 'file') {
-                        const blob = items[i].getAsFile();
-                        const r = new FileReader();
-                        r.onload = (evt) => {
-                            document.execCommand('insertImage', false, evt.target.result);
-                            loader.save();
-                        };
-                        r.readAsDataURL(blob);
-                        e.preventDefault();
-                    }
-                }
-            };
-            document.getElementById('note-editor').onpaste = h;
-            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = h);
-        }
-
-        document.addEventListener('keydown', e => {
-            if(e.key === "ArrowLeft") nav.prev();
-            if(e.key === "ArrowRight") nav.next();
-        });
     </script>
 </body>
 </html>
