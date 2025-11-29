@@ -3,50 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V50 - Salud Visual</title>
+    <title>Escuela Sabática V51 - Edición Oro</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
-        /* --- TEMAS DE COLOR --- */
+        /* --- TEMAS --- */
         :root {
             --bg: #ffffff;
             --text: #222;
             --primary: #00695c;
             --secondary: #e0f2f1;
             --accent: #c62828;
-            --window-bg: #ffffff;
+            --window-bg: #fff;
             --border: #ccc;
+            --ribbon-bg: #333;
+            --ribbon-btn: #555;
         }
-        /* 1. SEPIA (Lectura Papel) */
+        /* 1. SEPIA */
         body.sepia { 
-            --bg: #f5e6d3; --text: #4b3b2f; --primary: #795548; 
-            --secondary: #efebe9; --window-bg: #fff8e1; --border: #d7ccc8;
+            --bg: #f4ecd8; --text: #5b4636; --primary: #6d4c41; 
+            --secondary: #eefebe; --window-bg: #fcf8e3; --border: #d7ccc8;
         }
-        /* 2. DARK (Noche Estándar) */
-        body.dark { 
-            --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; 
-            --secondary: #1e1e1e; --accent: #ef9a9a; 
-            --window-bg: #2d2d2d; --border: #444;
-        }
-        /* 3. RED MODE (Tu pedido - Visión Nocturna Extrema) */
-        body.red-mode {
-            --bg: #0f0000; /* Negro rojizo */
-            --text: #ffb3a7; /* Salmón suave (muy legible) */
-            --primary: #ef5350; /* Rojo claro */
-            --secondary: #2a0a0a; /* Rojo muy oscuro */
-            --accent: #ff8a80;
-            --window-bg: #1a0505;
-            --border: #4e1818;
-        }
-        /* 4. AMBER MODE (Científico - Filtro Luz Azul) */
+        /* 2. ÁMBAR (Científico) */
         body.amber-mode {
-            --bg: #000000; /* Negro puro (OLED friendly) */
-            --text: #ffb74d; /* Naranja Ámbar */
-            --primary: #ff9800;
-            --secondary: #1a1a1a;
-            --accent: #ffd180;
-            --window-bg: #121212;
-            --border: #333;
+            --bg: #121212; --text: #ffb74d; --primary: #e65100;
+            --secondary: #1e1e1e; --accent: #ffd180; --window-bg: #1a1a1a;
+            --border: #333; --ribbon-bg: #222;
+        }
+        /* 3. OSCURO */
+        body.dark { 
+            --bg: #000000; --text: #e0e0e0; --primary: #80cbc4; 
+            --secondary: #1e1e1e; --accent: #ef9a9a; --window-bg: #222; 
+            --border: #444; --ribbon-bg: #333;
         }
 
         body { 
@@ -136,12 +124,11 @@
 
         /* CINTA FLOTANTE (RIBBON) */
         #ribbon {
-            position: absolute; display: none; background: #333; padding: 8px; border-radius: 8px;
+            position: absolute; display: none; background: var(--ribbon-bg); padding: 8px; border-radius: 8px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 2000; flex-direction: column; gap: 6px;
             min-width: 250px;
         }
-        /* Ajuste de colores del ribbon para modos oscuros/rojos */
-        body.red-mode #ribbon, body.amber-mode #ribbon { background: #220000; border: 1px solid #555; }
+        body.dark #ribbon { background: #333; border: 1px solid #555; }
         
         .rib-row { display: flex; align-items: center; gap: 5px; overflow-x: auto; }
         .rib-lbl { color: #aaa; font-size: 10px; text-transform: uppercase; width: 40px;}
@@ -152,8 +139,8 @@
         }
         .swatch input[type="color"] { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; opacity: 0; cursor: pointer; }
         
-        .rib-btn { background: #555; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
-        .rib-btn:hover { background: #777; }
+        .rib-btn { background: var(--ribbon-btn, #555); color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+        .rib-btn:hover { opacity: 0.8; }
 
         /* MODAL BIBLIA */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
@@ -220,8 +207,8 @@
                     <div id="window-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0; border:1px solid var(--border)"></div>
                 </div>
                 <div class="window-footer">
-                    <button onclick="notes.delete()" style="background:var(--accent); color:var(--bg); border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Eliminar</button>
-                    <button onclick="notes.save()" style="background:var(--primary); color:var(--bg); border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Guardar</button>
+                    <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Eliminar</button>
+                    <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Guardar</button>
                 </div>
             </div>
 
@@ -252,6 +239,7 @@
                 <div class="swatch" style="background:#a5d6a7" onclick="tools.bg('#a5d6a7')"></div>
                 <div class="swatch" style="background:#90caf9" onclick="tools.bg('#90caf9')"></div>
                 <div class="swatch" style="background:#ffcc80" onclick="tools.bg('#ffcc80')"></div>
+                <div class="swatch" style="background:#e1bee7" onclick="tools.bg('#e1bee7')"></div>
                 <div class="swatch" style="background:conic-gradient(red,blue,green)" title="Personalizado"><input type="color" oninput="tools.bg(this.value)"></div>
                 <button class="rib-btn" onclick="tools.bg('transparent')" title="Quitar">🚫</button>
             </div>
@@ -261,9 +249,10 @@
                 <div class="swatch" style="background:#000" onclick="tools.fg('#000')"></div>
                 <div class="swatch" style="background:#d32f2f" onclick="tools.fg('#d32f2f')"></div>
                 <div class="swatch" style="background:#1565c0" onclick="tools.fg('#1565c0')"></div>
+                <div class="swatch" style="background:#2e7d32" onclick="tools.fg('#2e7d32')"></div>
                 <div class="swatch" style="background:conic-gradient(black,white)" title="Personalizado"><input type="color" oninput="tools.fg(this.value)"></div>
             </div>
-            <!-- Estilos (CURSIVA AGREGADA) -->
+            <!-- Estilos -->
             <div class="rib-row" style="border-top:1px solid #666; padding-top:5px; margin-top:5px; justify-content:space-between">
                 <div style="display:flex; gap:3px">
                     <button class="rib-btn" onclick="tools.exec('bold')"><b>B</b></button>
@@ -271,8 +260,19 @@
                     <button class="rib-btn" onclick="tools.exec('underline')"><u>U</u></button>
                     <button class="rib-btn" onclick="tools.clear()">🧹</button>
                 </div>
-                <button class="rib-btn" onclick="tools.addNote()" style="background:var(--primary)">📝</button>
+                <button class="rib-btn" onclick="tools.addNote()" style="background:#7b1fa2">📝</button>
                 <button class="rib-btn" onclick="ribbon.hide()">✕</button>
+            </div>
+        </div>
+
+        <!-- MODAL BIBLIA API -->
+        <div id="bible-modal" class="modal">
+            <div class="modal-box">
+                <div class="modal-head" style="display:flex; justify-content:space-between; border-bottom:1px solid #ccc; padding-bottom:10px;">
+                    <span id="bible-title-api" style="font-weight:bold; color:var(--primary)">Biblia</span>
+                    <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.5rem; cursor:pointer; color:inherit">✕</button>
+                </div>
+                <div id="bible-content-api" class="bible-text" style="padding-top:10px;">Cargando...</div>
             </div>
         </div>
     </div>
@@ -359,11 +359,10 @@
             }
         };
 
-        // CARGADOR Y PERSISTENCIA
+        // CARGADOR
         const loader = {
             load: async () => {
-                ribbon.hide();
-                notes.close();
+                ribbon.hide(); notes.close();
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
@@ -520,19 +519,17 @@
 
         const bible = {
             fetch: (ref) => {
-                document.getElementById('bible-window').style.display = 'flex';
-                document.getElementById('bible-title').innerText = ref;
-                document.getElementById('bible-content').innerHTML = '<p style="text-align:center">Cargando...</p>';
+                document.getElementById('bible-modal').style.display = 'flex';
+                document.getElementById('bible-title-api').innerText = ref;
+                document.getElementById('bible-content-api').innerHTML = '<p style="text-align:center">Cargando...</p>';
                 
                 let cleanRef = ref.replace(/\s/g, ''); 
                 const url = `https://bible-api.com/${encodeURIComponent(cleanRef)}?translation=almeida`;
                 
                 fetch(url).then(r => r.json()).then(d => {
-                    if(d.text) document.getElementById('bible-content').innerText = d.text;
-                    else document.getElementById('bible-content').innerText = "Texto no encontrado. Usa el enlace externo.";
-                }).catch(()=>document.getElementById('bible-content').innerText="Error de red.");
-                
-                document.getElementById('bible-ext-link').href = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+                    if(d.text) document.getElementById('bible-content-api').innerText = d.text;
+                    else document.getElementById('bible-content-api').innerText = "Texto no encontrado.";
+                }).catch(()=>document.getElementById('bible-content-api').innerText="Error de red.");
             }
         };
 
@@ -540,9 +537,8 @@
             cycleMode: () => {
                 const b = document.body;
                 if(!b.className) b.className = 'sepia';
-                else if(b.className === 'sepia') b.className = 'dark';
-                else if(b.className === 'dark') b.className = 'red-mode';
-                else if(b.className === 'red-mode') b.className = 'amber-mode';
+                else if(b.className === 'sepia') b.className = 'amber-mode';
+                else if(b.className === 'amber-mode') b.className = 'dark';
                 else b.className = '';
             },
             font: (v) => {
