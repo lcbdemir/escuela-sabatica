@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V55 - Control Total</title>
+    <title>Escuela Sabática V56 - Biblia Activada</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
@@ -43,12 +43,14 @@
         h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
         p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
         
+        /* ENLACES BÍBLICOS (AZULES Y CLICKEABLES) */
         .bible-link { 
             color: var(--primary); font-weight: bold; text-decoration: underline; 
-            cursor: pointer; padding: 0 2px; border-radius: 3px;
+            cursor: pointer; background: rgba(0, 105, 92, 0.1); padding: 0 3px; border-radius: 3px;
         }
+        .bible-link:hover { background-color: var(--primary); color: white; }
 
-        /* NOTA SUPERÍNDICE */
+        /* NOTAS (V55 CONGELADO) */
         .note-sup {
             font-size: 0.6em; vertical-align: super; cursor: pointer;
             color: var(--accent); text-decoration: none !important; border: none; 
@@ -86,15 +88,14 @@
         .rib-btn { background: #555; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
         body.dark .rib-btn { background: #ccc; color: #000; }
 
-        /* VENTANA FLOTANTE REAL (RESIZABLE) */
+        /* VENTANA NOTAS (V55 CONGELADO) */
         .float-win {
-            position: absolute; top: 10%; left: 10%;
+            position: absolute; top: 20%; left: 20%;
             width: 400px; height: 300px;
             background: var(--bg); border: 1px solid #999;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 3000;
             display: none; flex-direction: column;
-            resize: both; overflow: hidden; /* Permite resize nativo */
-            min-width: 300px; min-height: 200px; border-radius: 8px;
+            resize: both; overflow: hidden; border-radius: 8px;
         }
         .win-head {
             padding: 8px 10px; background: var(--primary); color: white;
@@ -120,17 +121,19 @@
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <h2 style="color:var(--primary)">Mi Estudio</h2>
+    <!-- LOGIN -->
+    <div id="login-screen" style="position:fixed; inset:0; background:#fff; z-index:5000; display:flex; justify-content:center; align-items:center;">
+        <div style="text-align:center; width:300px; padding:30px; border:1px solid #ccc; border-radius:10px;">
+            <h2 style="color:#004d40">Mi Estudio</h2>
             <input id="email" class="login-inp" type="email" placeholder="Email">
             <input id="pass" class="login-inp" type="password" placeholder="Contraseña">
-            <button onclick="auth.login()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; margin-top:10px; cursor:pointer">Entrar</button>
+            <button onclick="auth.login()" style="width:100%; padding:10px; background:#004d40; color:white; border:none; margin-top:10px; cursor:pointer">Entrar</button>
             <button onclick="auth.reg()" style="width:100%; padding:10px; background:#555; color:white; border:none; margin-top:5px; cursor:pointer">Registrar</button>
             <p id="msg" style="color:red; font-size:0.8rem; margin-top:10px"></p>
         </div>
     </div>
 
+    <!-- APP -->
     <div id="app" class="hidden">
         <header>
             <select id="sel-q" onchange="nav.changeQuarter()"></select>
@@ -139,21 +142,60 @@
             <button class="tool-btn" onclick="ui.cycleMode()">🎨</button>
             <button class="tool-btn" onclick="ui.font(2)">A+</button>
             <button class="tool-btn" onclick="ui.font(-2)">A-</button>
-            <button class="tool-btn" onclick="loader.resetDay()" style="color:red" title="Borrar día">🗑️</button>
+            <button class="tool-btn" onclick="loader.resetDay()" style="color:red" title="Borrar cambios del día">🗑️</button>
         </header>
 
         <div id="workspace">
             <button id="prev-btn" class="nav-arrow" onclick="nav.prev()">❮</button>
             <button id="next-btn" class="nav-arrow" onclick="nav.next()">❯</button>
 
+            <!-- CONTENIDO LECCIÓN -->
             <div id="main-container" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
                 <div id="content">
                     <p style="text-align:center; margin-top:50px">Cargando...</p>
                 </div>
             </div>
+
+            <!-- VENTANA NOTAS (CONGELADA V55) -->
+            <div id="note-window" class="float-win" style="top:20%; left:20%;">
+                <div class="window-header" onmousedown="dragElement(document.getElementById('note-window'), event)">
+                    <span>📝 Nota</span>
+                    <span onclick="notes.close()" style="cursor:pointer; font-size:1.2em">✕</span>
+                </div>
+                <div class="window-body">
+                    <div style="font-size:0.8em; opacity:0.7; margin-bottom:5px">Pega imágenes (Ctrl+V) y escribe.</div>
+                    <div id="window-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0; border:1px solid #ccc"></div>
+                    <div id="save-status" style="font-size:0.7em; color:green; text-align:right; height:15px"></div>
+                </div>
+                <div class="window-footer">
+                    <div id="img-resizer">
+                        <span>Zoom Img:</span>
+                        <input type="range" min="10" max="100" value="100" oninput="notes.resizeImg(this.value)">
+                    </div>
+                    <div style="flex:1"></div>
+                    <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer">Eliminar</button>
+                    <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer">Guardar</button>
+                </div>
+            </div>
+
+            <!-- VENTANA BIBLIA (CON TEXTO) -->
+            <div id="bible-win" class="float-win" style="top:10%; left:10%; width:400px; height:400px">
+                <div class="win-head" onmousedown="dragElement(document.getElementById('bible-win'), event)">
+                    <span id="bible-title">Biblia</span> <span onclick="document.getElementById('bible-win').style.display='none'" style="cursor:pointer; font-size:1.2em">✕</span>
+                </div>
+                <div class="win-body">
+                    <div id="bible-content" style="line-height:1.6; font-size:1.1em; padding:10px;">Cargando...</div>
+                    <div style="margin-top:20px; text-align:center">
+                        <a id="bible-ext-link" href="#" target="_blank" style="display:inline-block; padding:10px; background:#004d40; color:white; text-decoration:none; border-radius:5px;">
+                            📖 Ver en BibleGateway
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- CINTA -->
+        <!-- CINTA COLORES -->
         <div id="ribbon" onmousedown="event.preventDefault()">
             <div class="rib-row">
                 <span class="rib-lbl">Fondo</span>
@@ -181,37 +223,10 @@
                 <button class="rib-btn" onclick="ribbon.hide()">✕</button>
             </div>
         </div>
-
-        <!-- VENTANA NOTA (FLOTANTE REAL) -->
-        <div id="note-win" class="float-win" style="top:20%; left:20%">
-            <div class="win-head" onmousedown="dragElement(document.getElementById('note-win'), event)">
-                <b>Nota</b> <span onclick="notes.close()" style="cursor:pointer">✕</span>
-            </div>
-            <div class="win-body">
-                <!-- Controles Imagen -->
-                <div id="img-resizer">
-                    <span>Tamaño Imagen:</span>
-                    <input type="range" min="10" max="100" value="100" oninput="notes.resizeImg(this.value)">
-                </div>
-                <div id="note-editor" class="rich-box" contenteditable="true" style="flex:1; border:none; outline:none;" oninput="notes.autoSave()"></div>
-                <div id="save-status" style="font-size:0.7em; color:green; text-align:right; height:15px"></div>
-            </div>
-            <div class="win-foot">
-                <button onclick="notes.del()" style="background:#d32f2f; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer">Eliminar</button>
-                <button onclick="notes.close()" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer">Cerrar</button>
-            </div>
-        </div>
-
-        <!-- BIBLIA -->
-        <div id="bible-win" class="float-win" style="top:10%; left:10%; width:500px">
-            <div class="win-head" onmousedown="dragElement(document.getElementById('bible-win'), event)">
-                <span id="bible-title">Biblia</span> <span onclick="document.getElementById('bible-win').style.display='none'" style="cursor:pointer">✕</span>
-            </div>
-            <div id="bible-content" class="win-body" style="line-height:1.6; font-size:1.1em"></div>
-        </div>
     </div>
 
     <script>
+        // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk", authDomain: "miescuelasabatica-fdb06.firebaseapp.com", databaseURL: "https://miescuelasabatica-fdb06-default-rtdb.firebaseio.com", projectId: "miescuelasabatica-fdb06", storageBucket: "miescuelasabatica-fdb06.firebasestorage.app", messagingSenderId: "832420279762", appId: "1:832420279762:web:4218b0fa30e2e93b12c40b" };
         firebase.initializeApp(firebaseConfig);
         const fbAuth = firebase.auth();
@@ -220,6 +235,7 @@
 
         const state = { user: null, q: '2025-04', l: '01', d: '01', activeNoteId: null, activeImg: null };
 
+        // AUTH
         const auth = {
             login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
             reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
@@ -253,20 +269,38 @@
 
         const nav = {
             init: () => {
-                const add = (id,t,v) => { let o=document.createElement('option'); o.text=t; o.value=v; document.getElementById(id).add(o); };
-                add('sel-q', 'Josué (2025-04)', '2025-04');
-                add('sel-q', 'Éxodo (2025-03)', '2025-03');
-                for(let i=1; i<=14; i++) add('sel-l', 'Lec '+i, i<10?"0"+i:""+i);
-                ['Sábado','Domingo','Lunes','Martes','Miércoles','Jueves','Viernes'].forEach((d,i) => add('sel-d', d, "0"+(i+1)));
+                const qSel = document.getElementById('sel-q');
+                qSel.add(new Option("Josué (2025-04)", "2025-04"));
+                qSel.add(new Option("Éxodo (2025-03)", "2025-03"));
                 
+                const lSel = document.getElementById('sel-l');
+                for(let i=1; i<=14; i++) lSel.add(new Option("Lección "+i, i<10?"0"+i:""+i));
+
+                const dSel = document.getElementById('sel-d');
+                const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
+                days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
+                dSel.add(new Option("--- Extras ---", "disabled", true, true));
+                dSel.add(new Option("Maestros / Auxiliar", "08"));
+                dSel.add(new Option("Misionero", "09"));
+
+                const now = new Date();
                 document.getElementById('sel-l').value = "09"; 
-                document.getElementById('sel-d').value = "0" + (new Date().getDay()||7);
+                let d = now.getDay();
+                let dMap = [2,3,4,5,6,7,1];
+                document.getElementById('sel-d').value = "0" + dMap[d];
+                
                 loader.load();
             },
             changeQuarter: () => { state.q = document.getElementById('sel-q').value; loader.load(); },
             changeLesson: () => { state.l = document.getElementById('sel-l').value; loader.load(); },
-            prev: () => { let s=document.getElementById('sel-d'); if(s.selectedIndex>0){s.selectedIndex--; loader.load();} },
-            next: () => { let s=document.getElementById('sel-d'); if(s.selectedIndex<s.options.length-1){s.selectedIndex++; loader.load();} }
+            prev: () => {
+                const d = document.getElementById('sel-d');
+                if(d.selectedIndex > 0) { d.selectedIndex--; if(d.value==='disabled')d.selectedIndex--; loader.load(); }
+            },
+            next: () => {
+                const d = document.getElementById('sel-d');
+                if(d.selectedIndex < d.options.length-1) { d.selectedIndex++; if(d.value==='disabled')d.selectedIndex++; loader.load(); }
+            }
         };
 
         const loader = {
@@ -275,13 +309,16 @@
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
-                document.getElementById('content').innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
+                if(state.d==='disabled') return;
+
+                const container = document.getElementById('content');
+                container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
 
                 const ref = `users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`;
                 fbDb.ref(ref).once('value', async (s) => {
                     const html = s.val();
                     if(html) {
-                        document.getElementById('content').innerHTML = html;
+                        container.innerHTML = html;
                         loader.postLoad();
                     } else {
                         await loader.fetchGitHub();
@@ -291,9 +328,9 @@
             fetchGitHub: async () => {
                 const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
                 try {
-                    let r = await fetch(url);
+                    const r = await fetch(url);
                     if(!r.ok) throw new Error();
-                    let md = await r.text();
+                    const md = await r.text();
                     document.getElementById('content').innerHTML = parser(md);
                     loader.postLoad();
                 } catch(e) {
@@ -303,112 +340,117 @@
             postLoad: () => {
                 document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.fetch(e.innerText));
                 document.querySelectorAll('.note-sup').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
-                enablePaste();
+                enablePasteImage();
+                loader.restoreInputs();
             },
             save: () => {
-                fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).set(document.getElementById('content').innerHTML);
-            },
-            saveInput: (id, val) => {
-                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}/${id}`).set(val);
+                const html = document.getElementById('content').innerHTML;
+                fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).set(html);
             },
             resetDay: () => {
                 if(confirm("¿Reiniciar día?")) {
                     fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).remove();
+                    fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).remove();
                     loader.load();
                 }
+            },
+            saveInput: (id, html) => {
+                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}/${id}`).set(html);
+            },
+            restoreInputs: () => {
+                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).once('value', s => {
+                    const d = s.val();
+                    if(d) Object.keys(d).forEach(k => {
+                        const el = document.getElementById(k);
+                        if(el) el.innerHTML = d[k];
+                    });
+                });
             }
         };
 
+        function enablePasteImage() {
+            const handle = (e) => {
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                for (let i in items) {
+                    if (items[i].kind === 'file') {
+                        const blob = items[i].getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = (evt) => {
+                            document.execCommand('insertImage', false, evt.target.result);
+                            setTimeout(() => {
+                                document.querySelectorAll('img').forEach(img => {
+                                    img.onclick = () => { 
+                                        state.activeImg = img; 
+                                        if(document.getElementById('note-window').style.display === 'flex') document.getElementById('img-resizer').style.display='flex';
+                                    };
+                                });
+                            }, 500);
+                            if(document.getElementById('note-window').style.display==='flex') notes.autoSave();
+                            else loader.save();
+                        };
+                        reader.readAsDataURL(blob);
+                        e.preventDefault();
+                    }
+                }
+            };
+            document.getElementById('window-editor').onpaste = handle;
+            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = handle);
+        }
+
         const tools = {
-            exec: (cmd, val) => { document.designMode = "on"; document.execCommand(cmd, false, val); document.designMode = "off"; loader.save(); },
-            bg: (c) => { tools.exec("BackColor", c); ribbon.hide(); },
-            fg: (c) => { tools.exec("ForeColor", c); ribbon.hide(); },
+            exec: (cmd, val) => {
+                document.designMode = "on";
+                document.execCommand(cmd, false, val);
+                document.designMode = "off";
+                loader.save();
+                if(cmd !== 'BackColor' && cmd !== 'ForeColor') ribbon.hide();
+            },
+            bg: (c) => tools.exec("BackColor", c),
+            fg: (c) => tools.exec("ForeColor", c),
             clear: () => { tools.exec("removeFormat", null); ribbon.hide(); },
             addNote: () => {
-                let sel = window.getSelection();
-                if(sel.isCollapsed) return;
+                const sel = window.getSelection();
+                if(!sel.rangeCount || sel.isCollapsed) return;
                 sel.collapseToEnd();
-                let id = Date.now();
-                let s = document.createElement('sup'); s.className='note-sup'; s.dataset.id=id; s.contentEditable="false";
-                s.onclick = (e) => { e.stopPropagation(); notes.open(id); };
-                sel.getRangeAt(0).insertNode(s);
-                notes.open(id); loader.save();
+                const id = Date.now().toString();
+                const sup = document.createElement("sup");
+                sup.className = "note-sup";
+                sup.dataset.id = id;
+                sup.contentEditable = "false";
+                sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
+                const range = sel.getRangeAt(0);
+                range.insertNode(sup);
+                ribbon.hide();
+                notes.open(id);
+                loader.save();
             }
         };
 
         const notes = {
             open: (id) => {
                 state.activeNoteId = id;
-                document.getElementById('note-win').style.display = 'flex';
-                document.getElementById('img-resizer').style.display = 'none'; // Ocultar slider al abrir
+                document.getElementById('note-window').style.display = 'flex';
+                document.getElementById('img-resizer').style.display = 'none';
                 fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
-                    document.getElementById('note-editor').innerHTML = s.val() || "";
-                    // Activar click en imágenes dentro de la nota
-                    document.querySelectorAll('#note-editor img').forEach(img => {
-                        img.onclick = () => { state.activeImg = img; document.getElementById('img-resizer').style.display='flex'; };
-                    });
+                    document.getElementById('window-editor').innerHTML = s.val() || "";
                 });
             },
-            close: () => document.getElementById('note-win').style.display = 'none',
+            close: () => document.getElementById('note-window').style.display = 'none',
             autoSave: () => {
-                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(document.getElementById('note-editor').innerHTML);
+                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(document.getElementById('window-editor').innerHTML);
                 document.getElementById('save-status').innerText = "Guardado";
             },
             resizeImg: (val) => {
-                if(state.activeImg) {
-                    state.activeImg.style.width = val + '%';
-                    notes.autoSave();
-                }
+                if(state.activeImg) { state.activeImg.style.width = val + '%'; notes.autoSave(); }
             },
+            save: () => { notes.autoSave(); notes.close(); },
             delete: () => {
-                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).remove();
-                let el = document.querySelector(`.note-sup[data-id="${state.activeNoteId}"]`);
+                const id = state.activeNoteId;
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
+                const el = document.querySelector(`.note-sup[data-id="${id}"]`);
                 if(el) el.remove();
-                notes.close(); loader.save();
-            },
-            save: () => { notes.autoSave(); notes.close(); }
-        };
-
-        function enablePaste() {
-            const h = (e) => {
-                let items = (e.clipboardData || e.originalEvent.clipboardData).items;
-                for (let i in items) {
-                    if (items[i].kind === 'file') {
-                        let blob = items[i].getAsFile();
-                        let r = new FileReader();
-                        r.onload = (evt) => {
-                            document.execCommand('insertImage', false, evt.target.result);
-                            // Añadir listener a la nueva imagen
-                            setTimeout(() => {
-                                document.querySelectorAll('img').forEach(img => {
-                                    img.onclick = () => { 
-                                        state.activeImg = img; 
-                                        if(document.getElementById('note-win').style.display === 'flex') document.getElementById('img-resizer').style.display='flex';
-                                    };
-                                });
-                            }, 500);
-                            
-                            if(document.getElementById('note-win').style.display==='flex') notes.autoSave();
-                            else loader.save();
-                        };
-                        r.readAsDataURL(blob);
-                        e.preventDefault();
-                    }
-                }
-            };
-            document.getElementById('note-editor').onpaste = h;
-            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = h);
-        }
-
-        const bible = {
-            fetch: (ref) => {
-                document.getElementById('bible-win').style.display = 'flex';
-                document.getElementById('bible-title').innerText = ref;
-                document.getElementById('bible-content').innerHTML = 'Cargando...';
-                let clean = ref.replace(/\s/g, '');
-                fetch(`https://bible-api.com/${encodeURIComponent(clean)}?translation=almeida`).then(r=>r.json())
-                .then(d => document.getElementById('bible-content').innerText = d.text || "Texto no disponible.")
-                .catch(()=>document.getElementById('bible-content').innerText = "Error.");
+                notes.close();
+                loader.save();
             }
         };
 
@@ -421,11 +463,47 @@
                         let m = document.getElementById('ribbon');
                         m.style.display = 'flex';
                         m.style.top = (r.top + window.scrollY - 130) + 'px';
-                        m.style.left = r.left + 'px';
+                        let l = r.left;
+                        if(l+m.offsetWidth > window.innerWidth) l = window.innerWidth - m.offsetWidth - 10;
+                        m.style.left = l + 'px';
                     }
                 }, 50);
             },
             hide: () => document.getElementById('ribbon').style.display = 'none'
+        };
+
+        // --- BIBLIA INTELIGENTE (V56) ---
+        const bible = {
+            fetch: (ref) => {
+                document.getElementById('bible-win').style.display = 'flex';
+                document.getElementById('bible-title').innerText = ref;
+                document.getElementById('bible-content').innerHTML = '<p style="text-align:center; margin-top:20px">Buscando texto...</p>';
+                document.getElementById('bible-ext-link').href = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+                
+                // Limpieza avanzada de referencia para API
+                // Convertir "Gén 1:1" a "Genesis 1:1"
+                let map = {'Gén':'Genesis','Éx':'Exodus','Lev':'Leviticus','Núm':'Numbers','Deut':'Deuteronomy','Jos':'Joshua','Jue':'Judges','Rut':'Ruth','1 Sam':'1 Samuel','2 Sam':'2 Samuel','1 Rey':'1 Kings','2 Rey':'2 Kings','1 Crón':'1 Chronicles','2 Crón':'2 Chronicles','Esd':'Ezra','Neh':'Nehemiah','Est':'Esther','Job':'Job','Sal':'Psalms','Prov':'Proverbs','Ecl':'Ecclesiastes','Cant':'Song of Songs','Isa':'Isaiah','Jer':'Jeremiah','Lam':'Lamentations','Ez':'Ezekiel','Dan':'Daniel','Os':'Hosea','Joel':'Joel','Amós':'Amos','Abd':'Obadiah','Jon':'Jonah','Miq':'Micah','Nah':'Nahum','Hab':'Habakkuk','Sof':'Zephaniah','Hag':'Haggai','Zac':'Zechariah','Mal':'Malachi','Mat':'Matthew','Mar':'Mark','Luc':'Luke','Juan':'John','Hech':'Acts','Rom':'Romans','1 Cor':'1 Corinthians','2 Cor':'2 Corinthians','Gál':'Galatians','Efe':'Ephesians','Fil':'Philippians','Col':'Colossians','1 Tes':'1 Thessalonians','2 Tes':'2 Thessalonians','1 Tim':'1 Timothy','2 Tim':'2 Timothy','Tito':'Titus','Flem':'Philemon','Heb':'Hebrews','Sant':'James','1 Ped':'1 Peter','2 Ped':'2 Peter','1 Juan':'1 John','2 Juan':'2 John','3 Juan':'3 John','Jud':'Jude','Apoc':'Revelation'};
+                
+                let book = ref.split(" ")[0];
+                if(!isNaN(book)) book = ref.split(" ")[0] + " " + ref.split(" ")[1]; // Para 1 Samuel, etc.
+                let rest = ref.substring(book.length);
+                let engBook = book;
+                
+                // Buscar traducción
+                for(let k in map) {
+                    if(book.startsWith(k)) { engBook = map[k]; break; }
+                }
+                
+                let query = engBook + rest;
+
+                fetch(`https://bible-api.com/${encodeURIComponent(query)}?translation=almeida`)
+                .then(r=>r.json())
+                .then(d => {
+                    if(d.text) document.getElementById('bible-content').innerText = d.text;
+                    else document.getElementById('bible-content').innerHTML = "No se pudo cargar. <br>Usa el enlace de abajo.";
+                })
+                .catch(()=>document.getElementById('bible-content').innerText = "Error de conexión.");
+            }
         };
 
         const ui = {
@@ -437,8 +515,9 @@
                 else b.className = '';
             },
             font: (v) => {
-                let el = document.getElementById('content');
-                el.style.fontSize = (parseInt(window.getComputedStyle(el).fontSize) + v) + 'px';
+                const el = document.getElementById('content');
+                const s = parseInt(window.getComputedStyle(el).fontSize);
+                el.style.fontSize = (s+v)+'px';
             }
         };
 
@@ -449,7 +528,7 @@
                    .replace(/^### (.*)/gm, '<h3>$1</h3>')
                    .replace(/\*\*(.*)\*\*/gm, '<b>$1</b>')
                    .replace(/> (.*)/gm, '<blockquote>$1</blockquote>')
-                   .replace(/([1-3]? ?[A-ZÑ][a-zñ]+\.? \d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
+                   .replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
             
             let h = "";
             md.split('\n').forEach((l, i) => {
@@ -457,9 +536,10 @@
                     h += `<p>${l}</p>`;
                     if(l.includes('?') || l.includes('Lee')) {
                         let id = `ans-${i}`;
-                        h += `<div id="${id}" class="rich-box" contenteditable="true" placeholder="Respuesta..." onblur="loader.saveInput('${id}', this.innerHTML)"></div>`;
-                    }
+                        h += `<span class="question-label">Tu respuesta:</span>
+                              <div class="rich-box" contenteditable="true" placeholder="Escribe aquí..." oninput="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
                 }
+            }
             });
             return h;
         }
