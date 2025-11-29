@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V47 - Biblia Ok</title>
+    <title>Escuela Sabática V48 - Ventanas Flotantes</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
@@ -13,11 +13,11 @@
             --primary: #00695c;
             --secondary: #e0f2f1;
             --accent: #c62828;
-            --sidebar-width: 320px;
-            --ribbon-bg: #333;
+            --window-bg: #fff;
+            --window-header: #333;
         }
-        body.sepia { --bg: #f4ecd8; --text: #5b4636; --primary: #5d4037; --secondary: #eefebe; }
-        body.dark { --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; --secondary: #1e1e1e; --accent: #ef9a9a; --ribbon-bg: #eee; }
+        body.sepia { --bg: #f4ecd8; --text: #5b4636; --primary: #5d4037; --secondary: #eefebe; --window-bg: #fcf8e3; }
+        body.dark { --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; --secondary: #1e1e1e; --accent: #ef9a9a; --window-bg: #2d2d2d; --window-header: #000; }
 
         body { 
             font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); 
@@ -26,7 +26,7 @@
 
         /* HEADER */
         header { 
-            background: var(--secondary); padding: 8px; border-bottom: 2px solid var(--primary); 
+            background: var(--secondary); padding: 5px; border-bottom: 2px solid var(--primary); 
             display: flex; gap: 5px; align-items: center; z-index: 50; flex-wrap: wrap;
         }
         select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 16px; min-width: 80px;}
@@ -57,17 +57,16 @@
         h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
         p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
         
-        /* ENLACES BÍBLICOS (V47) */
+        /* Enlaces Bíblicos */
         .bible-link { 
             color: var(--primary); font-weight: bold; text-decoration: underline; 
-            cursor: pointer; background: rgba(0, 105, 92, 0.08); padding: 2px 4px; border-radius: 4px;
+            cursor: pointer; background: rgba(0, 105, 92, 0.05); padding: 0 2px; border-radius: 3px;
         }
-        .bible-link:hover { background: var(--primary); color: white; }
 
         /* NOTAS SUPERÍNDICE */
         .note-marker {
             font-size: 0.7em; vertical-align: super; cursor: pointer;
-            background: var(--accent); color: white; border-radius: 50%; width: 20px; height: 20px;
+            background: var(--accent); color: white; border-radius: 50%; width: 22px; height: 22px;
             display: inline-flex; align-items: center; justify-content: center;
             margin-left: 2px; border: none; user-select: none;
         }
@@ -82,18 +81,29 @@
         }
         .rich-box img { max-width: 100%; display: block; margin: 5px 0; border-radius: 4px; }
 
-        /* SIDEBAR */
-        #notes-sidebar {
-            width: var(--sidebar-width); background: var(--bg);
-            border-left: 2px solid var(--primary); display: none; flex-direction: column;
-            position: absolute; right: 0; top: 0; bottom: 0; z-index: 100;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        /* --- VENTANA FLOTANTE (DRAGGABLE & RESIZABLE) --- */
+        .floating-window {
+            position: absolute; width: 350px; height: 300px;
+            background: var(--window-bg); border: 1px solid #999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 2000;
+            display: none; flex-direction: column;
+            resize: both; overflow: auto; /* Permite redimensionar */
+            min-width: 250px; min-height: 200px; border-radius: 8px;
         }
-        @media (max-width: 600px) { #notes-sidebar { width: 100%; } }
         
-        .sb-header { padding: 10px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center;}
-        .sb-content { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column;}
-        .sb-footer { padding: 10px; border-top: 1px solid #ccc; display: flex; gap: 10px; background: var(--secondary); }
+        .window-header {
+            padding: 8px 10px; background: var(--window-header); color: white;
+            cursor: move; /* Indica que se puede mover */
+            display: flex; justify-content: space-between; align-items: center;
+            user-select: none;
+        }
+        
+        .window-body { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; }
+        
+        .window-footer {
+            padding: 10px; border-top: 1px solid #ccc; background: var(--secondary);
+            display: flex; gap: 10px; justify-content: flex-end;
+        }
 
         /* CINTA FLOTANTE */
         #ribbon {
@@ -104,23 +114,13 @@
         body.dark #ribbon { background: #eee; }
         
         .rib-row { display: flex; align-items: center; gap: 5px; overflow-x: auto; }
-        .rib-lbl { color: #aaa; font-size: 10px; text-transform: uppercase; width: 40px;}
-        body.dark .rib-lbl { color: #555; }
-
         .swatch { 
             width: 24px; height: 24px; border: 1px solid #fff; border-radius: 4px; 
             cursor: pointer; flex-shrink: 0; position: relative; overflow: hidden;
         }
         .swatch input[type="color"] { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; opacity: 0; cursor: pointer; }
-        
         .rib-btn { background: #555; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
         body.dark .rib-btn { background: #ccc; color: #000; }
-
-        /* MODAL BIBLIA */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-box { background: var(--bg); width: 90%; max-width: 600px; max-height: 80%; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; padding: 0;}
-        .modal-head { padding: 15px; background: var(--secondary); display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-weight: bold; color: var(--primary);}
-        .modal-body { padding: 20px; overflow-y: auto; font-size: 1.2em; line-height: 1.6; color: var(--text); }
 
         /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
@@ -138,14 +138,13 @@
 <body>
 
     <!-- LOGIN -->
-    <div id="login-screen">
-        <div class="login-box">
-            <h2 style="color:var(--primary)">Mi Estudio</h2>
+    <div id="login-screen" style="position:fixed; inset:0; background:#fff; z-index:5000; display:flex; justify-content:center; align-items:center;">
+        <div style="text-align:center; width:300px; padding:30px; border:1px solid #ccc; border-radius:10px;">
+            <h2 style="color:#004d40">Mi Estudio</h2>
             <input id="email" class="login-inp" type="email" placeholder="Email">
             <input id="pass" class="login-inp" type="password" placeholder="Contraseña">
-            <button onclick="auth.login()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; margin-top:10px; cursor:pointer">Entrar</button>
-            <button onclick="auth.reg()" style="width:100%; padding:10px; background:#555; color:white; border:none; margin-top:5px; cursor:pointer">Registrar</button>
-            <p id="msg" style="color:red; font-size:0.8rem"></p>
+            <button onclick="auth.login()" style="width:100%; padding:10px; background:#004d40; color:white; border:none; margin-top:10px; cursor:pointer">Entrar</button>
+            <p id="msg" style="color:red; font-size:0.8rem; margin-top:10px"></p>
         </div>
     </div>
 
@@ -172,71 +171,64 @@
                 </div>
             </div>
 
-            <!-- SIDEBAR NOTAS -->
-            <div id="notes-sidebar">
-                <div class="sb-header">
-                    <b>Nota Personal</b>
-                    <button onclick="document.getElementById('notes-sidebar').style.display='none'" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer">✕</button>
+            <!-- VENTANA NOTAS FLOTANTE (Draggable) -->
+            <div id="note-window" class="floating-window" style="top:20%; left:20%;">
+                <div class="window-header" onmousedown="dragElement(document.getElementById('note-window'), event)">
+                    <span>📝 Nota</span>
+                    <span onclick="notes.close()" style="cursor:pointer; font-size:1.2em">✕</span>
                 </div>
-                <div class="sb-content">
-                    <p style="font-size:0.8em; color:#666; margin:0 0 5px 0">Puedes pegar imágenes aquí (Ctrl+V).</p>
-                    <div id="sidebar-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0"></div>
+                <div class="window-body">
+                    <div style="font-size:0.8em; color:#666; margin-bottom:5px">Pega imágenes (Ctrl+V) y escribe.</div>
+                    <div id="window-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0; border:1px solid #ccc"></div>
                 </div>
-                <div class="sb-footer">
-                    <button onclick="notes.delete()" style="flex:1; background:#d32f2f; color:white; border:none; padding:10px; border-radius:4px; cursor:pointer">Eliminar</button>
-                    <button onclick="notes.save()" style="flex:1; background:var(--primary); color:white; border:none; padding:10px; border-radius:4px; cursor:pointer">Guardar</button>
+                <div class="window-footer">
+                    <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Eliminar</button>
+                    <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer">Guardar</button>
                 </div>
             </div>
+
+            <!-- VENTANA BIBLIA FLOTANTE -->
+            <div id="bible-window" class="floating-window" style="top:15%; left:15%; width:400px; height:400px">
+                <div class="window-header" onmousedown="dragElement(document.getElementById('bible-window'), event)">
+                    <span id="bible-title">Biblia</span>
+                    <span onclick="document.getElementById('bible-window').style.display='none'" style="cursor:pointer; font-size:1.2em">✕</span>
+                </div>
+                <div class="window-body">
+                    <div id="bible-content" style="line-height:1.6; font-size:1.1em; padding:10px;">Cargando...</div>
+                    <div style="margin-top:20px; text-align:center">
+                        <a id="bible-ext-link" href="#" target="_blank" style="display:inline-block; padding:10px; background:#004d40; color:white; text-decoration:none; border-radius:5px;">
+                            📖 Leer en BibleGateway (Seguro)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- CINTA COLORES -->
         <div id="ribbon" onmousedown="event.preventDefault()">
-            <!-- Fondo -->
             <div class="rib-row">
-                <span class="rib-lbl">Fondo</span>
+                <span class="rib-lbl" style="color:#aaa; font-size:10px">FONDO</span>
                 <div class="swatch" style="background:#ffff00" onclick="tools.bg('#ffff00')"></div>
                 <div class="swatch" style="background:#a5d6a7" onclick="tools.bg('#a5d6a7')"></div>
                 <div class="swatch" style="background:#90caf9" onclick="tools.bg('#90caf9')"></div>
-                <div class="swatch" style="background:#ffcc80" onclick="tools.bg('#ffcc80')"></div>
-                <div class="swatch" style="background:#e1bee7" onclick="tools.bg('#e1bee7')"></div>
                 <div class="swatch" style="background:conic-gradient(red,blue,green)" title="Personalizado"><input type="color" oninput="tools.bg(this.value)"></div>
-                <button class="rib-btn" onclick="tools.bg('transparent')" title="Quitar">🚫</button>
+                <button class="rib-btn" onclick="tools.bg('transparent')">🚫</button>
             </div>
-            <!-- Letra -->
             <div class="rib-row">
-                <span class="rib-lbl">Letra</span>
-                <div class="swatch" style="background:#000" onclick="tools.fg('#000')"></div>
+                <span class="rib-lbl" style="color:#aaa; font-size:10px">LETRA</span>
                 <div class="swatch" style="background:#d32f2f" onclick="tools.fg('#d32f2f')"></div>
                 <div class="swatch" style="background:#1565c0" onclick="tools.fg('#1565c0')"></div>
-                <div class="swatch" style="background:#2e7d32" onclick="tools.fg('#2e7d32')"></div>
                 <div class="swatch" style="background:conic-gradient(black,white)" title="Personalizado"><input type="color" oninput="tools.fg(this.value)"></div>
             </div>
-            <!-- Estilos -->
             <div class="rib-row" style="border-top:1px solid #666; padding-top:5px; margin-top:5px; justify-content:space-between">
                 <div style="display:flex; gap:3px">
                     <button class="rib-btn" onclick="tools.exec('bold')"><b>B</b></button>
                     <button class="rib-btn" onclick="tools.exec('underline')"><u>U</u></button>
-                    <button class="rib-btn" onclick="tools.exec('italic')"><i>I</i></button>
                     <button class="rib-btn" onclick="tools.clear()">🧹</button>
                 </div>
                 <button class="rib-btn" onclick="tools.addNote()" style="background:#7b1fa2">📝</button>
                 <button class="rib-btn" onclick="ribbon.hide()">✕</button>
-            </div>
-        </div>
-
-        <!-- MODAL BIBLIA (V47) -->
-        <div id="bible-modal" class="modal">
-            <div class="modal-box">
-                <div class="modal-head">
-                    <span id="bible-title">Biblia RVR60</span>
-                    <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.5rem; cursor:pointer; color:inherit">✕</button>
-                </div>
-                <div id="bible-content" class="modal-body">
-                    Cargando...
-                </div>
-                <div style="padding:10px; text-align:center; border-top:1px solid #ccc; font-size:0.8rem">
-                    <a id="bible-ext" href="#" target="_blank" style="color:var(--accent)">Abrir en pestaña nueva</a>
-                </div>
             </div>
         </div>
     </div>
@@ -267,6 +259,31 @@
                 nav.init();
             }
         });
+
+        // DRAG & DROP LOGIC
+        function dragElement(elm, e) {
+            e.preventDefault();
+            let pos3 = e.clientX;
+            let pos4 = e.clientY;
+            
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+
+            function elementDrag(e) {
+                e.preventDefault();
+                let pos1 = pos3 - e.clientX;
+                let pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elm.style.top = (elm.offsetTop - pos2) + "px";
+                elm.style.left = (elm.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
 
         // NAVEGACIÓN
         const nav = {
@@ -309,7 +326,7 @@
         const loader = {
             load: async () => {
                 ribbon.hide();
-                document.getElementById('notes-sidebar').style.display='none';
+                notes.close();
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
@@ -343,7 +360,7 @@
                 }
             },
             postLoad: () => {
-                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.fetch(e.innerText));
+                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
                 document.querySelectorAll('.note-marker').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
                 enablePasteImage();
                 loader.restoreInputs();
@@ -389,7 +406,7 @@
                     }
                 }
             };
-            document.getElementById('sidebar-editor').onpaste = handle;
+            document.getElementById('window-editor').onpaste = handle;
             document.querySelectorAll('.rich-box').forEach(b => b.onpaste = handle);
         }
 
@@ -404,6 +421,7 @@
             bg: (c) => tools.exec("BackColor", c),
             fg: (c) => tools.exec("ForeColor", c),
             clear: () => { tools.exec("removeFormat", null); ribbon.hide(); },
+            
             addNote: () => {
                 const sel = window.getSelection();
                 if(!sel.rangeCount || sel.isCollapsed) return;
@@ -424,24 +442,24 @@
         const notes = {
             open: (id) => {
                 state.activeNoteId = id;
-                document.getElementById('notes-sidebar').style.display = 'flex';
+                document.getElementById('note-window').style.display = 'flex';
                 fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
-                    document.getElementById('sidebar-editor').innerHTML = s.val() || "";
+                    document.getElementById('window-editor').innerHTML = s.val() || "";
                 });
             },
-            close: () => document.getElementById('notes-sidebar').style.display = 'none',
+            close: () => document.getElementById('note-window').style.display = 'none',
             save: () => {
-                const html = document.getElementById('sidebar-editor').innerHTML;
+                const html = document.getElementById('window-editor').innerHTML;
                 if(!html.trim()) { notes.delete(); return; }
                 fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
-                document.getElementById('notes-sidebar').style.display = 'none';
+                notes.close();
             },
             delete: () => {
                 const id = state.activeNoteId;
                 fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
                 const el = document.querySelector(`.note-marker[data-id="${id}"]`);
                 if(el) el.remove();
-                document.getElementById('notes-sidebar').style.display = 'none';
+                notes.close();
                 loader.save();
             }
         };
@@ -464,69 +482,19 @@
             hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
-        // --- BIBLIA INTELIGENTE V47 ---
         const bible = {
-            fetch: (ref) => {
-                document.getElementById('bible-modal').style.display = 'flex';
+            open: (ref) => {
+                document.getElementById('bible-window').style.display = 'flex';
                 document.getElementById('bible-title').innerText = ref;
-                document.getElementById('bible-content').innerHTML = '<p style="text-align:center">Cargando...</p>';
+                document.getElementById('bible-content').innerText = "Buscando texto...";
+                document.getElementById('bible-ext-link').href = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
                 
-                // 1. Limpieza y traducción básica de libros (Español -> Inglés API)
-                let book = ref.split(" ")[0];
-                let rest = ref.substring(book.length);
-                let map = {
-                    'Gén': 'Genesis', 'Éx': 'Exodus', 'Lev': 'Leviticus', 'Núm': 'Numbers', 'Deut': 'Deuteronomy', 'Dt': 'Deuteronomy',
-                    'Jos': 'Joshua', 'Jue': 'Judges', 'Rut': 'Ruth', '1 Sam': '1Samuel', '2 Sam': '2Samuel', '1 Rey': '1Kings', '2 Rey': '2Kings',
-                    '1 Crón': '1Chronicles', '2 Crón': '2Chronicles', 'Esd': 'Ezra', 'Neh': 'Nehemiah', 'Est': 'Esther', 'Job': 'Job',
-                    'Sal': 'Psalms', 'Prov': 'Proverbs', 'Ecl': 'Ecclesiastes', 'Cant': 'Song of Songs', 'Isa': 'Isaiah', 'Jer': 'Jeremiah',
-                    'Lam': 'Lamentations', 'Ez': 'Ezekiel', 'Dan': 'Daniel', 'Os': 'Hosea', 'Joel': 'Joel', 'Amós': 'Amos', 'Abd': 'Obadiah',
-                    'Jon': 'Jonah', 'Miq': 'Micah', 'Nah': 'Nahum', 'Hab': 'Habakkuk', 'Sof': 'Zephaniah', 'Hag': 'Haggai', 'Zac': 'Zechariah',
-                    'Mal': 'Malachi', 'Mat': 'Matthew', 'Mar': 'Mark', 'Luc': 'Luke', 'Juan': 'John', 'Hech': 'Acts', 'Rom': 'Romans',
-                    '1 Cor': '1Corinthians', '2 Cor': '2Corinthians', 'Gál': 'Galatians', 'Efe': 'Ephesians', 'Fil': 'Philippians', 'Col': 'Colossians',
-                    '1 Tes': '1Thessalonians', '2 Tes': '2Thessalonians', '1 Tim': '1Timothy', '2 Tim': '2Timothy', 'Tito': 'Titus', 'Flem': 'Philemon',
-                    'Heb': 'Hebrews', 'Sant': 'James', '1 Ped': '1Peter', '2 Ped': '2Peter', '1 Juan': '1John', '2 Juan': '2John', '3 Juan': '3John',
-                    'Jud': 'Jude', 'Apoc': 'Revelation'
-                };
-                
-                // Buscar si existe traducción
-                for (let k in map) {
-                    if (ref.startsWith(k)) {
-                        book = map[k];
-                        rest = ref.substring(k.length);
-                        break;
-                    }
-                }
-                
-                let query = (book + rest).trim().replace(/\s/g, ''); // Quitar espacios para API
-                
-                // Enlace externo siempre listo
-                document.getElementById('bible-ext').href = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
-
-                // Consulta a GetBible (Proxy)
-                const url = `https://getbible.net/json?passage=${encodeURIComponent(query)}&v=rvr60`;
-                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-
-                fetch(proxy)
-                    .then(r => r.json())
+                // Intento API
+                fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=almeida`)
+                    .then(r=>r.json())
                     .then(d => {
-                        let jsonStr = d.contents;
-                        if(jsonStr.startsWith('(')) jsonStr = jsonStr.substring(1, jsonStr.length-2);
-                        let data = JSON.parse(jsonStr);
-                        
-                        let html = "";
-                        if(data.book) {
-                            data.book.forEach(ch => {
-                                Object.keys(ch.chapter).forEach(v => {
-                                    html += `<sup><b>${v}</b></sup> ${ch.chapter[v].verse}<br>`;
-                                });
-                            });
-                            document.getElementById('bible-content').innerHTML = html;
-                        } else { throw new Error("No data"); }
-                    })
-                    .catch(() => {
-                        document.getElementById('bible-content').innerHTML = 
-                        `<p style="text-align:center; color:#c62828">No se pudo cargar el texto aquí.<br>
-                        Por favor usa el enlace de abajo.</p>`;
+                        if(d.text) document.getElementById('bible-content').innerText = d.text;
+                        else document.getElementById('bible-content').innerText = "Texto no disponible aquí. Usa el botón de abajo.";
                     });
             }
         };
@@ -552,8 +520,6 @@
             md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
             md = md.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
             md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
-            
-            // Regex Biblia mejorado para capturar abreviaturas comunes
             md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
             
             let lines = md.split('\n');
