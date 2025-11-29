@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V37 - Estudio Total</title>
+    <title>Escuela Sabática V38 - Mobile & Media</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
@@ -13,40 +13,68 @@
             --primary: #00695c;
             --secondary: #e0f2f1;
             --accent: #c62828;
+            --ribbon-bg: #222;
             --sidebar-width: 350px;
         }
         body.sepia { --bg: #f4ecd8; --text: #5b4636; --primary: #5d4037; --secondary: #eefebe; }
-        body.dark { --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; --secondary: #1e1e1e; --accent: #ef9a9a; }
+        body.dark { --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; --secondary: #1e1e1e; --accent: #ef9a9a; --ribbon-bg: #eee; }
 
-        body { font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { 
+            font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); 
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+            -webkit-text-size-adjust: 100%;
+        }
 
-        /* HEADER */
-        header { background: var(--secondary); padding: 5px; border-bottom: 2px solid var(--primary); display: flex; gap: 5px; align-items: center; z-index: 50; }
-        select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 0.9rem; }
-        .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 5px; border-radius: 4px; color: var(--text); font-weight: bold; }
+        /* HEADER RESPONSIVE */
+        header { 
+            background: var(--secondary); padding: 8px; border-bottom: 2px solid var(--primary); 
+            display: flex; gap: 5px; align-items: center; z-index: 50; flex-wrap: wrap; 
+        }
+        select { 
+            flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; 
+            background: var(--bg); color: var(--text); font-size: 16px; /* Evita zoom en iPhone */
+            min-width: 80px;
+        }
+        .tool-btn { 
+            background: none; border: 1px solid transparent; cursor: pointer; 
+            padding: 8px; border-radius: 4px; color: var(--text); 
+        }
 
         /* CONTENEDOR */
         #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
-        #main-container { flex: 1; overflow-y: auto; padding: 20px 60px; box-sizing: border-box; }
+        #main-container { 
+            flex: 1; overflow-y: auto; padding: 20px 50px; 
+            box-sizing: border-box; -webkit-overflow-scrolling: touch;
+        }
 
-        /* SIDEBAR NOTAS */
+        /* SIDEBAR (Panel Lateral) */
         #notes-sidebar {
             width: var(--sidebar-width); background: var(--secondary);
             border-left: 2px solid var(--primary); display: none; flex-direction: column;
             position: absolute; right: 0; top: 0; bottom: 0; z-index: 100;
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
         }
-        
-        /* CAJAS RICAS (Rich Text Boxes) para Notas y Respuestas */
-        .rich-box {
-            width: 100%; min-height: 100px; padding: 10px; margin: 10px 0;
-            border: 1px solid #ccc; border-radius: 5px; background: var(--bg); color: var(--text);
-            font-family: sans-serif; overflow-y: auto; outline: none;
-        }
-        .rich-box:focus { border-color: var(--primary); box-shadow: 0 0 5px rgba(0,105,92,0.3); }
-        .rich-box img { max-width: 100%; height: auto; border-radius: 4px; }
 
-        /* FLECHAS */
+        /* RESPONSIVE MÓVIL */
+        @media (max-width: 700px) {
+            #main-container { padding: 20px 15px 80px 15px; } /* Menos margen lateral, espacio abajo */
+            #notes-sidebar { width: 100%; border-left: none; }
+            .nav-arrow { display: none; } /* Ocultar flechas en móvil, usar swipe o footer */
+            header { gap: 2px; }
+            select { font-size: 14px; padding: 5px; }
+        }
+
+        /* CAJAS RICAS (Permiten pegar imágenes) */
+        .rich-box {
+            width: 100%; min-height: 100px; padding: 10px; margin: 15px 0;
+            border: 1px solid #999; border-radius: 5px; background: var(--bg); color: var(--text);
+            font-family: sans-serif; overflow-y: auto; outline: none;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .rich-box:empty:before { content: attr(placeholder); color: #888; }
+        .rich-box img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 5px 0;}
+
+        /* FLECHAS PC */
         .nav-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(0,0,0,0.05); border: none; color: var(--text);
@@ -57,17 +85,21 @@
         #prev-btn { left: 0; } #next-btn { right: 0; }
 
         /* TEXTO */
-        h1 { color: var(--primary); border-bottom: 1px solid #ccc; font-size: 1.5em; }
+        h1 { color: var(--primary); border-bottom: 1px solid #ccc; font-size: 1.5em; line-height: 1.3; }
         h2 { color: var(--text); margin-top: 25px; font-weight: bold; font-size: 1.2em; }
         h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
         p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
-        .bible-link { color: var(--primary); font-weight: bold; text-decoration: underline; cursor: pointer; }
-        .question-label { font-weight:bold; color:var(--accent); font-family:sans-serif; margin-top:10px; display:block; }
+        
+        .bible-link { 
+            color: var(--primary); font-weight: bold; text-decoration: underline; 
+            cursor: pointer; padding: 2px 4px; border-radius: 4px;
+            background: rgba(0, 105, 92, 0.05);
+        }
 
         /* NOTAS SUPERÍNDICE */
         .note-marker {
             font-size: 0.7em; vertical-align: super; cursor: pointer;
-            background: var(--accent); color: white; border-radius: 50%; width: 20px; height: 20px;
+            background: var(--accent); color: white; border-radius: 50%; width: 22px; height: 22px;
             display: inline-flex; align-items: center; justify-content: center;
             margin-left: 2px; text-decoration: none !important; border: none; user-select: none;
         }
@@ -75,21 +107,28 @@
 
         /* CINTA FLOTANTE */
         #ribbon {
-            position: absolute; display: none; background: #333; padding: 8px; border-radius: 8px;
+            position: absolute; display: none; background: var(--ribbon-bg); padding: 8px; border-radius: 8px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 2000; flex-direction: column; gap: 6px;
-            min-width: 280px;
+            min-width: 280px; max-width: 90vw;
         }
-        .rib-row { display: flex; align-items: center; gap: 4px; overflow-x: auto; }
-        .swatch { width: 22px; height: 22px; border: 1px solid #fff; cursor: pointer; flex-shrink: 0; border-radius: 3px; }
-        .rib-btn { background: #555; border: none; color: white; padding: 6px; border-radius: 4px; cursor: pointer; }
+        body.dark #ribbon { background: #eee; }
         
-        /* Input Color Personalizado */
-        .custom-color-wrap { width: 22px; height: 22px; border: 1px solid #fff; position: relative; background: conic-gradient(red, yellow, green, blue, red); cursor:pointer;}
+        .rib-row { display: flex; align-items: center; gap: 4px; overflow-x: auto; }
+        .swatch { width: 24px; height: 24px; border: 1px solid #fff; cursor: pointer; flex-shrink: 0; border-radius: 4px; }
+        .rib-btn { background: #555; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer; }
+        .rib-btn:hover { background: #777; }
+        body.dark .rib-btn { background: #ddd; color: black; }
+        
+        .custom-color-wrap { width: 24px; height: 24px; border: 1px solid #fff; position: relative; background: conic-gradient(red, yellow, green, blue, red); cursor:pointer; border-radius: 4px;}
         input[type="color"] { opacity: 0; width: 100%; height: 100%; cursor: pointer; position: absolute; top: 0; left: 0; }
 
-        /* MODALES */
+        /* MODAL BIBLIA */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-box { background: var(--bg); padding: 20px; border-radius: 10px; width: 90%; max-width: 600px; max-height: 80%; overflow-y: auto; }
+        .modal-box { 
+            background: var(--bg); width: 95%; max-width: 800px; height: 90%; 
+            border-radius: 10px; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .modal-header { padding: 10px; background: var(--secondary); display: flex; justify-content: space-between; align-items: center; }
 
         .hidden { display: none !important; }
     </style>
@@ -103,11 +142,11 @@
 
     <!-- LOGIN -->
     <div id="login-screen" style="position:fixed; inset:0; background:#fff; z-index:5000; display:flex; justify-content:center; align-items:center;">
-        <div style="text-align:center; width:300px;">
+        <div style="text-align:center; width:300px; padding:20px; border:1px solid #ccc; border-radius:10px;">
             <h2 style="color:#004d40">Mi Estudio</h2>
-            <input id="email" type="email" placeholder="Email" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ccc;">
-            <input id="pass" type="password" placeholder="Contraseña" style="width:100%; padding:10px; margin:5px 0; border:1px solid #ccc;">
-            <button onclick="auth.login()" style="width:100%; padding:10px; background:#004d40; color:white; border:none; cursor:pointer;">Entrar</button>
+            <input id="email" type="email" placeholder="Email" style="width:100%; padding:12px; margin:5px 0; border:1px solid #ccc;">
+            <input id="pass" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin:5px 0; border:1px solid #ccc;">
+            <button onclick="auth.login()" style="width:100%; padding:12px; background:#004d40; color:white; border:none; cursor:pointer; margin-top:10px">Entrar</button>
             <p id="msg" style="color:red"></p>
         </div>
     </div>
@@ -121,84 +160,78 @@
             <button class="tool-btn" onclick="ui.cycleMode()">🎨</button>
             <button class="tool-btn" onclick="ui.font(2)">A+</button>
             <button class="tool-btn" onclick="ui.font(-2)">A-</button>
-            <button class="tool-btn" onclick="loader.resetDay()" title="Restaurar Lección Original" style="color:red">♻</button>
+            <button class="tool-btn" onclick="loader.resetDay()" style="color:red">🗑️</button>
         </header>
 
         <div id="workspace">
             <button id="prev-btn" class="nav-arrow" onclick="nav.prev()">❮</button>
             <button id="next-btn" class="nav-arrow" onclick="nav.next()">❯</button>
 
-            <!-- CONTENIDO EDITABLE -->
+            <!-- CONTENIDO -->
             <div id="main-container" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
                 <div id="content">
                     <p style="text-align:center; margin-top:50px">Cargando...</p>
                 </div>
             </div>
 
-            <!-- SIDEBAR DE NOTAS -->
+            <!-- SIDEBAR NOTAS (Soporte Imágenes) -->
             <div id="notes-sidebar">
-                <div style="background:var(--primary); color:white; padding:10px; display:flex; justify-content:space-between">
-                    <b>Nota</b>
-                    <button onclick="document.getElementById('notes-sidebar').style.display='none'" style="background:none; border:none; color:white; font-size:1.2em">✕</button>
+                <div style="background:var(--primary); color:white; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <b>Nota / Archivo</b>
+                    <button onclick="document.getElementById('notes-sidebar').style.display='none'" style="background:none; border:none; color:white; font-size:1.5em">✕</button>
                 </div>
-                <div style="flex:1; padding:10px; overflow-y:auto">
-                    <!-- EDITOR DE NOTA (Soporta imágenes pegadas) -->
-                    <div id="sidebar-editor" class="rich-box" contenteditable="true" onmouseup="ribbon.showInEditor()"></div>
-                    
-                    <div style="margin-top:10px; display:flex; justify-content:space-between">
-                        <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px; border-radius:4px">Eliminar</button>
-                        <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px; border-radius:4px">Guardar</button>
+                <div style="flex:1; padding:10px; overflow-y:auto; display:flex; flex-direction:column;">
+                    <div style="font-size:0.8em; color:#666; margin-bottom:5px">
+                        💡 Pega imágenes aquí (Ctrl+V) o escribe texto.
                     </div>
-                    <p style="font-size:0.7em; color:#777; margin-top:5px">Puedes pegar imágenes aquí.</p>
+                    <!-- Editor Rico -->
+                    <div id="sidebar-editor" class="rich-box" contenteditable="true" placeholder="Escribe o pega imagen..." style="flex:1; margin:0"></div>
+                    
+                    <div style="margin-top:10px; display:flex; gap:10px">
+                        <button onclick="notes.delete()" style="flex:1; background:#d32f2f; color:white; border:none; padding:10px; border-radius:4px">Eliminar</button>
+                        <button onclick="notes.save()" style="flex:1; background:var(--primary); color:white; border:none; padding:10px; border-radius:4px">Guardar</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- CINTA DE HERRAMIENTAS -->
+        <!-- CINTA FLOTANTE -->
         <div id="ribbon" onmousedown="event.preventDefault()">
-            <!-- Fondo -->
             <div class="rib-row">
                 <span style="color:#aaa; font-size:10px">FONDO</span>
                 <div class="swatch" style="background:#ffff00" onclick="tools.bg('#ffff00')"></div>
                 <div class="swatch" style="background:#a5d6a7" onclick="tools.bg('#a5d6a7')"></div>
                 <div class="swatch" style="background:#90caf9" onclick="tools.bg('#90caf9')"></div>
-                <div class="swatch" style="background:#ffcc80" onclick="tools.bg('#ffcc80')"></div>
-                <div class="swatch" style="background:#e1bee7" onclick="tools.bg('#e1bee7')"></div>
                 <div class="custom-color-wrap"><input type="color" oninput="tools.bg(this.value)"></div>
-                <button class="rib-btn" onclick="tools.bg('transparent')" title="Quitar Fondo">🚫</button>
+                <button class="rib-btn" onclick="tools.bg('transparent')">🚫</button>
             </div>
-            <!-- Letra -->
             <div class="rib-row">
                 <span style="color:#aaa; font-size:10px">LETRA</span>
                 <div class="swatch" style="background:#000" onclick="tools.fg('#000')"></div>
                 <div class="swatch" style="background:#d32f2f" onclick="tools.fg('#d32f2f')"></div>
-                <div class="swatch" style="background:#1565c0" onclick="tools.fg('#1565c0')"></div>
-                <div class="swatch" style="background:#2e7d32" onclick="tools.fg('#2e7d32')"></div>
                 <div class="custom-color-wrap"><input type="color" oninput="tools.fg(this.value)"></div>
             </div>
-            <!-- Estilos -->
             <div class="rib-row" style="justify-content:space-between; margin-top:5px; border-top:1px solid #555; padding-top:5px">
                 <div style="display:flex; gap:3px">
                     <button class="rib-btn" onclick="tools.exec('bold')"><b>B</b></button>
                     <button class="rib-btn" onclick="tools.exec('underline')"><u>U</u></button>
-                    <button class="rib-btn" onclick="tools.exec('italic')"><i>I</i></button>
-                    <button class="rib-btn" onclick="tools.clear()" title="Limpiar Formato">🧹</button>
+                    <button class="rib-btn" onclick="tools.clear()">🧹</button>
                 </div>
-                <div style="display:flex; gap:3px">
-                    <button class="rib-btn" onclick="tools.addNote()" style="background:#7b1fa2">📝 Nota</button>
-                    <button class="rib-btn" onclick="ribbon.hide()">✕</button>
-                </div>
+                <button class="rib-btn" onclick="tools.addNote()" style="background:#7b1fa2">📝 Nota</button>
             </div>
         </div>
 
         <!-- MODAL BIBLIA -->
         <div id="bible-modal" class="modal">
             <div class="modal-box">
-                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #ccc; padding-bottom:10px; margin-bottom:10px">
-                    <b id="bible-ref-title">Referencia</b>
-                    <button onclick="document.getElementById('bible-modal').style.display='none'">✕</button>
+                <div class="modal-header">
+                    <span id="bible-title">Biblia</span>
+                    <div style="display:flex; gap:10px">
+                        <a id="bible-ext-link" href="#" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none; padding-top:5px">Abrir fuera</a>
+                        <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.5rem">✕</button>
+                    </div>
                 </div>
-                <div id="bible-text-content" style="line-height:1.6; font-size:1.1em">Cargando...</div>
+                <iframe id="bible-frame" style="flex:1; border:none; width:100%" src=""></iframe>
             </div>
         </div>
     </div>
@@ -237,7 +270,7 @@
             }
         });
 
-        // NAVEGACIÓN
+        // NAVEGACIÓN MEJORADA (Material Auxiliar)
         const nav = {
             init: () => {
                 const qSel = document.getElementById('sel-q');
@@ -249,8 +282,16 @@
 
                 const dSel = document.getElementById('sel-d');
                 const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
-                days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
+                const codes = ["01","02","03","04","05","06","07"];
+                days.forEach((d,i) => dSel.add(new Option(d, codes[i])));
+                
+                // Agregamos Material Auxiliar
+                dSel.add(new Option("--- Extras ---", "disabled", true, true)); // Separador
+                dSel.options[dSel.options.length-1].disabled = true;
+                dSel.add(new Option("Auxiliar / Maestros", "08")); 
+                dSel.add(new Option("Historia Misionera", "09"));
 
+                // Fecha Hoy
                 const now = new Date();
                 document.getElementById('sel-l').value = "09"; 
                 let d = now.getDay();
@@ -263,15 +304,23 @@
             changeLesson: () => { state.l = document.getElementById('sel-l').value; loader.load(); },
             prev: () => {
                 const d = document.getElementById('sel-d');
-                if(d.selectedIndex > 0) { d.selectedIndex--; loader.load(); }
+                if(d.selectedIndex > 0) { 
+                    d.selectedIndex--; 
+                    if(d.value === 'disabled') d.selectedIndex--; // Saltar separador
+                    loader.load(); 
+                }
             },
             next: () => {
                 const d = document.getElementById('sel-d');
-                if(d.selectedIndex < d.options.length-1) { d.selectedIndex++; loader.load(); }
+                if(d.selectedIndex < d.options.length-1) { 
+                    d.selectedIndex++;
+                    if(d.value === 'disabled') d.selectedIndex++; // Saltar separador
+                    loader.load(); 
+                }
             }
         };
 
-        // CARGADOR
+        // CARGADOR Y PERSISTENCIA (Soporte Imágenes Base64)
         const loader = {
             load: async () => {
                 ribbon.hide();
@@ -280,44 +329,62 @@
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
                 
+                if(state.d === 'disabled') return;
+
                 const container = document.getElementById('content');
                 container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
 
-                // 1. Intentar cargar guardado
                 const ref = `users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`;
                 fbDb.ref(ref).once('value', async (s) => {
                     const html = s.val();
                     if(html) {
                         container.innerHTML = html;
-                        loader.attachEvents();
-                        // Importante: Hacer que las cajas de respuesta sean editables de nuevo si se perdió
-                        document.querySelectorAll('.rich-box').forEach(b => b.contentEditable = "true");
+                        loader.postLoad();
                     } else {
-                        await loader.fetchRaw();
+                        await loader.fetchGitHub();
                     }
                 });
             },
-            fetchRaw: async () => {
+            fetchGitHub: async () => {
                 const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
                 try {
                     const r = await fetch(url);
                     if(!r.ok) throw new Error();
                     const md = await r.text();
                     document.getElementById('content').innerHTML = parser(md);
-                    loader.attachEvents();
+                    loader.postLoad();
                 } catch(e) {
-                    document.getElementById('content').innerHTML = "<p>Sin contenido.</p>";
+                    document.getElementById('content').innerHTML = "<p>Contenido no disponible para esta sección.</p>";
                 }
+            },
+            postLoad: () => {
+                loader.attachEvents();
+                loader.restoreInputs();
+                // Activar pegado de imágenes en cajas ricas
+                enablePasteImage();
             },
             save: () => {
                 const html = document.getElementById('content').innerHTML;
                 fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).set(html);
             },
             resetDay: () => {
-                if(confirm("¿Borrar todo lo que hiciste hoy y recargar la lección original?")) {
+                if(confirm("¿Borrar todo y reiniciar lección?")) {
                     fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).remove();
+                    fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).remove();
                     loader.load();
                 }
+            },
+            saveInput: (id, html) => {
+                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}/${id}`).set(html);
+            },
+            restoreInputs: () => {
+                fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).once('value', s => {
+                    const d = s.val();
+                    if(d) Object.keys(d).forEach(k => {
+                        const el = document.getElementById(k);
+                        if(el) el.innerHTML = d[k];
+                    });
+                });
             },
             attachEvents: () => {
                 document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
@@ -325,7 +392,30 @@
             }
         };
 
-        // HERRAMIENTAS Y EDITOR
+        // GESTIÓN DE PEGAR IMÁGENES (Base64)
+        function enablePasteImage() {
+            const processPaste = (e) => {
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                for (let index in items) {
+                    const item = items[index];
+                    if (item.kind === 'file') {
+                        const blob = item.getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            document.execCommand('insertImage', false, event.target.result);
+                            loader.save(); // Auto guardar tras pegar
+                        };
+                        reader.readAsDataURL(blob);
+                        e.preventDefault(); // Evitar pegado doble
+                    }
+                }
+            };
+            // Aplicar a sidebar y cajas de respuesta
+            document.getElementById('sidebar-editor').onpaste = processPaste;
+            document.querySelectorAll('.rich-box').forEach(box => box.onpaste = processPaste);
+        }
+
+        // HERRAMIENTAS
         const tools = {
             exec: (cmd, val) => {
                 document.designMode = "on";
@@ -336,22 +426,17 @@
             bg: (c) => { tools.exec("BackColor", c); ribbon.hide(); },
             fg: (c) => { tools.exec("ForeColor", c); ribbon.hide(); },
             clear: () => { tools.exec("removeFormat", null); ribbon.hide(); },
-            
             addNote: () => {
                 const sel = window.getSelection();
                 if(!sel.rangeCount || sel.isCollapsed) return;
-                
                 const id = Date.now().toString();
                 const sup = document.createElement("sup");
                 sup.className = "note-marker";
                 sup.dataset.id = id;
                 sup.contentEditable = "false";
                 sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
-                
                 const range = sel.getRangeAt(0);
-                range.collapse(false); 
-                range.insertNode(sup);
-                
+                range.collapse(false); range.insertNode(sup);
                 ribbon.hide();
                 notes.open(id);
                 loader.save();
@@ -368,7 +453,9 @@
             },
             save: () => {
                 const html = document.getElementById('sidebar-editor').innerHTML;
-                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
+                const id = state.activeNoteId;
+                if(!html.trim()) { notes.delete(); return; }
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).set(html);
                 document.getElementById('notes-sidebar').style.display = 'none';
             },
             delete: () => {
@@ -381,6 +468,7 @@
             }
         };
 
+        // CINTA RESPONSIVE
         const ribbon = {
             show: () => {
                 setTimeout(() => {
@@ -390,54 +478,24 @@
                         const m = document.getElementById('ribbon');
                         m.style.display = 'flex';
                         m.style.top = (r.top + window.scrollY - 130) + 'px'; 
-                        // Centrar
-                        let l = r.left + (r.width/2) - (m.offsetWidth/2);
-                        if(l<10) l=10;
+                        let l = r.left;
+                        if(window.innerWidth < 600) l = 10; // En móvil, margen fijo
+                        else if(l + m.offsetWidth > window.innerWidth) l = window.innerWidth - m.offsetWidth - 10;
                         m.style.left = l + 'px';
                     }
                 }, 50);
             },
-            showInEditor: () => {
-                // Versión simplificada para que funcione dentro de las cajas de respuesta también
-                ribbon.show();
-            },
             hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
-        // BIBLIA API (RVR1960 vía Proxy Texto)
+        // BIBLIA V38 (BibleGateway Directo)
         const bible = {
             open: (ref) => {
                 document.getElementById('bible-modal').style.display = 'flex';
-                document.getElementById('bible-ref-title').innerText = ref;
-                document.getElementById('bible-text-content').innerHTML = "Cargando...";
-                
-                // Usamos GetBible.net (Funciona bien y gratis)
-                // Formato JSONP o Proxy
-                const url = `https://corsproxy.io/?` + encodeURIComponent(`https://getbible.net/json?passage=${ref}&v=rvr60`);
-                
-                fetch(url)
-                    .then(r => r.text())
-                    .then(text => {
-                        // GetBible devuelve un formato raro tipo (json);
-                        let jsonStr = text.replace(/^\(/, '').replace(/\);$/, '');
-                        let data = JSON.parse(jsonStr);
-                        
-                        let html = "";
-                        if(data.book) {
-                            data.book.forEach(ch => {
-                                Object.keys(ch.chapter).forEach(vNum => {
-                                    html += `<sup>${vNum}</sup> ${ch.chapter[vNum].verse}<br>`;
-                                });
-                            });
-                        } else {
-                            html = "No se encontró el texto exacto.";
-                        }
-                        document.getElementById('bible-text-content').innerHTML = html;
-                    })
-                    .catch(e => {
-                        document.getElementById('bible-text-content').innerHTML = 
-                        `No se pudo cargar el texto aquí. <br> <a href="https://www.biblegateway.com/passage/?search=${ref}&version=RVR1960" target="_blank">Abrir en BibleGateway</a>`;
-                    });
+                document.getElementById('bible-title').innerText = ref;
+                const url = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+                document.getElementById('bible-frame').src = url;
+                document.getElementById('bible-ext-link').href = url;
             }
         };
 
@@ -470,18 +528,12 @@
                 if(!l.trim()) return;
                 h += `<p>${l}</p>`;
                 if(l.includes('?') || l.includes('Lee')) {
-                    // CAJA RICA QUE GUARDA EN EL HTML PRINCIPAL
-                    h += `<span class="question-label">Tu respuesta:</span>
-                          <div class="rich-box" contenteditable="true" onblur="loader.save()"></div>`;
+                    let id = `ans-${i}`;
+                    h += `<div class="rich-box" contenteditable="true" placeholder="Responde aquí..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
                 }
             });
             return h;
         }
-        
-        document.addEventListener('keydown', e => {
-            if(e.key === "ArrowLeft") nav.prev();
-            if(e.key === "ArrowRight") nav.next();
-        });
     </script>
 </body>
 </html>
