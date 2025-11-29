@@ -3,119 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V40 - Final</title>
+    <title>Escuela Sabática V41 - Final Fix</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
+        /* TEMA BASE */
         :root {
             --bg: #ffffff;
             --text: #222;
-            --primary: #004d40;
-            --secondary: #e0f2f1;
+            --header-bg: #f8f9fa;
+            --primary: #00695c;
             --accent: #c62828;
-            --ribbon-bg: #333;
-            --sidebar-w: 320px;
+            --border: #ddd;
         }
-        body.sepia { --bg: #f4ecd8; --text: #5b4636; --primary: #5d4037; --secondary: #eefebe; }
-        body.dark { --bg: #121212; --text: #e0e0e0; --primary: #80cbc4; --secondary: #1e1e1e; --accent: #ef9a9a; --ribbon-bg: #eeeeee; }
+        body.dark {
+            --bg: #121212;
+            --text: #e0e0e0;
+            --header-bg: #1f1f1f;
+            --primary: #80cbc4;
+            --accent: #ef9a9a;
+            --border: #333;
+        }
+        body.sepia {
+            --bg: #f4ecd8;
+            --text: #5b4636;
+            --header-bg: #e9e2c9;
+            --primary: #5d4037;
+            --border: #d7cbb1;
+        }
 
+        /* LAYOUT (GRID SYSTEM PARA ARREGLAR SCROLL) */
         body { 
             font-family: 'Georgia', serif; margin: 0; background: var(--bg); color: var(--text); 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+            height: 100vh; overflow: hidden; /* El body no scrollea */
+            display: grid; grid-template-rows: auto 1fr; /* Encabezado fijo, resto flexible */
         }
 
         /* HEADER */
         header { 
-            background: var(--secondary); padding: 5px 10px; border-bottom: 2px solid var(--primary); 
-            display: flex; gap: 5px; align-items: center; z-index: 50; flex-shrink: 0;
+            background: var(--header-bg); padding: 10px; border-bottom: 2px solid var(--primary); 
+            display: flex; gap: 8px; align-items: center; z-index: 50; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 16px; }
-        .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text); }
+        select { flex: 1; padding: 8px; border: 1px solid #999; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 16px; }
+        .btn-tool { background: none; border: 1px solid var(--border); padding: 5px; border-radius: 4px; color: var(--text); cursor: pointer; }
 
-        /* CONTENEDOR PRINCIPAL */
-        #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
-        #main-container { 
-            flex: 1; overflow-y: auto; padding: 20px 50px; 
-            box-sizing: border-box; -webkit-overflow-scrolling: touch;
+        /* CONTENEDOR PRINCIPAL (AQUÍ ESTÁ EL SCROLL) */
+        #scroll-container { 
+            overflow-y: auto; padding: 20px 50px; position: relative; scroll-behavior: smooth;
         }
-        @media(max-width:600px) { #main-container { padding: 15px; } }
+        /* Ajuste móvil */
+        @media (max-width: 600px) { #scroll-container { padding: 20px 15px 80px 15px; } }
 
-        /* FLECHAS NAVEGACIÓN */
-        .nav-arrow {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(0,0,0,0.05); border: none; color: var(--text);
+        /* FLECHAS DE NAVEGACIÓN (FLOTANTES Y FIJAS) */
+        .arrow-btn {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            background: rgba(0,0,0,0.1); border: none; color: var(--text);
             font-size: 2rem; padding: 20px 5px; cursor: pointer; z-index: 40;
-            border-radius: 4px; transition: 0.2s;
+            border-radius: 5px; transition: 0.2s;
         }
-        .nav-arrow:hover { background: var(--primary); color: white; }
-        #prev-btn { left: 0; } #next-btn { right: 0; }
+        .arrow-btn:hover { background: var(--primary); color: white; }
+        #btn-prev { left: 0; }
+        #btn-next { right: 0; }
 
-        /* TEXTO LECCIÓN */
-        h1 { color: var(--primary); border-bottom: 1px solid #ccc; font-size: 1.5em; }
-        h2 { color: var(--text); margin-top: 25px; font-weight: bold; font-size: 1.2em; }
-        h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
-        p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
-        
-        .bible-link { 
-            color: var(--primary); font-weight: bold; text-decoration: underline; 
-            cursor: pointer; background: rgba(0,0,0,0.05); padding: 0 2px; border-radius: 3px;
+        /* TEXTO Y CONTENIDO */
+        #content { max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 19px; padding-bottom: 50px; }
+        h1 { color: var(--primary); border-bottom: 1px solid var(--border); font-size: 1.5em; }
+        h2 { color: var(--text); margin-top: 30px; font-weight: bold; }
+        p { margin-bottom: 15px; }
+        .bible-link { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: bold; }
+
+        /* NOTAS (ICONO MEJORADO) */
+        .note-ref {
+            font-size: 0.7em; vertical-align: super; cursor: pointer; color: var(--accent);
+            text-decoration: none; margin-left: 2px;
         }
+        .note-ref::before { content: '📄'; } /* Icono de documento */
 
-        /* NOTAS (SUPERÍNDICE) */
-        .note-marker {
-            font-size: 0.7em; vertical-align: super; cursor: pointer;
-            background: var(--accent); color: white; border-radius: 50%; width: 22px; height: 22px;
-            display: inline-flex; align-items: center; justify-content: center;
-            margin-left: 2px; border: none; user-select: none;
-        }
-        .note-marker::before { content: '✎'; }
-
-        /* CAJAS DE RESPUESTA (RICH TEXT) */
+        /* CAJAS DE RESPUESTA */
         .rich-box {
-            width: 100%; min-height: 100px; padding: 10px; margin: 10px 0;
-            border: 1px solid #999; border-radius: 5px; background: var(--bg); color: var(--text);
-            font-family: sans-serif; overflow-y: auto; outline: none;
+            width: 100%; min-height: 100px; padding: 10px; margin: 15px 0;
+            border: 1px solid var(--border); border-radius: 5px; background: var(--bg); color: var(--text);
+            font-family: sans-serif; overflow-y: auto; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
-        .rich-box img { max-width: 100%; display: block; margin: 5px 0; border-radius: 4px; }
+        .rich-box:focus { border-color: var(--primary); }
 
-        /* SIDEBAR (NOTAS) */
-        #sidebar {
-            width: var(--sidebar-w); background: var(--bg); border-left: 2px solid var(--primary);
-            display: none; flex-direction: column; position: absolute; right: 0; top: 0; bottom: 0; z-index: 100;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
-        }
-        @media(max-width:600px) { #sidebar { width: 100%; } }
-        .sb-head { padding: 10px; background: var(--primary); color: white; display: flex; justify-content: space-between; }
-        .sb-body { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; }
-        .sb-foot { padding: 10px; border-top: 1px solid #ccc; display: flex; gap: 10px; background: var(--secondary); }
-
-        /* CINTA DE COLORES */
+        /* CINTA FLOTANTE */
         #ribbon {
-            position: absolute; display: none; background: var(--ribbon-bg); padding: 8px; border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 2000; flex-direction: column; gap: 6px; min-width: 250px;
+            position: absolute; display: none; background: #333; padding: 5px; border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4); z-index: 1000; align-items: center; gap: 5px;
         }
-        body.dark #ribbon { color: #000; }
-        
-        .rib-row { display: flex; align-items: center; gap: 5px; overflow-x: auto; }
-        .rib-lbl { color: #aaa; font-size: 10px; text-transform: uppercase; width: 40px;}
-        body.dark .rib-lbl { color: #555; }
+        .rib-btn { 
+            background: none; border: none; color: white; padding: 8px; border-radius: 50%; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .rib-btn:hover { background: #555; }
 
-        /* Círculos de Color */
-        .dot { 
-            width: 24px; height: 24px; border: 1px solid #fff; border-radius: 50%; 
-            cursor: pointer; flex-shrink: 0; position: relative; overflow: hidden;
+        /* PALETA DE COLORES (MODAL) */
+        #palette-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bg); padding: 20px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 2000; display: none; width: 300px; border: 1px solid var(--border);
         }
-        .dot input[type="color"] { 
-            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; 
-            opacity: 0; cursor: pointer; 
+        .palette-section { margin-bottom: 15px; }
+        .palette-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; color: var(--text); }
+        .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+        .swatch { 
+            width: 30px; height: 30px; border-radius: 50%; border: 1px solid #999; cursor: pointer; 
         }
-        
-        .rib-btn { background: #555; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; }
-        body.dark .rib-btn { background: #ccc; color: #000; }
+        .swatch:hover { transform: scale(1.1); border-color: var(--text); }
+        /* Picker Nativo Grande */
+        .color-picker-large { width: 100%; height: 40px; border: none; cursor: pointer; margin-top: 5px; }
 
         /* MODALES */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-box { background: var(--bg); width: 95%; max-width: 700px; height: 80%; border-radius: 8px; display: flex; flex-direction: column; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1500; display: none; }
+        .modal-container { 
+            position: fixed; inset: 20px; background: var(--bg); border-radius: 10px; z-index: 1600; display: none; flex-direction: column; 
+            max-width: 800px; margin: auto;
+        }
+        .modal-head { padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;}
+        .modal-body { flex: 1; padding: 10px; overflow-y: auto; }
+
+        /* LOGIN */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        .login-box { text-align: center; padding: 30px; border: 1px solid var(--border); border-radius: 10px; width: 300px; background: var(--header-bg); }
+        .login-inp { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #999; border-radius: 4px; box-sizing: border-box; }
         
         .hidden { display: none !important; }
     </style>
@@ -128,106 +139,97 @@
 <body>
 
     <!-- LOGIN -->
-    <div id="login-screen" style="position:fixed; inset:0; background:#fff; z-index:5000; display:flex; justify-content:center; align-items:center;">
-        <div style="text-align:center; width:300px; padding:30px; border:1px solid #ccc; border-radius:10px;">
-            <h2 style="color:#004d40">Mi Estudio</h2>
-            <input id="email" type="email" placeholder="Email" style="width:100%; padding:10px; margin:5px 0;">
-            <input id="pass" type="password" placeholder="Contraseña" style="width:100%; padding:10px; margin:5px 0;">
-            <button onclick="auth.login()" style="width:100%; padding:10px; background:#004d40; color:white; border:none; margin-top:10px">Entrar</button>
-            <p id="msg" style="color:red; font-size:0.8rem; margin-top:10px"></p>
+    <div id="login-screen">
+        <div class="login-box">
+            <h2 style="color:var(--primary)">Mi Estudio</h2>
+            <input id="email" class="login-inp" type="email" placeholder="Correo">
+            <input id="pass" class="login-inp" type="password" placeholder="Contraseña">
+            <button onclick="auth.login()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer">Entrar</button>
+            <button onclick="auth.reg()" style="width:100%; padding:10px; background:#555; color:white; border:none; border-radius:4px; margin-top:5px; cursor:pointer">Registrarme</button>
+            <p id="msg" style="color:red; margin-top:10px"></p>
         </div>
     </div>
 
-    <!-- APP -->
-    <div id="app" class="hidden">
-        <header>
-            <select id="sel-q" onchange="nav.changeQuarter()"></select>
-            <select id="sel-l" onchange="nav.changeLesson()"></select>
-            <select id="sel-d" onchange="loader.load()"></select>
-            <button class="tool-btn" onclick="ui.cycleMode()">🎨</button>
-            <button class="tool-btn" onclick="ui.font(2)">A+</button>
-            <button class="tool-btn" onclick="ui.font(-2)">A-</button>
-            <button class="tool-btn" onclick="loader.resetDay()" style="color:red" title="Borrar cambios del día">🗑️</button>
-        </header>
+    <!-- NAVEGACIÓN -->
+    <header>
+        <select id="sel-q" onchange="nav.changeQuarter()"></select>
+        <select id="sel-l" onchange="nav.changeLesson()"></select>
+        <select id="sel-d" onchange="loader.load()"></select>
+        <button class="btn-tool" onclick="ui.cycleMode()" title="Tema">🎨</button>
+        <button class="btn-tool" onclick="ui.font(2)">A+</button>
+        <button class="btn-tool" onclick="ui.font(-2)">A-</button>
+    </header>
 
-        <div id="workspace">
-            <button id="prev-btn" class="nav-arrow" onclick="nav.prev()">❮</button>
-            <button id="next-btn" class="nav-arrow" onclick="nav.next()">❯</button>
+    <!-- FLECHAS -->
+    <button id="btn-prev" class="arrow-btn" onclick="nav.prev()">❮</button>
+    <button id="btn-next" class="arrow-btn" onclick="nav.next()">❯</button>
 
-            <div id="main-container" onmouseup="ribbon.show()" ontouchend="ribbon.show()">
-                <div id="content">
-                    <p style="text-align:center; margin-top:50px">Cargando...</p>
-                </div>
+    <!-- ÁREA DE LECTURA (SCROLLABLE) -->
+    <div id="scroll-container" onmouseup="ribbon.check()" ontouchend="ribbon.check()">
+        <div id="content">
+            <p style="text-align:center; padding-top:50px">Cargando...</p>
+        </div>
+    </div>
+
+    <!-- CINTA FLOTANTE -->
+    <div id="ribbon" onmousedown="event.preventDefault()">
+        <button class="rib-btn" onclick="palette.open('back')" title="Resaltar Fondo"><i class="material-icons">border_color</i></button>
+        <button class="rib-btn" onclick="palette.open('fore')" title="Color Texto"><i class="material-icons">format_color_text</i></button>
+        <div style="width:1px; height:20px; background:#666; margin:0 5px"></div>
+        <button class="rib-btn" onclick="format.exec('bold')"><b>B</b></button>
+        <button class="rib-btn" onclick="format.exec('underline')"><u>U</u></button>
+        <button class="rib-btn" onclick="notes.add()" title="Añadir Nota"><i class="material-icons">note_add</i></button>
+        <button class="rib-btn" onclick="format.clear()" title="Limpiar"><i class="material-icons">format_clear</i></button>
+    </div>
+
+    <!-- MODAL PALETA DE COLORES -->
+    <div id="palette-modal">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+            <b id="pal-title">Color</b>
+            <button onclick="palette.close()" style="border:none; background:none; cursor:pointer">✕</button>
+        </div>
+        
+        <div class="palette-section">
+            <span class="palette-label">Estándar:</span>
+            <div class="color-grid" id="pal-grid"></div>
+        </div>
+        
+        <div class="palette-section">
+            <span class="palette-label">Personalizado (Toca para elegir):</span>
+            <!-- Input Color que aplica AL INSTANTE (oninput) -->
+            <input type="color" class="color-picker-large" id="pal-picker" oninput="palette.applyCustom(this.value)">
+        </div>
+    </div>
+
+    <!-- MODAL NOTAS -->
+    <div id="note-modal" class="modal-overlay">
+        <div class="modal-container" style="max-width:500px; height:60%; top:20%; bottom:20%">
+            <div class="modal-head">
+                <b>Nota / Archivo</b> <button onclick="notes.close()">✕</button>
             </div>
-
-            <!-- SIDEBAR NOTAS -->
-            <div id="sidebar">
-                <div class="sb-head">
-                    <b>Nota</b> <button onclick="notes.close()" style="background:none; border:none; color:white; font-size:1.2rem">✕</button>
-                </div>
-                <div class="sb-body">
-                    <div style="font-size:0.8em; color:#666; margin-bottom:5px">Pega imágenes con Ctrl+V.</div>
-                    <div id="sb-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0"></div>
-                </div>
-                <div class="sb-foot">
-                    <button onclick="notes.delete()" style="flex:1; background:#d32f2f; color:white; border:none; padding:10px; border-radius:4px">Eliminar</button>
-                    <button onclick="notes.save()" style="flex:1; background:var(--primary); color:white; border:none; padding:10px; border-radius:4px">Guardar</button>
-                </div>
+            <div class="modal-body" style="display:flex; flex-direction:column">
+                <p style="font-size:0.8rem; color:#666; margin:0 0 5px 0">Pega imágenes con Ctrl+V</p>
+                <div id="note-editor" class="rich-box" contenteditable="true" style="flex:1; margin:0"></div>
+            </div>
+            <div style="padding:10px; display:flex; justify-content:space-between; background:var(--header-bg)">
+                <button onclick="notes.delete()" style="background:#d32f2f; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Eliminar</button>
+                <button onclick="notes.save()" style="background:var(--primary); color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">Guardar</button>
             </div>
         </div>
+    </div>
 
-        <!-- CINTA COLORES -->
-        <div id="ribbon" onmousedown="event.preventDefault()">
-            <!-- Fondo -->
-            <div class="rib-row">
-                <span class="rib-lbl">Fondo</span>
-                <div class="dot" style="background:#ffff00" onclick="tools.bg('#ffff00')"></div>
-                <div class="dot" style="background:#a5d6a7" onclick="tools.bg('#a5d6a7')"></div>
-                <div class="dot" style="background:#90caf9" onclick="tools.bg('#90caf9')"></div>
-                <div class="dot" style="background:#ffcc80" onclick="tools.bg('#ffcc80')"></div>
-                <div class="dot" style="background:#e1bee7" onclick="tools.bg('#e1bee7')"></div>
-                <div class="dot" style="background:conic-gradient(red,blue,green)">
-                    <input type="color" oninput="tools.bg(this.value)">
-                </div>
-                <button class="rib-btn" onclick="tools.bg('transparent')">🚫</button>
+    <!-- MODAL BIBLIA -->
+    <div id="bible-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-head">
+                <b>Biblia</b> <button onclick="document.getElementById('bible-modal').style.display='none'">✕</button>
             </div>
-            <!-- Letra -->
-            <div class="rib-row">
-                <span class="rib-lbl">Letra</span>
-                <div class="dot" style="background:#000" onclick="tools.fg('#000')"></div>
-                <div class="dot" style="background:#d32f2f" onclick="tools.fg('#d32f2f')"></div>
-                <div class="dot" style="background:#1565c0" onclick="tools.fg('#1565c0')"></div>
-                <div class="dot" style="background:#2e7d32" onclick="tools.fg('#2e7d32')"></div>
-                <div class="dot" style="background:conic-gradient(black,white)">
-                    <input type="color" oninput="tools.fg(this.value)">
-                </div>
-            </div>
-            <!-- Estilos -->
-            <div class="rib-row" style="border-top:1px solid #666; padding-top:5px; margin-top:5px; justify-content:space-between">
-                <div style="display:flex; gap:3px">
-                    <button class="rib-btn" onclick="tools.exec('bold')"><b>B</b></button>
-                    <button class="rib-btn" onclick="tools.exec('underline')"><u>U</u></button>
-                    <button class="rib-btn" onclick="tools.exec('italic')"><i>I</i></button>
-                    <button class="rib-btn" onclick="tools.clear()">🧹</button>
-                </div>
-                <button class="rib-btn" onclick="tools.addNote()" style="background:#7b1fa2">📝</button>
-                <button class="rib-btn" onclick="ribbon.hide()">✕</button>
-            </div>
-        </div>
-
-        <!-- BIBLIA -->
-        <div id="bible-modal" class="modal">
-            <div class="modal-box">
-                <div style="padding:10px; display:flex; justify-content:flex-end; border-bottom:1px solid #ccc">
-                    <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.5rem">✕</button>
-                </div>
-                <iframe id="bible-frame" style="flex:1; border:none" src=""></iframe>
-            </div>
+            <iframe id="bible-frame" style="flex:1; border:none" src=""></iframe>
         </div>
     </div>
 
     <script>
-        // FIREBASE
+        // CONFIG
         const firebaseConfig = {
           apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk",
           authDomain: "miescuelasabatica-fdb06.firebaseapp.com",
@@ -240,8 +242,9 @@
         firebase.initializeApp(firebaseConfig);
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
+        fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
-        const state = { user: null, q: '2025-04', l: '01', d: '01', activeNoteId: null };
+        const state = { user: null, q: '2025-04', l: '01', d: '01', activeNoteId: null, range: null };
 
         // AUTH
         const auth = {
@@ -273,16 +276,10 @@
                 const dSel = document.getElementById('sel-d');
                 const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
                 days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
-                dSel.add(new Option("-- Auxiliar --", "disabled", true, true));
-                dSel.add(new Option("Material Maestros", "08"));
-                dSel.add(new Option("Misionero", "09"));
 
-                // Calcular hoy
-                const now = new Date();
+                // Ir a hoy (aprox)
                 document.getElementById('sel-l').value = "09"; 
-                let d = now.getDay();
-                let dMap = [2,3,4,5,6,7,1];
-                document.getElementById('sel-d').value = "0" + dMap[d];
+                document.getElementById('sel-d').value = "06"; 
                 
                 loader.load();
             },
@@ -290,38 +287,37 @@
             changeLesson: () => { state.l = document.getElementById('sel-l').value; loader.load(); },
             prev: () => {
                 const d = document.getElementById('sel-d');
-                if(d.selectedIndex > 0) { d.selectedIndex--; if(d.value==='disabled')d.selectedIndex--; loader.load(); }
+                if(d.selectedIndex > 0) { d.selectedIndex--; loader.load(); }
             },
             next: () => {
                 const d = document.getElementById('sel-d');
-                if(d.selectedIndex < d.options.length-1) { d.selectedIndex++; if(d.value==='disabled')d.selectedIndex++; loader.load(); }
+                if(d.selectedIndex < d.options.length-1) { d.selectedIndex++; loader.load(); }
             }
         };
 
-        // CARGADOR Y PERSISTENCIA
+        // CARGADOR
         const loader = {
             load: async () => {
-                ribbon.hide(); notes.close();
+                ribbon.hide();
                 state.q = document.getElementById('sel-q').value;
                 state.l = document.getElementById('sel-l').value;
                 state.d = document.getElementById('sel-d').value;
-                if(state.d==='disabled') return;
-
-                const box = document.getElementById('content');
-                box.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
+                
+                const container = document.getElementById('content');
+                container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
 
                 const ref = `users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`;
                 fbDb.ref(ref).once('value', async (s) => {
                     const html = s.val();
                     if(html) {
-                        box.innerHTML = html;
+                        container.innerHTML = html;
                         loader.postLoad();
                     } else {
-                        await loader.fetchGitHub();
+                        await loader.fetchRaw();
                     }
                 });
             },
-            fetchGitHub: async () => {
+            fetchRaw: async () => {
                 const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
                 try {
                     const r = await fetch(url);
@@ -334,10 +330,10 @@
                 }
             },
             postLoad: () => {
-                // Reconectar eventos a elementos dinámicos
                 document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
-                document.querySelectorAll('.note-marker').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
+                document.querySelectorAll('.note-ref').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
                 enablePasteImage();
+                loader.restoreInputs();
             },
             save: () => {
                 const html = document.getElementById('content').innerHTML;
@@ -354,104 +350,44 @@
                         if(el) el.innerHTML = d[k];
                     });
                 });
-            },
-            resetDay: () => {
-                if(confirm("¿Borrar todo y reiniciar?")) {
-                    fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).remove();
-                    fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).remove();
-                    loader.load();
-                }
             }
         };
 
-        // GESTIÓN IMÁGENES
-        function enablePasteImage() {
-            const handle = (e) => {
-                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-                for (let i in items) {
-                    if (items[i].kind === 'file') {
-                        const blob = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = (evt) => {
-                            document.execCommand('insertImage', false, evt.target.result);
-                            loader.save();
-                        };
-                        reader.readAsDataURL(blob);
-                        e.preventDefault();
-                    }
+        // PARSER
+        function parser(md) {
+            md = md.replace(/^---[\s\S]*?---/, "");
+            md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            md = md.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
+            md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
+            md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
+            
+            let lines = md.split('\n');
+            let h = "";
+            lines.forEach((l, i) => {
+                if(!l.trim()) return;
+                h += `<p>${l}</p>`;
+                if(l.includes('?') || l.includes('Lee')) {
+                    let id = `ans-${i}`;
+                    h += `<div class="rich-box" contenteditable="true" onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
                 }
-            };
-            document.getElementById('sb-editor').onpaste = handle;
-            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = handle);
+            });
+            return h;
         }
 
-        // HERRAMIENTAS
-        const tools = {
-            exec: (cmd, val) => {
-                document.designMode = "on";
-                document.execCommand(cmd, false, val);
-                document.designMode = "off";
-                loader.save();
-                if(cmd !== 'BackColor' && cmd !== 'ForeColor') ribbon.hide();
-            },
-            bg: (c) => tools.exec("BackColor", c),
-            fg: (c) => tools.exec("ForeColor", c),
-            clear: () => { tools.exec("removeFormat", null); ribbon.hide(); },
-            
-            addNote: () => {
-                const sel = window.getSelection();
-                if(!sel.rangeCount || sel.isCollapsed) return;
-                const id = Date.now().toString();
-                const sup = document.createElement("sup");
-                sup.className = "note-marker";
-                sup.dataset.id = id;
-                sup.contentEditable = "false";
-                sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
-                
-                const range = sel.getRangeAt(0);
-                range.collapse(false);
-                range.insertNode(sup);
-                ribbon.hide();
-                notes.open(id);
-                loader.save();
-            }
-        };
-
-        const notes = {
-            open: (id) => {
-                state.activeNoteId = id;
-                document.getElementById('sidebar').style.display = 'flex';
-                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
-                    document.getElementById('sb-editor').innerHTML = s.val() || "";
-                });
-            },
-            close: () => document.getElementById('sidebar').style.display = 'none',
-            save: () => {
-                const html = document.getElementById('sb-editor').innerHTML;
-                if(!html.trim()){ notes.delete(); return; }
-                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
-                notes.close();
-            },
-            delete: () => {
-                const id = state.activeNoteId;
-                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
-                const el = document.querySelector(`.note-marker[data-id="${id}"]`);
-                if(el) el.remove();
-                notes.close();
-                loader.save();
-            }
-        };
-
-        // CINTA
+        // CINTA Y HERRAMIENTAS
         const ribbon = {
-            show: () => {
+            check: () => {
                 setTimeout(() => {
                     const sel = window.getSelection();
                     if(sel.toString().length > 0 && !sel.isCollapsed) {
-                        const r = sel.getRangeAt(0).getBoundingClientRect();
+                        // Guardar rango para no perderlo al abrir modal
+                        state.range = sel.getRangeAt(0);
+                        const r = state.range.getBoundingClientRect();
                         const m = document.getElementById('ribbon');
                         m.style.display = 'flex';
-                        m.style.top = (r.top + window.scrollY - 130) + 'px';
+                        m.style.top = (r.top + window.scrollY - 60) + 'px';
                         let l = r.left;
                         if(l+m.offsetWidth > window.innerWidth) l = window.innerWidth - m.offsetWidth - 10;
                         m.style.left = l + 'px';
@@ -461,10 +397,97 @@
             hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
+        const format = {
+            exec: (cmd, val) => {
+                // Restaurar selección si se perdió
+                if(state.range) {
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(state.range);
+                }
+                document.execCommand(cmd, false, val);
+                loader.save();
+                if(cmd !== 'BackColor' && cmd !== 'ForeColor') ribbon.hide();
+            },
+            clear: () => format.exec("removeFormat", null)
+        };
+
+        const palette = {
+            currentMode: 'back', // back or fore
+            open: (mode) => {
+                palette.currentMode = mode;
+                document.getElementById('palette-modal').style.display = 'block';
+                document.getElementById('pal-title').innerText = mode === 'back' ? 'Resaltar Fondo' : 'Color Texto';
+                
+                // Generar colores estándar
+                const colors = ['#ffff00', '#a5d6a7', '#90caf9', '#ef9a9a', '#e1bee7', '#bcaaa4'];
+                const grid = document.getElementById('pal-grid');
+                grid.innerHTML = "";
+                colors.forEach(c => {
+                    let d = document.createElement('div');
+                    d.className = 'swatch';
+                    d.style.backgroundColor = c;
+                    d.onclick = () => { palette.apply(c); palette.close(); };
+                    grid.appendChild(d);
+                });
+            },
+            apply: (c) => {
+                let cmd = palette.currentMode === 'back' ? 'BackColor' : 'ForeColor';
+                format.exec(cmd, c);
+            },
+            applyCustom: (c) => {
+                // Se ejecuta al mover el input (oninput)
+                let cmd = palette.currentMode === 'back' ? 'BackColor' : 'ForeColor';
+                format.exec(cmd, c);
+            },
+            close: () => document.getElementById('palette-modal').style.display = 'none'
+        };
+
+        const notes = {
+            add: () => {
+                if(!state.range) return;
+                const id = Date.now().toString();
+                const sup = document.createElement("sup");
+                sup.className = "note-ref";
+                sup.dataset.id = id;
+                sup.contentEditable = "false";
+                sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
+                
+                state.range.collapse(false);
+                state.range.insertNode(sup);
+                ribbon.hide();
+                notes.open(id);
+                loader.save();
+            },
+            open: (id) => {
+                state.activeNoteId = id;
+                document.getElementById('note-modal').style.display = 'flex';
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).once('value', s => {
+                    document.getElementById('note-editor').innerHTML = s.val() || "";
+                });
+            },
+            save: () => {
+                const html = document.getElementById('note-editor').innerHTML;
+                if(!html.trim()) { notes.delete(); return; }
+                fbDb.ref(`users/${state.user.uid}/notes_data/${state.activeNoteId}`).set(html);
+                document.getElementById('note-modal').style.display = 'none';
+            },
+            delete: () => {
+                const id = state.activeNoteId;
+                fbDb.ref(`users/${state.user.uid}/notes_data/${id}`).remove();
+                const el = document.querySelector(`.note-ref[data-id="${id}"]`);
+                if(el) el.remove();
+                document.getElementById('note-modal').style.display = 'none';
+                loader.save();
+            },
+            close: () => document.getElementById('note-modal').style.display = 'none'
+        };
+
+        // BIBLIA & UI
         const bible = {
             open: (ref) => {
                 document.getElementById('bible-modal').style.display = 'flex';
-                document.getElementById('bible-frame').src = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960&interface=print`;
+                document.getElementById('bible-frame').src = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
             }
         };
 
@@ -482,35 +505,25 @@
             }
         };
 
-        function parser(md) {
-            md = md.replace(/^---[\s\S]*?---/, "");
-            md = md.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-            md = md.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            md = md.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            md = md.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
-            md = md.replace(/> (.*$)/gim, '<blockquote>$1</blockquote>');
-            md = md.replace(/([1-3]?\s?[A-ZÑ][a-zñáéíóú]+\.?\s\d+:\d+(?:-\d+)?)/g, '<span class="bible-link">$1</span>');
-            
-            let lines = md.split('\n');
-            let h = "";
-            lines.forEach((l, i) => {
-                if(!l.trim()) return;
-                h += `<p>${l}</p>`;
-                if(l.includes('?') || l.includes('Lee')) {
-                    let id = `ans-${i}`;
-                    // Caja de respuesta que permite HTML (imágenes) y tiene contenteditable=true
-                    h += `<div class="rich-box" contenteditable="true" placeholder="Escribe aquí..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
+        function enablePasteImage() {
+            const h = (e) => {
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                for (let i in items) {
+                    if (items[i].kind === 'file') {
+                        const blob = items[i].getAsFile();
+                        const r = new FileReader();
+                        r.onload = (evt) => {
+                            document.execCommand('insertImage', false, evt.target.result);
+                            loader.save();
+                        };
+                        r.readAsDataURL(blob);
+                        e.preventDefault();
+                    }
                 }
-            });
-            return h;
+            };
+            document.getElementById('note-editor').onpaste = h;
+            document.querySelectorAll('.rich-box').forEach(b => b.onpaste = h);
         }
-        
-        // Cargar respuestas al iniciar
-        const originalPostLoad = loader.postLoad;
-        loader.postLoad = () => {
-            originalPostLoad();
-            loader.restoreInputs();
-        };
 
         document.addEventListener('keydown', e => {
             if(e.key === "ArrowLeft") nav.prev();
