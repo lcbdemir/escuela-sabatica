@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V44 - Diseño V37 Mejorado</title>
+    <title>Escuela Sabática V45 - Biblia Arreglada</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
+        /* ESTILOS (Mismos de la V44 que te gustaron) */
         :root {
             --bg: #ffffff;
             --text: #222;
@@ -62,7 +63,7 @@
             cursor: pointer; background: rgba(0, 105, 92, 0.05); padding: 0 2px; border-radius: 3px;
         }
 
-        /* NOTAS SUPERÍNDICE (V37 Style) */
+        /* NOTAS SUPERÍNDICE */
         .note-marker {
             font-size: 0.7em; vertical-align: super; cursor: pointer;
             background: var(--accent); color: white; border-radius: 50%; width: 20px; height: 20px;
@@ -71,7 +72,7 @@
         }
         .note-marker::before { content: '✎'; }
 
-        /* CAJAS DE RESPUESTA (V37 Style - Rich Text) */
+        /* CAJAS DE RESPUESTA */
         .question-label { display: block; font-family: sans-serif; font-weight: bold; color: var(--accent); margin-top: 10px; font-size: 0.9em; }
         .rich-box {
             width: 100%; min-height: 100px; padding: 10px; margin: 5px 0 15px 0;
@@ -80,7 +81,7 @@
         }
         .rich-box img { max-width: 100%; display: block; margin: 5px 0; border-radius: 4px; }
 
-        /* SIDEBAR (V37 Style) */
+        /* SIDEBAR */
         #notes-sidebar {
             width: var(--sidebar-width); background: var(--bg);
             border-left: 2px solid var(--primary); display: none; flex-direction: column;
@@ -116,7 +117,9 @@
 
         /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-box { background: var(--bg); width: 95%; max-width: 700px; height: 80%; border-radius: 8px; display: flex; flex-direction: column; }
+        .modal-box { background: var(--bg); width: 95%; max-width: 600px; max-height: 80%; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;}
+        .modal-header { padding: 15px; background: var(--secondary); display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; align-items: center;}
+        .modal-body { padding: 20px; overflow-y: auto; font-size: 1.1em; line-height: 1.6; }
 
         /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
@@ -150,10 +153,10 @@
             <select id="sel-q" onchange="nav.changeQuarter()"></select>
             <select id="sel-l" onchange="nav.changeLesson()"></select>
             <select id="sel-d" onchange="loader.load()"></select>
-            <button class="tool-btn" onclick="ui.cycleMode()" title="Tema">🎨</button>
+            <button class="tool-btn" onclick="ui.cycleMode()">🎨</button>
             <button class="tool-btn" onclick="ui.font(2)">A+</button>
             <button class="tool-btn" onclick="ui.font(-2)">A-</button>
-            <button class="tool-btn" onclick="auth.logout()" style="color:red" title="Salir">🚪</button>
+            <button class="tool-btn" onclick="loader.resetDay()" style="color:red" title="Borrar cambios del día">🗑️</button>
         </header>
 
         <div id="workspace">
@@ -167,7 +170,7 @@
                 </div>
             </div>
 
-            <!-- SIDEBAR NOTAS (ESTILO V37) -->
+            <!-- SIDEBAR NOTAS -->
             <div id="notes-sidebar">
                 <div class="sb-header">
                     <b>Nota Personal</b>
@@ -193,6 +196,7 @@
                 <div class="swatch" style="background:#a5d6a7" onclick="tools.bg('#a5d6a7')"></div>
                 <div class="swatch" style="background:#90caf9" onclick="tools.bg('#90caf9')"></div>
                 <div class="swatch" style="background:#ffcc80" onclick="tools.bg('#ffcc80')"></div>
+                <div class="swatch" style="background:#e1bee7" onclick="tools.bg('#e1bee7')"></div>
                 <div class="swatch" style="background:conic-gradient(red,blue,green)" title="Personalizado"><input type="color" oninput="tools.bg(this.value)"></div>
                 <button class="rib-btn" onclick="tools.bg('transparent')" title="Quitar">🚫</button>
             </div>
@@ -218,13 +222,19 @@
             </div>
         </div>
 
-        <!-- MODAL BIBLIA -->
+        <!-- MODAL BIBLIA (V45) -->
         <div id="bible-modal" class="modal">
             <div class="modal-box">
-                <div style="padding:10px; display:flex; justify-content:flex-end; border-bottom:1px solid #ccc; background:var(--secondary)">
+                <div class="modal-header">
+                    <span id="bible-title" style="font-weight:bold; color:var(--primary)">Biblia RVR60</span>
                     <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.5rem; cursor:pointer">✕</button>
                 </div>
-                <iframe id="bible-frame" style="flex:1; border:none" src=""></iframe>
+                <div id="bible-text" class="modal-body">
+                    Cargando...
+                </div>
+                <div style="padding:10px; text-align:center; border-top:1px solid #ccc; font-size:0.8rem">
+                    <a id="bible-ext-link" href="#" target="_blank" style="color:var(--accent); text-decoration:none">Si no carga, clic aquí para abrir externo</a>
+                </div>
             </div>
         </div>
     </div>
@@ -232,7 +242,7 @@
     <script>
         // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyD8Z79dXBAIYXYYm-hvyJZszGiTiX1cdLk", authDomain: "miescuelasabatica-fdb06.firebaseapp.com", databaseURL: "https://miescuelasabatica-fdb06-default-rtdb.firebaseio.com", projectId: "miescuelasabatica-fdb06", storageBucket: "miescuelasabatica-fdb06.firebasestorage.app", messagingSenderId: "832420279762", appId: "1:832420279762:web:4218b0fa30e2e93b12c40b" };
-        try { firebase.initializeApp(firebaseConfig); } catch(e){}
+        firebase.initializeApp(firebaseConfig);
         const fbAuth = firebase.auth();
         const fbDb = firebase.database();
         fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -242,8 +252,7 @@
         // AUTH
         const auth = {
             login: () => fbAuth.signInWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message)),
-            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).then(()=>auth.login()).catch(e=>msg(e.message)),
-            logout: () => location.reload()
+            reg: () => fbAuth.createUserWithEmailAndPassword(val('email'), val('pass')).catch(e=>msg(e.message))
         };
         function val(id){ return document.getElementById(id).value; }
         function msg(t){ document.getElementById('msg').innerText = t; }
@@ -270,12 +279,10 @@
                 const dSel = document.getElementById('sel-d');
                 const days = ["Sábado","Domingo","Lunes","Martes","Miércoles","Jueves","Viernes"];
                 days.forEach((d,i) => dSel.add(new Option(d, "0"+(i+1))));
-                // Extras
                 dSel.add(new Option("--- Extras ---", "disabled", true, true));
                 dSel.add(new Option("Maestros / Auxiliar", "08"));
                 dSel.add(new Option("Misionero", "09"));
 
-                // Calcular hoy
                 const now = new Date();
                 document.getElementById('sel-l').value = "09"; 
                 let d = now.getDay();
@@ -310,7 +317,6 @@
                 const container = document.getElementById('content');
                 container.innerHTML = '<p style="text-align:center; padding:50px">Cargando...</p>';
 
-                // Cargar HTML guardado
                 const ref = `users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`;
                 fbDb.ref(ref).once('value', async (s) => {
                     const html = s.val();
@@ -318,11 +324,11 @@
                         container.innerHTML = html;
                         loader.postLoad();
                     } else {
-                        await loader.fetchRaw();
+                        await loader.fetchGitHub();
                     }
                 });
             },
-            fetchRaw: async () => {
+            fetchGitHub: async () => {
                 const url = `https://raw.githubusercontent.com/Adventech/sabbath-school-lessons/master/src/es/${state.q}/${state.l}/${state.d}.md`;
                 try {
                     const r = await fetch(url);
@@ -335,8 +341,7 @@
                 }
             },
             postLoad: () => {
-                // Reconectar eventos
-                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
+                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.fetch(e.innerText));
                 document.querySelectorAll('.note-marker').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
                 enablePasteImage();
                 loader.restoreInputs();
@@ -344,6 +349,13 @@
             save: () => {
                 const html = document.getElementById('content').innerHTML;
                 fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).set(html);
+            },
+            resetDay: () => {
+                if(confirm("¿Reiniciar lección?")) {
+                    fbDb.ref(`users/${state.user.uid}/pages/${state.q}-${state.l}-${state.d}`).remove();
+                    fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}`).remove();
+                    loader.load();
+                }
             },
             saveInput: (id, html) => {
                 fbDb.ref(`users/${state.user.uid}/inputs/${state.q}-${state.l}-${state.d}/${id}`).set(html);
@@ -359,7 +371,7 @@
             }
         };
 
-        // GESTIÓN DE PEGAR IMÁGENES
+        // GESTIÓN IMÁGENES
         function enablePasteImage() {
             const handle = (e) => {
                 const items = (e.clipboardData || e.originalEvent.clipboardData).items;
@@ -396,14 +408,12 @@
             addNote: () => {
                 const sel = window.getSelection();
                 if(!sel.rangeCount || sel.isCollapsed) return;
-                
                 const id = Date.now().toString();
                 const sup = document.createElement("sup");
                 sup.className = "note-marker";
                 sup.dataset.id = id;
                 sup.contentEditable = "false";
                 sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
-                
                 const range = sel.getRangeAt(0);
                 range.collapse(false);
                 range.insertNode(sup);
@@ -456,10 +466,51 @@
             hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
+        // BIBLIA V45 (API JSON)
         const bible = {
-            open: (ref) => {
+            fetch: (ref) => {
                 document.getElementById('bible-modal').style.display = 'flex';
-                document.getElementById('bible-frame').src = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960&interface=print`;
+                document.getElementById('bible-title').innerText = ref;
+                document.getElementById('bible-text').innerHTML = '<p style="text-align:center">Cargando texto...</p>';
+                
+                // Enlace externo como respaldo
+                const extUrl = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
+                document.getElementById('bible-ext-link').href = extUrl;
+
+                // API GetBible (RVR1960)
+                // Formato de entrada: "Gén 1:1" -> "Genesis1:1" (Simple conversion needed usually)
+                let cleanRef = ref.replace(/\s/g, ''); 
+                
+                // Usamos JSONP wrapper de getbible o un proxy
+                const url = `https://getbible.net/json?passage=${encodeURIComponent(cleanRef)}&v=rvr60`;
+                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+                fetch(proxy)
+                    .then(r => r.json())
+                    .then(d => {
+                        // GetBible devuelve un string tipo `({ ... })`, hay que limpiarlo
+                        let jsonStr = d.contents;
+                        if(jsonStr.startsWith('(')) jsonStr = jsonStr.substring(1, jsonStr.length-2);
+                        
+                        let data = JSON.parse(jsonStr);
+                        let html = "";
+                        
+                        if(data.book) {
+                            data.book.forEach(ch => {
+                                Object.keys(ch.chapter).forEach(v => {
+                                    html += `<sup><b>${v}</b></sup> ${ch.chapter[v].verse}<br>`;
+                                });
+                            });
+                            document.getElementById('bible-text').innerHTML = html;
+                        } else {
+                            throw new Error("No encontrado");
+                        }
+                    })
+                    .catch(e => {
+                        document.getElementById('bible-text').innerHTML = 
+                        `<p style="text-align:center">No se pudo cargar el texto aquí.<br>
+                        <a href="${extUrl}" target="_blank" style="color:blue; text-decoration:underline">Abrir en BibleGateway</a></p>`;
+                    });
             }
         };
 
@@ -494,7 +545,7 @@
                 if(l.includes('?') || l.includes('Lee')) {
                     let id = `ans-${i}`;
                     h += `<span class="question-label">Tu respuesta:</span>
-                          <div class="rich-box" contenteditable="true" placeholder="Escribe aquí..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
+                          <div class="rich-box" contenteditable="true" placeholder="Escribe..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
                 }
             });
             return h;
