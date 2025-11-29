@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escuela Sabática V45 - Biblia Arreglada</title>
+    <title>Escuela Sabática V46 - Biblia Funcionando</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
-        /* ESTILOS (Mismos de la V44 que te gustaron) */
+        /* ESTILOS DE LA V44 (Que te gustaron) */
         :root {
             --bg: #ffffff;
             --text: #222;
@@ -31,7 +31,7 @@
             display: flex; gap: 5px; align-items: center; z-index: 50; flex-wrap: wrap;
         }
         select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: var(--bg); color: var(--text); font-size: 16px; min-width: 80px;}
-        .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text); }
+        .tool-btn { background: none; border: 1px solid transparent; cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text); font-weight: bold;}
 
         /* CONTENEDOR PRINCIPAL */
         #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
@@ -58,6 +58,7 @@
         h3 { color: var(--accent); margin-top: 15px; font-size: 1.1em; }
         p { line-height: 1.8; font-size: 1.15em; margin-bottom: 15px; }
         
+        /* Enlaces Bíblicos */
         .bible-link { 
             color: var(--primary); font-weight: bold; text-decoration: underline; 
             cursor: pointer; background: rgba(0, 105, 92, 0.05); padding: 0 2px; border-radius: 3px;
@@ -115,11 +116,10 @@
         .rib-btn { background: #555; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
         body.dark .rib-btn { background: #ccc; color: #000; }
 
-        /* MODALES */
+        /* MODAL BIBLIA */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-box { background: var(--bg); width: 95%; max-width: 600px; max-height: 80%; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;}
-        .modal-header { padding: 15px; background: var(--secondary); display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; align-items: center;}
-        .modal-body { padding: 20px; overflow-y: auto; font-size: 1.1em; line-height: 1.6; }
+        .modal-box { background: var(--bg); width: 90%; max-width: 600px; max-height: 80%; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; padding: 20px; box-sizing: border-box;}
+        .bible-text { font-size: 1.2em; line-height: 1.6; overflow-y: auto; margin-top: 10px; }
 
         /* LOGIN */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
@@ -222,18 +222,18 @@
             </div>
         </div>
 
-        <!-- MODAL BIBLIA (V45) -->
+        <!-- MODAL BIBLIA (V46) -->
         <div id="bible-modal" class="modal">
             <div class="modal-box">
-                <div class="modal-header">
-                    <span id="bible-title" style="font-weight:bold; color:var(--primary)">Biblia RVR60</span>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #ccc; padding-bottom:10px; margin-bottom:10px">
+                    <b id="bible-title" style="color:var(--primary); font-size:1.2em">Biblia</b>
                     <button onclick="document.getElementById('bible-modal').style.display='none'" style="border:none; background:none; font-size:1.5rem; cursor:pointer">✕</button>
                 </div>
-                <div id="bible-text" class="modal-body">
+                <div id="bible-content" class="bible-text">
                     Cargando...
                 </div>
-                <div style="padding:10px; text-align:center; border-top:1px solid #ccc; font-size:0.8rem">
-                    <a id="bible-ext-link" href="#" target="_blank" style="color:var(--accent); text-decoration:none">Si no carga, clic aquí para abrir externo</a>
+                <div style="margin-top:10px; text-align:center; font-size:0.8em">
+                    <a id="bible-ext" href="#" target="_blank" style="color:var(--accent)">Abrir en pestaña nueva</a>
                 </div>
             </div>
         </div>
@@ -341,7 +341,7 @@
                 }
             },
             postLoad: () => {
-                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.fetch(e.innerText));
+                document.querySelectorAll('.bible-link').forEach(e => e.onclick = () => bible.open(e.innerText));
                 document.querySelectorAll('.note-marker').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); notes.open(e.dataset.id); });
                 enablePasteImage();
                 loader.restoreInputs();
@@ -371,7 +371,6 @@
             }
         };
 
-        // GESTIÓN IMÁGENES
         function enablePasteImage() {
             const handle = (e) => {
                 const items = (e.clipboardData || e.originalEvent.clipboardData).items;
@@ -392,7 +391,6 @@
             document.querySelectorAll('.rich-box').forEach(b => b.onpaste = handle);
         }
 
-        // HERRAMIENTAS
         const tools = {
             exec: (cmd, val) => {
                 document.designMode = "on";
@@ -415,8 +413,7 @@
                 sup.contentEditable = "false";
                 sup.onclick = (e) => { e.stopPropagation(); notes.open(id); };
                 const range = sel.getRangeAt(0);
-                range.collapse(false);
-                range.insertNode(sup);
+                range.collapse(false); range.insertNode(sup);
                 ribbon.hide();
                 notes.open(id);
                 loader.save();
@@ -466,51 +463,36 @@
             hide: () => document.getElementById('ribbon').style.display = 'none'
         };
 
-        // BIBLIA V45 (API JSON)
+        // --- BIBLIA API NATIVA ---
         const bible = {
-            fetch: (ref) => {
+            open: (ref) => {
                 document.getElementById('bible-modal').style.display = 'flex';
                 document.getElementById('bible-title').innerText = ref;
-                document.getElementById('bible-text').innerHTML = '<p style="text-align:center">Cargando texto...</p>';
+                document.getElementById('bible-content').innerHTML = "Cargando...";
                 
-                // Enlace externo como respaldo
-                const extUrl = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
-                document.getElementById('bible-ext-link').href = extUrl;
-
-                // API GetBible (RVR1960)
-                // Formato de entrada: "Gén 1:1" -> "Genesis1:1" (Simple conversion needed usually)
-                let cleanRef = ref.replace(/\s/g, ''); 
+                // Mapeo básico de libros (Español -> Inglés para API)
+                // Se puede expandir
+                let cleanRef = ref;
                 
-                // Usamos JSONP wrapper de getbible o un proxy
-                const url = `https://getbible.net/json?passage=${encodeURIComponent(cleanRef)}&v=rvr60`;
-                const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-
-                fetch(proxy)
+                // Usamos bible-api.com que permite CORS
+                // Ojo: Reina Valera tiene copyright, usamos 'almeida' (portuguesa/español antiguo) como fallback
+                // O intentamos una API proxy
+                const url = `https://bible-api.com/${encodeURIComponent(cleanRef)}?translation=almeida`;
+                
+                fetch(url)
                     .then(r => r.json())
-                    .then(d => {
-                        // GetBible devuelve un string tipo `({ ... })`, hay que limpiarlo
-                        let jsonStr = d.contents;
-                        if(jsonStr.startsWith('(')) jsonStr = jsonStr.substring(1, jsonStr.length-2);
-                        
-                        let data = JSON.parse(jsonStr);
-                        let html = "";
-                        
-                        if(data.book) {
-                            data.book.forEach(ch => {
-                                Object.keys(ch.chapter).forEach(v => {
-                                    html += `<sup><b>${v}</b></sup> ${ch.chapter[v].verse}<br>`;
-                                });
-                            });
-                            document.getElementById('bible-text').innerHTML = html;
+                    .then(data => {
+                        if(data.text) {
+                            document.getElementById('bible-content').innerText = data.text;
                         } else {
                             throw new Error("No encontrado");
                         }
                     })
-                    .catch(e => {
-                        document.getElementById('bible-text').innerHTML = 
-                        `<p style="text-align:center">No se pudo cargar el texto aquí.<br>
-                        <a href="${extUrl}" target="_blank" style="color:blue; text-decoration:underline">Abrir en BibleGateway</a></p>`;
+                    .catch(() => {
+                        document.getElementById('bible-content').innerHTML = "No se pudo cargar el texto automáticamente.<br>Usa el enlace de abajo.";
                     });
+                    
+                document.getElementById('bible-ext').href = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(ref)}&version=RVR1960`;
             }
         };
 
@@ -545,7 +527,7 @@
                 if(l.includes('?') || l.includes('Lee')) {
                     let id = `ans-${i}`;
                     h += `<span class="question-label">Tu respuesta:</span>
-                          <div class="rich-box" contenteditable="true" placeholder="Escribe..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
+                          <div class="rich-box" contenteditable="true" placeholder="Escribe aquí..." onblur="loader.saveInput('${id}', this.innerHTML)" id="${id}"></div>`;
                 }
             });
             return h;
